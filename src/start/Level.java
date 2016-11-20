@@ -1,5 +1,5 @@
 package start;
 
-public class Level {
+public class Level{
 
 }

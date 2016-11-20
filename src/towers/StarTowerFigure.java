@@ -5,7 +5,7 @@ import start.Position;
 
 public class StarTowerFigure extends TowerFigure{
 
-	public static final Figures shape = Figures.STAR;
+	public static final Figures SHAPE = Figures.STAR;
 	
 	public StarTowerFigure(int baseDamage, int hue, int range, 
 			Position position) {
@@ -18,7 +18,7 @@ public class StarTowerFigure extends TowerFigure{
 
 	@Override
 	public Figures getShape(){
-		return shape;
+		return SHAPE;
 	}
 
 }
