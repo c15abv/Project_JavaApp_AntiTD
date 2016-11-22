@@ -27,6 +27,10 @@ public class AttackingPlayer extends Player{
 		currentHorde.add(figure);
 	}
 	
+	public ArrayList<CreatureFigure> getHorde(){
+		return new ArrayList<CreatureFigure>(currentHorde);
+	}
+	
 	public int getPoints(){
 		return points;
 	}

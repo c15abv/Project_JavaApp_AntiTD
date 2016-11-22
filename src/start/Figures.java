@@ -1,6 +1,6 @@
 package start;
 
-public enum Figures {
+public enum Figures{
 	
 	CIRCLE, TRIANGLE, SQUARE, STAR;
 }

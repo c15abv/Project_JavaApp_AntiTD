@@ -15,7 +15,7 @@ public abstract class CreatureFigure implements TimerListener{
 	private int hitPoints;
 	private boolean isAlive;
 	private ArrayList<Action> onSpawnActionList;
-	private HashMap<Integer, Action> onSpawnTimerActionMap;
+	private HashMap<Integer, Action> onSpawnTimedActionMap;
 	private ArrayList<Action> onDeathActionList;
 	private volatile ArrayList<Integer> notifiedTimedActions;
 	
@@ -34,6 +34,8 @@ public abstract class CreatureFigure implements TimerListener{
 		 hitPoints -= damage;
 		 if(hitPoints <= 0){
 			 isAlive = false;
+			 //if can be resurrected (tile effect -> aura)
+			 //clean non-permanent action data structures
 		 }
 	}
 	
@@ -55,17 +57,38 @@ public abstract class CreatureFigure implements TimerListener{
 		return true;
 	}
 	
-	protected void addOnSpawnAction(Action action){
+	protected void addPermanentOnSpawnAction(Action action){
 		onSpawnActionList.add(action);
 	}
 	
-	protected void addOnSpawnTimerActionMap(Integer id, Action action){
-		onSpawnTimerActionMap.put(id, action);
+	protected void addPermanentOnSpawnTimedAction(Integer id, Action action){
+		onSpawnTimedActionMap.put(id, action);
 		onSpawnActionList.add(action);
+	}
+	
+	protected void addPermanentOnDeathAction(Action action){
+		onDeathActionList.add(action);
+	}
+	
+	protected void addOnSpawnAction(Action action){
+	}
+	
+	protected void addOnSpawnTimedAction(Integer id, Action action){
 	}
 	
 	protected void addOnDeathAction(Action action){
-		onDeathActionList.add(action);
+	}
+	
+	protected void addPermanentActiveAction(Action action){
+	}
+	
+	protected void addPermanentActiveTimedAction(Action action){
+	}
+	
+	protected void addActiveAction(Action action){
+	}
+	
+	protected void addActiveTimedAction(Action action){
 	}
 	
 	@Override
@@ -77,7 +100,7 @@ public abstract class CreatureFigure implements TimerListener{
 	private void init(){
 		isAlive = true;
 		onSpawnActionList = new ArrayList<Action>();
-		onSpawnTimerActionMap = new HashMap<Integer, Action>();
+		onSpawnTimedActionMap = new HashMap<Integer, Action>();
 		onDeathActionList = new ArrayList<Action>();
 		notifiedTimedActions = new ArrayList<Integer>();
 	}

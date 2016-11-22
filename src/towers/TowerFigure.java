@@ -1,6 +1,10 @@
 package towers;
 
+import java.util.HashMap;
+
 import creatures.Action;
+import creatures.CreatureFigure;
+import projectiles.ProjectileFigure;
 import start.Figures;
 import start.Position;
 import utilities.TimerListener;
@@ -15,6 +19,9 @@ public abstract class TowerFigure implements TimerListener{
 	private Position position;
 	private boolean isOnCooldown;
 	private Action towerAction;
+	private CreatureFigure currentTarget;
+	
+	private HashMap<ProjectileFigure, CreatureFigure> projectiles;
 	
 	public TowerFigure(int baseDamage, int hue, int range, 
 			Position position){
@@ -28,10 +35,18 @@ public abstract class TowerFigure implements TimerListener{
 	public void update(){
 		//if not on cooldown
 		//call towerAction
-		if(!isOnCooldown){
+		if(!isOnCooldown && currentTarget != null){
 			towerAction.executeAction();
 			isOnCooldown = true;
 		}
+	}
+	
+	public void setTarget(CreatureFigure target){
+		currentTarget = target;
+	}
+	
+	public CreatureFigure getTarget(){
+		return currentTarget;
 	}
 	
 	public abstract void render();
