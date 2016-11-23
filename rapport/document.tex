@@ -1,0 +1,177 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+\usepackage[T1]{fontenc}
+\usepackage{color}
+\usepackage{listings}
+\usepackage{collectbox}
+\usepackage{amsmath}
+\usepackage{etoolbox}
+\usepackage{graphicx}
+\usepackage{dirtree}
+\usepackage{tabto}
+\usepackage[simplified]{pgf-umlcd}
+\usepackage[a4paper,margin=0.8in]{geometry}  
+\renewcommand{\contentsname}{Innehållsförteckning}
+\renewcommand{\figurename}{Figur}
+\usetikzlibrary{shapes.geometric, arrows}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{Grupp 9, Applikationsutveckling i Java, 7.5 hp, AntiTD}
+
+\definecolor{pblue}{rgb}{0.13,0.13,1}
+\definecolor{pgreen}{rgb}{0,0.5,0}
+\definecolor{pred}{rgb}{0.9,0,0}
+\definecolor{pgrey}{rgb}{0.46,0.45,0.48}
+
+\lstset{language=Java,
+	showspaces=false,
+	showtabs=false,
+	breaklines=true,
+	showstringspaces=false,
+	breakatwhitespace=true,
+	commentstyle=\color{pgreen},
+	keywordstyle=\color{pblue},
+	stringstyle=\color{pred},
+	basicstyle=\ttfamily,
+	moredelim=[is][\textcolor{pgrey}]{\%\%}{\%\%}
+}
+
+\makeatletter
+\newcommand{\sqbox}{%
+	\collectbox{%
+		\@tempdima=\dimexpr\width-\totalheight\relax
+		\ifdim\@tempdima<\z@
+		\fbox{\hbox{\hspace{-.5\@tempdima}\BOXCONTENT\hspace{-.5\@tempdima}}}%
+		\else
+		\ht\collectedbox=\dimexpr\ht\collectedbox+.5\@tempdima\relax
+		\dp\collectedbox=\dimexpr\dp\collectedbox+.5\@tempdima\relax
+		\fbox{\BOXCONTENT}%
+		\fi
+	}%
+}
+\makeatother
+
+\renewcommand{\today}{\number\day \space%
+	\ifcase \month \or januari\or februari\or mars\or april\or maj%
+	\or juni\or juli\or augusti\or september\or oktober\or november\or december\fi,\space%
+	\number \year} 
+
+\renewcommand\refname{Källor}
+
+\begin{document}
+	\begin{titlepage}
+		\noindent UMEÅ UNIVERSITET\\
+		Institutionen för Datavetenskap\\
+		Rapport obligatorisk uppgift\\
+		\begin{center}
+			{\Large \bfseries Applikationsutveckling i Java,\\7.5 hp\\5DV135\\}
+			\vspace{0.5cm}
+			{Obligatorisk uppgift nr\\}
+			\vspace{0.20cm}
+			{\Huge \bfseries \sqbox{ 2 }\\}
+			\vspace{1.0cm}
+			\bgroup
+			\def\arraystretch{2}
+			\begin{Form}
+				\begin{tabularx}{\textwidth}{|l|X|r|r|}
+					\hline
+					Namn & Alexander Beliaev & \textbf{albe0060} &\textbf{c15abv}\\
+					\hline
+					Namn & Alexander Ekström & \textbf{alek0013} &\textbf{c15aem}\\
+					\hline
+					Namn & Jan Nylén & \textbf{jany0014} &\textbf{id12jnn}\\
+					\hline
+					Namn & Karolina Jonzén & \textbf{kajo0136} &\textbf{id12kjn}\\
+					\hline
+					Grupp & \multicolumn{3}{l|}{9}\\
+					\hline
+					Datum & \multicolumn{3}{l|}{\today}\\
+					\hline
+					Kursansvarig & \multicolumn{3}{l|}{Johan Eliasson}\\
+					\hline
+					Övriga lärare & \multicolumn{3}{l|}{Jan Erik Moström}\\
+					\hline
+					\multirow{3}{*}{Handledare} &\multicolumn{3}{l|}{\mbox Adam Dahlgren Lindström,}\\
+					&\multicolumn{3}{l|}{\mbox Alexander Sutherland,}\\
+					&\multicolumn{3}{l|}{\mbox Filip Allberg,}\\
+					\hline
+					Källkod & \multicolumn{3}{l|}{"Currently on vacation; back on 19/12" - Källkod, 2016}\\
+					\hline
+				\end{tabularx}
+			\end{Form}
+			\egroup
+		\end{center}
+		\vspace{0.25cm}
+		\textbf{ Kommentarer:}
+	\end{titlepage}
+	
+	\newpage
+	\tableofcontents
+	\newpage
+	\section{Exekveringsflöde}
+	Nedan beskrivs exekveringsflöded (samt algoritmer) för olika händelser i programmet.
+	\subsection{Spelsession, minimal användarinteraktion}
+	\begin{itemize}
+		\item Process skapas.
+		\item Fönster till programmet öppnas (centrerad).
+		\item Laddningsskärm visas samtidigt som information hämtas från en databas (asynkron laddning).
+		\item När laddningen är färdig presenteras startmeny beroende på informationen som hämtades från databasen.
+		\item Vid tryck på start-knapp visas ännu en gång en laddningsskärm samtidigt som adekvat nivå laddas (asynkron).
+		\item Den attackerande spelaren presenteras därefter av en dialog om att välja/skapa $k$-antal trupptyper; dessa
+		kan anpassas genom att ändra form, färg (endast 255 färgtoner, ej mättnad eller luminositet), storlek/fart/hälsa där farten är (förslagsvis - kräver balanseringstester) omvänt proportionell mot storleken och hälsan är (ännu en gång förslag) direkt proportionell mot storleken, vänster-/höger-/slump-gående,
+		teleporteregenskap, etc. Alla valda attribut attribuerar i någon utsträckning mot den skapade trupptypens produktionskostnad. Denna information sparas i truppmallar som förvaras i en datastruktur.
+		\item När spelaren skapat alla trupptyper eller om den förbestämda tidsgränsen för att skapa trupper tagit slut ges liknande möjlighet till motspelaren (motspelaren implementeras endast som AI, däremot kan sättet som spelaren implementeras enkelt byggas vidare på för att tillåta människa vs människa).
+		\item Motspelaren väljer även den ett antal figurer, dock endast försvarstorn. Även dessa kan anpassas genom att välja form, färg, räckvidd, basskada, återhämtningsperiod, etc. Beroende på svårighetsgrad som spelaren valt har motspelaren (försvararen) tillgång till attributen hos $i$ ($0 \leq i \leq k$) förvalda trupptyperna (högre svårighetsgrad innebär att $i$ kommer närmare $k$), och därav kan skapa mer effektiva försvarstorn. Även informationen här sparas i mallar som förvaras i en datastruktur.
+		\item ev. nedräkning visas.
+		\item Timer för referens till spelet skapas.
+		\item Spel-loop startas.
+		\item Uppdateringsmetod i huvudklassen för spelet kallas.
+		\begin{itemize}
+			\item Uppdateringsmetod för försvararen kallas.
+			\item Uppdateringsmetod AI som hanterar tornen kallas (ska ej förväxlas med AI för motspelaren).
+			\item En iteration över alla befintliga torn sker:
+			\begin{itemize}
+				\item Kontrollerar om tornet har ett mål.
+				\begin{itemize}
+					\item Kontrollera om målet är inom räckvidd (och levande).
+					\item Om nej: fortsätt. Om ja: hoppa till (end).
+				\end{itemize}
+				\item Räckvidden hämtas.
+				\item Hämta alla trupper som ligger inom radien för tornet.
+				\item Välj nytt mål beroende på form/färg/storlek, etc.
+				\item (end) Uppdateringsmetod för tornet kallas.
+				\begin{itemize}
+					\item Om är redo och har ett mål: skapa projektil.
+					\item Skapa länk mellan projektil och mål, och spara i datastruktur.
+					\item En iteration över alla befintliga projektil (från detta torn) sker -> uppdateras.
+				\end{itemize}
+			\end{itemize}
+			\item Uppdateringsmetod för attackeraren kallas.
+			\begin{itemize}
+				\item En iteration över alla befintliga trupper sker:
+				\item Kontrollera om trupp-figur lever. Om inte, släng bort referens.
+				\item Uppdateringsmetod för figur kallas:
+				\begin{itemize}
+					\item Kontrollera hälsa.
+					\item Kalla alla redo actions (händelser).
+					\item Förflytta till nästa lämpliga position (utifrån fart och rörlighetsbeteende (höger/vänster)).
+				\end{itemize}
+			\end{itemize}
+		\end{itemize}
+		\item Renderingsmetoden i huvudklassen kallas, samt alla underliggande renderingsmetoder.
+	\end{itemize}
+	\subsection{Val av startpunkt(er) för trupper}
+	\subsection{Köp av trupp}
+	\subsection{Köp av torn}
+	\subsection{Projektil vägbana}
+	\subsection{Markering (mus) av levande trupp}
+	\subsection{Markering (mus) av utplacerat torn}
+	\subsection{Markering (mus) av speciellt markområde (Tile)}
+	\subsection{Paus av spelsession}
+	\subsection{Avslut av spelsession}
+	
+\end{document}
