@@ -56,7 +56,7 @@ public class ColorCreator{
 	}
 	
 	private static boolean correctionTest2(float color){
-		if(2 * color < 2){
+		if(2 * color < 1){
 			color = LS_MULTIPLIER;
 			return true;
 		}
