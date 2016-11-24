@@ -1,5 +1,7 @@
 package towers;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.util.HashMap;
 
 import creatures.Action;
@@ -7,20 +9,22 @@ import creatures.CreatureFigure;
 import projectiles.ProjectileFigure;
 import start.Figures;
 import start.Position;
+import utilities.ColorCreator;
 import utilities.TimerListener;
 
 public abstract class TowerFigure implements TimerListener{
-
-	public static final int DEFAULT_BASE_DAMAGE = 0;
+	
+	protected static final int TEMP_SIZE = 50;
 	
 	private int baseDamage;
 	private int hue;
 	private int range;
+	private Color towerColor;
 	private Position position;
 	private boolean isOnCooldown;
 	private Action towerAction;
 	private CreatureFigure currentTarget;
-	
+	private TimerListener specifedTimerListener;
 	private HashMap<ProjectileFigure, CreatureFigure> projectiles;
 	
 	public TowerFigure(int baseDamage, int hue, int range, 
@@ -29,19 +33,50 @@ public abstract class TowerFigure implements TimerListener{
 		this.hue = hue;
 		this.range = range;
 		this.position = position;
-		isOnCooldown = false;
+		towerColor = ColorCreator.generateColorFromHue(hue);
+		projectiles = new HashMap<ProjectileFigure, CreatureFigure>();
 	}
 	
+	public int getBaseDamage(){
+		return baseDamage;
+	}
+
+	protected void setBaseDamage(int baseDamage){
+		this.baseDamage = baseDamage;
+	}
+
+	public int getRange(){
+		return range;
+	}
+
+	protected void setRange(int range){
+		this.range = range;
+	}
+
+	public int getHue(){
+		return hue;
+	}
+	
+	public Color getColor(){
+		return towerColor;
+	}
+
+	public boolean isOnCooldown(){
+		return isOnCooldown;
+	}
+
+	public HashMap<ProjectileFigure, CreatureFigure> getProjectiles() {
+		return new HashMap<ProjectileFigure, CreatureFigure>(projectiles);
+	}
+
 	public void update(){
-		//if not on cooldown
-		//call towerAction
-		if(!isOnCooldown && currentTarget != null){
+		if(!isOnCooldown && currentTarget != null 
+				&& towerAction != null){
 			towerAction.executeAction();
-			isOnCooldown = true;
 		}
 	}
 	
-	public void setTarget(CreatureFigure target){
+	protected void setTarget(CreatureFigure target){
 		currentTarget = target;
 	}
 	
@@ -49,25 +84,64 @@ public abstract class TowerFigure implements TimerListener{
 		return currentTarget;
 	}
 	
-	public abstract void render();
+	protected void setIsOnCooldown(boolean isOnCooldown){
+		this.isOnCooldown = isOnCooldown;
+	}
+	
+	public abstract void render(Graphics2D g2d);
 	public abstract Figures getShape();
 	
 	protected void setTowerAction(Action action){
 		towerAction = action;
 	}
 	
+	protected void setOnNotification(TimerListener listener){
+		specifedTimerListener = listener;
+	}
+	
+	public Position getPosition(){
+		return position;
+	}
+	
 	@Override
 	public void receiveNotification(Integer id){
-		isOnCooldown = false;
+		if(specifedTimerListener == null){
+			setIsOnCooldown(false);
+		}else{
+			specifedTimerListener.receiveNotification(id);
+		}
 	}
-	
+
 	@Override
-	public int hashCode(){
-		return 0;
+	public int hashCode() {
+		final int prime = 92821;
+		int result = 1;
+		result = prime * result + ((position == null) ? 0 : 
+			position.hashCode());
+		return result;
 	}
-	
+
 	@Override
-	public boolean equals(Object object){
+	public boolean equals(Object obj) {
+		if(this == obj){
+			return true;
+		}
+		if(obj == null){
+			return false;
+		}
+		if(getClass() != obj.getClass()){
+			return false;
+		}
+		TowerFigure other = (TowerFigure) obj;
+		if(position == null){
+			if(other.position != null){
+				return false;
+			}
+		}else if(!position.equals(other.position)){
+			return false;
+		}
 		return true;
 	}
+	
+	
 }
