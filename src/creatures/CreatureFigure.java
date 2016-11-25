@@ -21,17 +21,23 @@ public abstract class CreatureFigure implements TimerListener{
 	private int hitPoints;
 	private boolean isAlive;
 	private ArrayList<Action> onPermanentActiveActionList;
-	private ArrayList<Action> onSpawnActionList;
+	protected ArrayList<Action> onSpawnActionList;
 	private HashMap<Integer, Action> onSpawnTimedActionMap;
 	private ArrayList<Action> onDeathActionList;
 	private volatile ArrayList<Integer> notifiedTimedActions;
 	private ActionTimer actionTimer;
+	protected ArrayList<Action> onActiveActionList;
+	protected int hasSpawned;
 	
 	public CreatureFigure(int hue, float scale, Position position){
 		this.hue = hue;
 		this.scale = scale;
 		this.position = position;
 		this.creatureColor = ColorCreator.generateColorFromHue(hue);
+		
+		this.onActiveActionList = new ArrayList<>();
+		this.onSpawnActionList = new ArrayList<>();
+		this.hasSpawned = 0;
 
 		init();
 	}
@@ -85,6 +91,7 @@ public abstract class CreatureFigure implements TimerListener{
 	}
 	
 	protected void addOnSpawnAction(Action action){
+		onSpawnActionList.add(action);
 	}
 	
 	protected void addOnSpawnTimedAction(Integer id, Action action){
@@ -109,6 +116,7 @@ public abstract class CreatureFigure implements TimerListener{
 	}
 	
 	protected void addActiveAction(Action action){
+		onActiveActionList.add(action);
 	}
 	
 	protected void addActiveTimedAction(Action action){
