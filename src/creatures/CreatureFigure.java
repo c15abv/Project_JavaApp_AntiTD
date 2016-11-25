@@ -1,34 +1,48 @@
 package creatures;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import start.Figures;
 import start.Position;
+import utilities.ActionTimer;
+import utilities.ColorCreator;
 import utilities.TimerListener;
 
 public abstract class CreatureFigure implements TimerListener{
-	
+	protected static final int TEMP_SIZE = 50;
+
+	private Color creatureColor;
 	private int hue;
 	private float scale;
 	private Position position;
 	private int hitPoints;
 	private boolean isAlive;
+	private ArrayList<Action> onPermanentActiveActionList;
 	private ArrayList<Action> onSpawnActionList;
 	private HashMap<Integer, Action> onSpawnTimedActionMap;
 	private ArrayList<Action> onDeathActionList;
 	private volatile ArrayList<Integer> notifiedTimedActions;
+	private ActionTimer actionTimer;
 	
 	public CreatureFigure(int hue, float scale, Position position){
 		this.hue = hue;
 		this.scale = scale;
 		this.position = position;
+		this.creatureColor = ColorCreator.generateColorFromHue(hue);
+
 		init();
 	}
 	
 	public abstract void update();
-	public abstract void render();
+	public abstract void render(Graphics2D g2d);
 	public abstract Figures getShape();
+	
+	public Color getColor(){
+		return creatureColor;
+	}
 	
 	public void setDamageTaken(int damage){
 		 hitPoints -= damage;
@@ -80,8 +94,17 @@ public abstract class CreatureFigure implements TimerListener{
 	}
 	
 	protected void addPermanentActiveAction(Action action){
+		onPermanentActiveActionList.add(action);
 	}
 	
+	public ActionTimer getActionTimer() {
+		return actionTimer;
+	}
+
+	public void setActionTimer(ActionTimer actionTimer) {
+		this.actionTimer = actionTimer;
+	}
+
 	protected void addPermanentActiveTimedAction(Action action){
 	}
 	
@@ -103,5 +126,29 @@ public abstract class CreatureFigure implements TimerListener{
 		onSpawnTimedActionMap = new HashMap<Integer, Action>();
 		onDeathActionList = new ArrayList<Action>();
 		notifiedTimedActions = new ArrayList<Integer>();
+	}
+	
+	public int getHue() {
+		return hue;
+	}
+
+	public void setHue(int hue) {
+		this.hue = hue;
+	}
+
+	public float getScale() {
+		return scale;
+	}
+
+	public void setScale(float scale) {
+		this.scale = scale;
+	}
+
+	public Position getPosition() {
+		return position;
+	}
+
+	public void setPosition(Position position) {
+		this.position = position;
 	}
 }
