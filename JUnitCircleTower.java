@@ -22,7 +22,7 @@ import utilities.ActionTimer;
 
 public class JUnitCircleTower {
 	
-	class TestWindow extends JFrame implements Runnable{ 
+	/*class TestWindow extends JFrame implements Runnable{ 
 		
 		private static final long serialVersionUID = 1L;
 		
@@ -104,9 +104,9 @@ public class JUnitCircleTower {
 		}catch(InterruptedException e){
 			e.printStackTrace();
 		}
-	}
+	}*/
 	
-	/*@Test
+	@Test
 	public void testNotificationFunctionality(){
 		CircleTowerFigure fig = new CircleTowerFigure(0,0,0,new Position(150, 150));
 		CircleCreatureFigure creature = new CircleCreatureFigure(0,0,new Position(0,0));
@@ -133,12 +133,9 @@ public class JUnitCircleTower {
 			Thread.sleep(2000);
 			timer.terminate();
 		}catch(InterruptedException e){
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-	}*/
+	}
 	
-	
-
 }
