@@ -28,6 +28,7 @@ public abstract class CreatureFigure implements TimerListener{
 	private ActionTimer actionTimer;
 	protected ArrayList<Action> onActiveActionList;
 	protected int hasSpawned;
+	protected boolean hasReachedGoal;
 	
 	public CreatureFigure(int hue, float scale, Position position){
 		this.hue = hue;
@@ -38,6 +39,7 @@ public abstract class CreatureFigure implements TimerListener{
 		this.onActiveActionList = new ArrayList<>();
 		this.onSpawnActionList = new ArrayList<>();
 		this.hasSpawned = 0;
+		this.hasReachedGoal = false;
 
 		init();
 	}
