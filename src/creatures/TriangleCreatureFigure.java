@@ -1,5 +1,7 @@
 package creatures;
 
+import java.awt.Graphics2D;
+
 import start.Figures;
 import start.Position;
 
@@ -16,7 +18,7 @@ public class TriangleCreatureFigure extends CreatureFigure{
 	}
 
 	@Override
-	public void render(){
+	public void render(Graphics2D g2d){
 	}
 
 	@Override
