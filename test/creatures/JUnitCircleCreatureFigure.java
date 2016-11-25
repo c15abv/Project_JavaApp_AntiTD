@@ -5,13 +5,13 @@ import org.junit.Test;
 import start.Figures;
 import start.Position;
 
-public class JUnitSquareCreatureFigure {
-	private SquareCreatureFigure figure = new SquareCreatureFigure(0,0, new Position(0,0));
+public class JUnitCircleCreatureFigure {
+	private CircleCreatureFigure figure = new CircleCreatureFigure(0,0, new Position(0,0));
 	
 	
 	@Test
-	public void testShapeIsSquare() {
-		assertEquals(Figures.SQUARE, figure.getShape());
+	public void testShapeIsCircle() {
+		assertEquals(Figures.CIRCLE, figure.getShape());
 	}
 	
 	@Test
@@ -78,8 +78,4 @@ public class JUnitSquareCreatureFigure {
 		assertEquals(figure.getPosition(), new Position(10,10));
 	}
 	
-	
-	
-	
-
 }
