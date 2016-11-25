@@ -1,5 +1,7 @@
 package towers;
 
+import java.awt.Graphics2D;
+
 import start.Figures;
 import start.Position;
 
@@ -13,12 +15,19 @@ public class CircleTowerFigure extends TowerFigure{
 	}
 
 	@Override
-	public void render(){
+	public void render(Graphics2D g2d){
+		g2d.setColor(this.getColor());
+		g2d.fillOval(this.getPosition().getX(),
+				this.getPosition().getY(),
+				TowerFigure.TEMP_SIZE,
+				TowerFigure.TEMP_SIZE);
 	}
 
 	@Override
 	public Figures getShape(){
 		return SHAPE;
 	}
+	
+	
 
 }
