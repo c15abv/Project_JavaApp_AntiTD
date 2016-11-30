@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<levels
+	xmlns="http://www.w3schools.com"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="LevelsXMLSchema.xsd">
+
+	<Level name = "testLevel">
+		<row Index="1">
+			<cell>W</cell>
+			<cell>W</cell>
+			<cell>W</cell>
+			<cell>G</cell>
+			<cell>W</cell>
+			<cell>W</cell>
+			<cell>W</cell>
+		</row>
+		<row Index="2">
+			<cell>T</cell>
+			<cell>T</cell>
+			<cell>T</cell>
+			<cell>p</cell>
+			<cell>T</cell>
+			<cell>W</cell>
+			<cell>W</cell>
+		</row>
+		<row Index="3">
+			<cell>T</cell>
+			<cell>P</cell>
+			<cell>P</cell>
+			<cell>p</cell>
+			<cell>P</cell>
+			<cell>T</cell>
+			<cell>W</cell>
+		</row>
+		<row index="4">
+			<cell>T</cell>
+			<cell>P</cell>
+			<cell>P</cell>
+			<cell>P</cell>
+			<cell>P</cell>
+			<cell>T</cell>
+			<cell>W</cell>
+		</row>
+		<row Index="5">
+			<cell>T</cell>
+			<cell>P</cell>
+			<cell>T</cell>
+			<cell>T</cell>
+			<cell>P</cell>
+			<cell>T</cell>
+			<cell>W</cell>
+		</row>
+		<row Index="6">
+			<cell>W</cell>
+			<cell>P</cell>
+			<cell>P</cell>
+			<cell>P</cell>
+			<cell>P</cell>
+			<cell>T</cell>
+			<cell>W</cell>
+		</row>
+		<row Index="7">
+			<cell>W</cell>
+			<cell>W</cell>
+			<cell>W</cell>
+			<cell>S</cell>
+			<cell>W</cell>
+			<cell>W</cell>
+			<cell>W</cell>
+		</row>
+		<rules>
+			<attackerCredit>100</attackerCredit>
+			<defenderCredit>100</defenderCredit>
+			<timeToFinish>10</timeToFinish>			
+		</rules>
+		<!-- vet inte hur jag man ska identifiera klasserna.. Om dom ska 
+		ha ett eget element och sen en text med filens namn. Eller om det direkt bara ska vara namnet i textform...-->
+		<landOnClassFiles>
+			<haste></haste>
+			<cripple></cripple>
+		</landOnClassFiles>
+	</Level>
+</levels>
