@@ -19,6 +19,7 @@ public abstract class CreatureFigure implements TimerListener{
 	private float scale;
 	private Position position;
 	private int hitPoints;
+	private int startHitPoints;
 	private boolean isAlive;
 	private ArrayList<Action> onPermanentActiveActionList;
 	protected ArrayList<Action> onSpawnActionList;
@@ -41,6 +42,8 @@ public abstract class CreatureFigure implements TimerListener{
 		this.hasSpawned = 0;
 		this.hasReachedGoal = false;
 
+		hitPoints = startHitPoints = 0; //for now
+		
 		init();
 	}
 	
@@ -56,7 +59,6 @@ public abstract class CreatureFigure implements TimerListener{
 		 hitPoints -= damage;
 		 if(hitPoints <= 0){
 			 isAlive = false;
-			 //if can be resurrected (tile effect -> aura)
 			 //clean non-permanent action data structures
 		 }
 	}
@@ -67,6 +69,10 @@ public abstract class CreatureFigure implements TimerListener{
 	
 	public boolean isAlive(){
 		return isAlive;
+	}
+	
+	public int percentLife(){
+		return Math.round(hitPoints / startHitPoints * 100);
 	}
 	
 	@Override
