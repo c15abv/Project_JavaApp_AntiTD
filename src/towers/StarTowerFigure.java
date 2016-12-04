@@ -29,10 +29,10 @@ public class StarTowerFigure extends TowerFigure{
 	}
 
 	@Override
-	protected void attack() {
+	public void attack() {
 		if(this.hasTarget()){
-			this.getProjectiles().put(new StarProjectileFigure(
-					this.getHue(), 1,
+			projectiles.put(new StarProjectileFigure(
+					this.getHue(),
 					new Position(this.getPosition())),
 					this.getTarget());
 		}
