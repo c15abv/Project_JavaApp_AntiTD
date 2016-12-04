@@ -9,6 +9,7 @@ import creatures.CreatureFigure;
 import projectiles.ProjectileFigure;
 import start.Figures;
 import start.Position;
+import utilities.ActionTimer;
 import utilities.ColorCreator;
 import utilities.TimerListener;
 
@@ -26,7 +27,16 @@ public abstract class TowerFigure implements TimerListener{
 	private CreatureFigure currentTarget;
 	private TimerListener specifedTimerListener;
 	private HashMap<ProjectileFigure, CreatureFigure> projectiles;
+	private ActionTimer actionTimer;
 	
+	public ActionTimer getActionTimer() {
+		return actionTimer;
+	}
+
+	public void setActionTimer(ActionTimer actionTimer) {
+		this.actionTimer = actionTimer;
+	}
+
 	public TowerFigure(int baseDamage, int hue, int range, 
 			Position position){
 		this.baseDamage = baseDamage;
@@ -65,11 +75,11 @@ public abstract class TowerFigure implements TimerListener{
 		return isOnCooldown;
 	}
 
-	public HashMap<ProjectileFigure, CreatureFigure> getProjectiles() {
+	protected HashMap<ProjectileFigure, CreatureFigure> getProjectiles() {
 		return new HashMap<ProjectileFigure, CreatureFigure>(projectiles);
 	}
 
-	public void update(){
+	protected void update(){
 		if(!isOnCooldown && currentTarget != null 
 				&& towerAction != null){
 			towerAction.executeAction();
@@ -84,12 +94,17 @@ public abstract class TowerFigure implements TimerListener{
 		return currentTarget;
 	}
 	
+	public boolean hasTarget(){
+		return currentTarget != null;
+	}
+	
 	protected void setIsOnCooldown(boolean isOnCooldown){
 		this.isOnCooldown = isOnCooldown;
 	}
 	
 	public abstract void render(Graphics2D g2d);
 	public abstract Figures getShape();
+	protected abstract void attack();
 	
 	protected void setTowerAction(Action action){
 		towerAction = action;

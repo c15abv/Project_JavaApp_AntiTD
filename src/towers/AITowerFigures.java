@@ -1,10 +1,9 @@
 package towers;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import creatures.CreatureFigure;
-import projectiles.ProjectileFigure;
+import start.Position;
 
 public class AITowerFigures{
 
@@ -15,22 +14,66 @@ public class AITowerFigures{
 	}
 	
 	public void update(ArrayList<TowerFigure> currentDefence){
-		/*run through currentDefence/towers;
-		1. if no target link exists:
-			+ choose an adequate target in currentHorde based on (priority):
-				- range #if nothing within range: skip
-				- hue
-				- speed/hitpoints
-			+ make a link between tower and creature by
-			  inserting into the tower.
-		
-		2. if target link exists:
-			+ check if target creature is alive and within range;
-				#if not, then go to 1.
-		
-		3. update*/
 		for(TowerFigure tower : currentDefence){
+			if(!tower.isOnCooldown() && (!tower.hasTarget() || 
+					!tower.getTarget().isAlive() ||
+					!targetWithinRange(tower, tower.getTarget()))){
+				findTarget(tower);
+			}
+			
 			tower.update();
 		}
+	}
+	
+	private void findTarget(TowerFigure tower){
+		CreatureFigure tempTarget = null;
+		
+		for(CreatureFigure creature : currentHorde){
+			if(targetWithinRange(tower, creature) &&
+					betterCompared(tower, tempTarget, creature)){
+				tempTarget = creature;
+			}
+		}
+		
+		tower.setTarget(tempTarget);
+	}
+	
+	private boolean targetWithinRange(TowerFigure tower,
+			CreatureFigure target){
+		return tower.getRange() >= getTargetDistance(tower.getPosition(),
+				target.getPosition());
+	}
+	
+	private double getTargetDistance(Position towerPosition,
+			Position targetPosition){
+		return Math.sqrt(Math.pow(towerPosition.getY() -
+				targetPosition.getY(), 2) + Math.pow(towerPosition.getX() - 
+						targetPosition.getX(), 2));
+	}
+	
+	private boolean betterCompared(TowerFigure tower,
+			CreatureFigure oldTarget,
+			CreatureFigure newTarget){
+		int oldDiffHue = Math.abs(tower.getHue() - oldTarget.getHue());
+		int newDiffHue = Math.abs(tower.getHue() - newTarget.getHue());
+		int oldLife = oldTarget.percentLife();
+		int newLife = newTarget.percentLife();
+		
+		if(oldDiffHue > 30 && oldDiffHue > newDiffHue){
+			return true;
+		}
+		
+		if(oldDiffHue - 10 > newDiffHue){
+			return true;
+		}else if(oldDiffHue - 5 > newDiffHue && oldLife >= newLife){
+			return true;
+		}
+		
+		if(oldDiffHue > newDiffHue && oldDiffHue - 5 <= newDiffHue && 
+				oldLife - 40 >= newLife){
+			return true;
+		}
+		
+		return false;
 	}
 }
