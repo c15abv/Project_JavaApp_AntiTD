@@ -1,7 +1,10 @@
 package towers;
 
 import java.awt.Graphics2D;
+import java.util.Map;
 
+import creatures.CreatureFigure;
+import projectiles.ProjectileFigure;
 import projectiles.SquareProjectileFigure;
 import start.Figures;
 import start.Position;
@@ -22,6 +25,11 @@ public class SquareTowerFigure extends TowerFigure{
 				this.getPosition().getY() - TowerFigure.TEMP_SIZE/2,
 				TowerFigure.TEMP_SIZE,
 				TowerFigure.TEMP_SIZE);
+		
+		for(Map.Entry<ProjectileFigure, CreatureFigure> entry : 
+				projectiles.entrySet()){
+			entry.getKey().render(g2d);
+		}
 	}
 
 	@Override
@@ -30,10 +38,12 @@ public class SquareTowerFigure extends TowerFigure{
 	}
 
 	@Override
-	protected void attack() {
-		if(this.hasTarget()){
-			this.getProjectiles().put(new SquareProjectileFigure(
-					this.getHue(), 1,
+	public void attack() {
+		if(this.hasTarget() && !this.isOnCooldown() &&
+				this.getTarget().isAlive()){
+			projectiles.put(new SquareProjectileFigure(
+					this.getHue(),
+					this.getBaseDamage(),
 					new Position(this.getPosition())),
 					this.getTarget());
 		}

@@ -4,7 +4,6 @@ import java.awt.Graphics2D;
 
 import start.Figures;
 import start.Position;
-import towers.TowerFigure;
 import utilities.CustomShapes;
 
 public class TriangleCreatureFigure extends CreatureFigure{
@@ -13,20 +12,6 @@ public class TriangleCreatureFigure extends CreatureFigure{
 	
 	public TriangleCreatureFigure(int hue, float scale, Position position){
 		super(hue, scale, position);
-	}
-
-	@Override
-	public void update() {
-		if (this.hasSpawned == 0) {
-			for (Action action : this.onSpawnActionList) {
-				action.executeAction();
-			}
-			this.hasSpawned++;
-		}
-
-		for (Action action : this.onActiveActionList) {
-			action.executeAction();
-		}
 	}
 
 	public void moveForward() {
@@ -51,6 +36,40 @@ public class TriangleCreatureFigure extends CreatureFigure{
 	@Override
 	public Figures getShape(){
 		return shape;
+	}
+
+	@Override
+	public boolean isCollision(Position position) {
+		int dx = Math.abs(position.getX() - this.getPosition().getX());
+		int dy = Math.abs(position.getY() - this.getPosition().getY());
+		int outerRadius = CreatureFigure.TEMP_SIZE/2;
+		double innerRadius;
+		double collPointAngle;
+		
+		if(dx > outerRadius || dy > outerRadius){
+			return false;
+		}
+		
+		if(dx > 0){
+			collPointAngle = Math.atan(dy / dx);
+		}else{
+			collPointAngle = Math.PI / 2;
+		}
+		
+		innerRadius = getInnerRadius(collPointAngle);
+		
+		if(innerRadius >= Math.sqrt(Math.pow(dx, 2) +
+				Math.pow(dy, 2))){
+			return true;
+		}
+		
+		
+		return false;
+	}
+	
+	private double getInnerRadius(double angle){
+		return CreatureFigure.TEMP_SIZE/2 * Math.sin(Math.PI / 6) / 
+				Math.sin(2 * Math.PI / 6 + angle);
 	}
 
 }
