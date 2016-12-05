@@ -1,5 +1,7 @@
 package start;
 
+import java.awt.Graphics2D;
+
 public abstract class Player{
 	
 	private int credits;
@@ -9,7 +11,7 @@ public abstract class Player{
 	}
 	
 	public abstract void update();
-	public abstract void render();
+	public abstract void render(Graphics2D g2d);
 	
 	public void setCredits(int credits){
 		this.credits = credits;

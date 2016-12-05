@@ -1,6 +1,7 @@
 package start;
 
 import towers.AITowerFigures;
+import towers.DefendingPlayer;
 import utilities.TimerListener;
 
 public class Game implements TimerListener{
@@ -22,9 +23,8 @@ public class Game implements TimerListener{
 		this.level = level;
 		
 		attacker = new AttackingPlayer(TEMP_CREDIT_HOLDER);
-		aiTower = new AITowerFigures(attacker.getHorde());
-		defender = new DefendingPlayer(TEMP_CREDIT_HOLDER,
-				aiTower);
+		aiTower = new AITowerFigures(attacker, defender);
+		defender = new DefendingPlayer(TEMP_CREDIT_HOLDER);
 	}
 	
 	public void update(){

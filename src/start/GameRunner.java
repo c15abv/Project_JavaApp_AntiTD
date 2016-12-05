@@ -2,10 +2,11 @@ package start;
 
 public class GameRunner implements Runnable{
 	
-	public static final int UPS = 30;
-	public static final long UPS_DELTA = (long) (10e9 / UPS);
+	private static final int UPS = 60;
+	private static final long MARGIN = (long) (1000000000 / UPS);
+	private static final int FPS_SKIP = 10;
 	
-	private volatile boolean isRunning;
+	private volatile boolean isRunning = true;
 	private Game game;
 	
 	public GameRunner(Game game){
@@ -14,10 +15,16 @@ public class GameRunner implements Runnable{
 	
 	@Override
 	public void run(){
-		isRunning = true;
+		long lastUpdateTime = System.nanoTime();
+		int loops;
 		
 		while(isRunning){
-			game.update();
+			loops = 0;
+			while(System.nanoTime() > lastUpdateTime && loops < FPS_SKIP){
+				game.update();
+				lastUpdateTime += MARGIN;
+				loops++;
+			}
 			game.render();
 		}
 	}

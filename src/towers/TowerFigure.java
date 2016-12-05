@@ -2,7 +2,11 @@ package towers;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import creatures.Action;
 import creatures.CreatureFigure;
@@ -26,7 +30,7 @@ public abstract class TowerFigure implements TimerListener{
 	private Action towerAction;
 	private CreatureFigure currentTarget;
 	private TimerListener specifedTimerListener;
-	private HashMap<ProjectileFigure, CreatureFigure> projectiles;
+	protected HashMap<ProjectileFigure, CreatureFigure> projectiles;
 	private ActionTimer actionTimer;
 	
 	public ActionTimer getActionTimer() {
@@ -75,15 +79,26 @@ public abstract class TowerFigure implements TimerListener{
 		return isOnCooldown;
 	}
 
-	protected HashMap<ProjectileFigure, CreatureFigure> getProjectiles() {
-		return new HashMap<ProjectileFigure, CreatureFigure>(projectiles);
-	}
-
 	protected void update(){
 		if(!isOnCooldown && currentTarget != null 
 				&& towerAction != null){
 			towerAction.executeAction();
 		}
+		
+		ArrayList<ProjectileFigure> figs = new ArrayList<ProjectileFigure>();
+
+		Iterator<Entry<ProjectileFigure, CreatureFigure>> it = 
+				projectiles.entrySet().iterator();
+		Map.Entry<ProjectileFigure, CreatureFigure> pair;
+	    while(it.hasNext()){
+	    	pair = (Map.Entry<ProjectileFigure, CreatureFigure>)it.next();
+	    	if(!pair.getKey().isAlive()){
+	    		figs.add(pair.getKey());
+	    		it.remove();
+	    	}else{
+	    		pair.getKey().update(pair.getValue());
+	    	}
+	    }
 	}
 	
 	protected void setTarget(CreatureFigure target){
@@ -98,19 +113,19 @@ public abstract class TowerFigure implements TimerListener{
 		return currentTarget != null;
 	}
 	
-	protected void setIsOnCooldown(boolean isOnCooldown){
+	public void setIsOnCooldown(boolean isOnCooldown){
 		this.isOnCooldown = isOnCooldown;
 	}
 	
 	public abstract void render(Graphics2D g2d);
 	public abstract Figures getShape();
-	protected abstract void attack();
+	public abstract void attack();
 	
-	protected void setTowerAction(Action action){
+	public void setTowerAction(Action action){
 		towerAction = action;
 	}
 	
-	protected void setOnNotification(TimerListener listener){
+	public void setOnNotification(TimerListener listener){
 		specifedTimerListener = listener;
 	}
 	
@@ -128,7 +143,7 @@ public abstract class TowerFigure implements TimerListener{
 	}
 
 	@Override
-	public int hashCode() {
+	public int hashCode(){
 		final int prime = 92821;
 		int result = 1;
 		result = prime * result + ((position == null) ? 0 : 
