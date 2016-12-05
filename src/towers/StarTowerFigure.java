@@ -33,6 +33,7 @@ public class StarTowerFigure extends TowerFigure{
 		if(this.hasTarget()){
 			projectiles.put(new StarProjectileFigure(
 					this.getHue(),
+					this.getBaseDamage(),
 					new Position(this.getPosition())),
 					this.getTarget());
 		}

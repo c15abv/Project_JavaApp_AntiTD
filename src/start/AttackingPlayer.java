@@ -22,6 +22,9 @@ public class AttackingPlayer extends Player{
 		for(int i=0; i<currentHorde.size(); i++){
 			figure = currentHorde.get(i);
 			figure.update();
+			if(figure.hasReachedGoal()){
+				points++;
+			}
 			if(figure.isFinished()){
 				currentHorde.remove(i);
 			}

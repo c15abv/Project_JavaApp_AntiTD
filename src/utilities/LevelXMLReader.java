@@ -13,6 +13,6 @@ public class LevelXMLReader{
 	
 	//
 	public GameLevel toLevel(){
-		return new GameLevel();
+		return new GameLevel(123);
 	}
 }
