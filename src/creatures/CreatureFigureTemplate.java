@@ -2,7 +2,9 @@ package creatures;
 
 import java.util.Random;
 
+import creatures.CreatureFigure.Orientation;
 import start.Figures;
+import start.GameLevel;
 import start.Position;
 
 public class CreatureFigureTemplate{
@@ -11,13 +13,17 @@ public class CreatureFigureTemplate{
 	private int hue;
 	private float scale;
 	private int cost;
+	private Orientation orientation;
+	private GameLevel level;
 	
 	public CreatureFigureTemplate(Figures creatureType, int hue, float scale,
-			int cost){
+			int cost, Orientation orientation, GameLevel level){
 		this.creatureType = creatureType;
 		this.hue = hue;
 		this.scale = scale;
 		this.cost = cost;
+		this.orientation = orientation;
+		this.level = level;
 	}
 	
 	public int getCost(){
@@ -36,17 +42,20 @@ public class CreatureFigureTemplate{
 	
 	private CircleCreatureFigure createNewCircleCreature(
 			Position position){
-		return new CircleCreatureFigure(hue, scale, position);
+		return new CircleCreatureFigure(hue, scale, position,
+				orientation, level);
 	}
 	
 	private SquareCreatureFigure createNewSquareCreature(
 			Position position){
-		return new SquareCreatureFigure(hue, scale, position);
+		return new SquareCreatureFigure(hue, scale, position,
+				orientation, level);
 	}
 
 	private TriangleCreatureFigure createNewTriangleCreature(
 			Position position){
-		return new TriangleCreatureFigure(hue, scale, position);
+		return new TriangleCreatureFigure(hue, scale, position,
+				orientation, level);
 	}
 
 	private CreatureFigure createNewRandomCreature(
