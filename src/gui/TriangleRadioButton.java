@@ -14,14 +14,14 @@ class TriangleRadioButton extends FigureRadioButton {
 
 	@Override
 	public Dimension getPreferredSize() {
-		return new Dimension(80, 80);
+		return new Dimension(TEMP_SIZE, TEMP_SIZE);
 	}
 
 	@Override
 	public Shape createShape() {
 
-		Polygon p = new Polygon(new int[] { 40, 80, 0 },
-				new int[] { 0, 80, 80 }, 3);
+		Polygon p = new Polygon(new int[] { TEMP_SIZE/2, TEMP_SIZE, 0 },
+				new int[] { 0, TEMP_SIZE, TEMP_SIZE }, 3);
 
 		return p;
 
