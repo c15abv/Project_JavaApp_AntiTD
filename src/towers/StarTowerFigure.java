@@ -12,10 +12,15 @@ public class StarTowerFigure extends TowerFigure{
 	public static final Figures SHAPE = Figures.STAR;
 	
 	public StarTowerFigure(int baseDamage, int hue, int range, 
-			Position position) {
-		super(baseDamage, hue, range, position);
+			Position position){
+		super(baseDamage, hue, range, COOLDOWN, position);
 	}
 
+	public StarTowerFigure(int baseDamage, int hue, int range, 
+			int cooldown, Position position){
+		super(baseDamage, hue, range, cooldown, position);
+	}
+	
 	@Override
 	public void render(Graphics2D g2d){
 		g2d.setColor(this.getColor());
@@ -30,7 +35,8 @@ public class StarTowerFigure extends TowerFigure{
 
 	@Override
 	public void attack() {
-		if(this.hasTarget()){
+		if(this.hasTarget() && !this.isOnCooldown() &&
+				this.getTarget().isAlive()){
 			projectiles.put(new StarProjectileFigure(
 					this.getHue(),
 					this.getBaseDamage(),

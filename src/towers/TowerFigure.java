@@ -2,7 +2,6 @@ package towers;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -19,11 +18,13 @@ import utilities.TimerListener;
 
 public abstract class TowerFigure implements TimerListener{
 	
-	protected static final int TEMP_SIZE = 50;
+	public static final int TEMP_SIZE = 50;
+	public static final int COOLDOWN = 1000;
 	
 	private int baseDamage;
 	private int hue;
 	private int range;
+	private int cooldown;
 	private Color towerColor;
 	private Position position;
 	private boolean isOnCooldown;
@@ -33,6 +34,20 @@ public abstract class TowerFigure implements TimerListener{
 	protected HashMap<ProjectileFigure, CreatureFigure> projectiles;
 	private ActionTimer actionTimer;
 	
+	public TowerFigure(int baseDamage, int hue, int range, 
+			int cooldown, Position position){
+		this.baseDamage = baseDamage;
+		this.hue = hue;
+		this.range = range;
+		this.cooldown = cooldown;
+		this.position = position;
+		towerColor = ColorCreator.generateColorFromHue(hue);
+		projectiles = new HashMap<ProjectileFigure, CreatureFigure>();
+		actionTimer = null;
+		
+		setDefaultBehaviour();
+	}
+	
 	public ActionTimer getActionTimer() {
 		return actionTimer;
 	}
@@ -40,15 +55,9 @@ public abstract class TowerFigure implements TimerListener{
 	public void setActionTimer(ActionTimer actionTimer) {
 		this.actionTimer = actionTimer;
 	}
-
-	public TowerFigure(int baseDamage, int hue, int range, 
-			Position position){
-		this.baseDamage = baseDamage;
-		this.hue = hue;
-		this.range = range;
-		this.position = position;
-		towerColor = ColorCreator.generateColorFromHue(hue);
-		projectiles = new HashMap<ProjectileFigure, CreatureFigure>();
+	
+	public boolean hasActionTimer(){
+		return actionTimer != null;
 	}
 	
 	public int getBaseDamage(){
@@ -85,15 +94,12 @@ public abstract class TowerFigure implements TimerListener{
 			towerAction.executeAction();
 		}
 		
-		ArrayList<ProjectileFigure> figs = new ArrayList<ProjectileFigure>();
-
 		Iterator<Entry<ProjectileFigure, CreatureFigure>> it = 
 				projectiles.entrySet().iterator();
 		Map.Entry<ProjectileFigure, CreatureFigure> pair;
 	    while(it.hasNext()){
 	    	pair = (Map.Entry<ProjectileFigure, CreatureFigure>)it.next();
 	    	if(!pair.getKey().isAlive()){
-	    		figs.add(pair.getKey());
 	    		it.remove();
 	    	}else{
 	    		pair.getKey().update(pair.getValue());
@@ -134,10 +140,8 @@ public abstract class TowerFigure implements TimerListener{
 	}
 	
 	@Override
-	public void receiveNotification(Integer id){
-		if(specifedTimerListener == null){
-			setIsOnCooldown(false);
-		}else{
+	public void receiveNotification(Long id){
+		if(specifedTimerListener != null){
 			specifedTimerListener.receiveNotification(id);
 		}
 	}
@@ -172,6 +176,23 @@ public abstract class TowerFigure implements TimerListener{
 		}
 		return true;
 	}
+
+	public void resetDefaultBehaviour(){
+		setDefaultBehaviour();
+	}
 	
-	
+	private void setDefaultBehaviour(){
+		this.setTowerAction(() -> {
+			if(hasActionTimer()){
+				attack();
+				isOnCooldown = true;
+				actionTimer.setTimer(actionTimer.getNewUniqueId(),
+						this, cooldown);
+			}
+		});
+		
+		this.setOnNotification(id -> {
+			this.setIsOnCooldown(false);
+		});
+	}
 }

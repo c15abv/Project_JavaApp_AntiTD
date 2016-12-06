@@ -1,85 +1,123 @@
 package creatures;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
+
+import creatures.CreatureFigure.Orientation;
 import start.Figures;
 import start.Position;
+import utilities.ActionTimer;
 
-public class JUnitSquareCreatureFigure {
-	private SquareCreatureFigure figure = new SquareCreatureFigure(0,0, new Position(0,0));
-	
-	
-	@Test
-	public void testShapeIsSquare() {
-		assertEquals(Figures.SQUARE, figure.getShape());
-	}
-	
-	@Test
-	public void testIsAlive () {
-		assertTrue(figure.isAlive());
-	}
-	
-	@Test
-	public void testIsNotAlive () {
-		int currentHitPoints = figure.getHitPoints();
-		figure.setDamageTaken(currentHitPoints);
-		
-		assertFalse(figure.isAlive());
-	}
-	
-	@Test
-	public void testMoveAction ()	{
-		figure.addActiveAction(() ->	{
-			figure.moveForward();
-		});
-		
-		figure.update();
-		assertEquals(figure.getPosition(), new Position(1,1));
-	}
-	
-	@Test
-	public void testSpawnAction ()	{
-		figure.addOnSpawnAction(() ->	{
-			int currentHitPoints = figure.getHitPoints();
-			figure.setDamageTaken(currentHitPoints);
-		});
-		
-		figure.update();
-		
-		assertFalse(figure.isAlive());
-	}
-	
-	@Test
-	public void testUpdates ()	{
-		figure.addOnSpawnAction(() ->	{
-			int currentHitPoints = figure.getHitPoints();
-			figure.setDamageTaken(currentHitPoints);
-		});
-		
-		for(int i = 0; i < 10; i++)	{
+public class JUnitSquareCreatureFigure{
 
-			figure.update();
+	@Test
+	public void testTemplate(){
+		CreatureFigureTemplate template = new CreatureFigureTemplate(Figures.SQUARE, 100,
+				1, 100, CreatureFigure.Orientation.RANDOM, null);
+		SquareCreatureFigure fig = (SquareCreatureFigure)template.createNewCreature(
+				new Position(250,250));
+		
+		assertTrue(fig.getHue() == 100);
+		assertTrue(fig.isAlive() == true);
+		assertTrue(fig.isFinished() == false);
+		assertTrue(fig.getPosition().equals(new Position(250,250)));
+		assertTrue(fig.getScale() == 1);
+		assertTrue(fig.getOrientation() == Orientation.RANDOM);
+		assertTrue(fig.getShape() == Figures.SQUARE);
+	}
+	
+	@Test 
+	public void testIfDiesOnFatalDamage(){
+		SquareCreatureFigure fig = new SquareCreatureFigure(100, 1,
+				new Position(250,250), Orientation.RANDOM, null);
+		
+		fig.setDamageTaken(CircleCreatureFigure.BASE_HITPOINTS * 1 + 1);
+		
+		assertTrue(!fig.isAlive());
+	}
+	
+	@Test
+	public void testOnSpawnAction(){
+		SquareCreatureFigure fig = new SquareCreatureFigure(100, 1,
+				new Position(250,250), Orientation.RANDOM, null);
+		
+		fig.addOnSpawnAction(() -> {
+			fig.setDamageTaken(25);
+		});
+		
+		fig.update();
+		assertTrue(fig.getHitPoints() == 75);
+	}
+	
+	@Test
+	public void testOnSpawnTimedAction(){
+		ActionTimer timer = new ActionTimer();
+		Thread thread = new Thread(timer);
+		SquareCreatureFigure fig = new SquareCreatureFigure(100, 1,
+				new Position(250,250), Orientation.RANDOM, null);
+		
+		thread.start();
+		
+		fig.setActionTimer(timer);
+		
+		fig.addOnSpawnTimedAction(1000, () -> {
+			fig.setDamageTaken(25);
+		});
+		
+		fig.update();
+		
+		assertTrue(fig.getHitPoints() == 100);
+		
+		try{
+			Thread.sleep(1001);
+		}catch(InterruptedException e){
+			e.printStackTrace();
 		}
 		
-		assertEquals(figure.hasSpawned, 1);
+		fig.update();
+		assertEquals(fig.getHitPoints(), 75);
+		
+		timer.terminate();
 	}
 	
 	@Test
-	public void testUpdates2 ()	{
-		figure.addActiveAction(() ->	{
-			figure.moveForward();
+	public void testActiveAction(){
+		SquareCreatureFigure fig = new SquareCreatureFigure(100, 1,
+				new Position(250,250), Orientation.RANDOM, null);
+		Position pos = new Position(fig.getPosition().getX() + 100,
+				fig.getPosition().getY() + 100);
+		
+		fig.addActiveAction(() -> {
+			fig.setPosition(new Position(fig.getPosition().getX() + 1,
+					fig.getPosition().getY() + 1));
 		});
 		
-		for(int i = 0; i < 10; i++)	{
-
-			figure.update();
+		for(int i=0; i < 100; i++){
+			fig.update();
 		}
 		
-		assertEquals(figure.getPosition(), new Position(10,10));
+		assertEquals(pos, fig.getPosition());
 	}
 	
-	
-	
-	
-
+	@Test
+	public void testOnDeathAction(){
+		SquareCreatureFigure fig = new SquareCreatureFigure(100, 1,
+				new Position(250,250), Orientation.RANDOM, null);
+		
+		fig.addOnDeathAction(() -> {
+			fig.setPosition(new Position(fig.getPosition().getX() + 1,
+					fig.getPosition().getY() + 1));
+		});
+		
+		fig.setDamageTaken(101);
+		
+		fig.update();
+		assertTrue(new Position(251, 251).equals(fig.getPosition()));
+		
+		fig.update();
+		assertEquals(new Position(251, 251), fig.getPosition());
+		
+	}
 }

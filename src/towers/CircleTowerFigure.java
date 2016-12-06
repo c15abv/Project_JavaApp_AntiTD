@@ -15,14 +15,19 @@ public class CircleTowerFigure extends TowerFigure{
 	
 	public CircleTowerFigure(int baseDamage, int hue, int range,
 			Position position){
-		super(baseDamage, hue, range, position);
+		this(baseDamage, hue, range, COOLDOWN, position);
+	}
+	
+	public CircleTowerFigure(int baseDamage, int hue, int range,
+			int cooldown, Position position){
+		super(baseDamage, hue, range, COOLDOWN, position);
 	}
 
 	@Override
 	public void render(Graphics2D g2d){
-		g2d.setColor(this.getColor());
-		g2d.fillOval(this.getPosition().getX() - TowerFigure.TEMP_SIZE/2,
-				this.getPosition().getY() - TowerFigure.TEMP_SIZE/2,
+		g2d.setColor(getColor());
+		g2d.fillOval(getPosition().getX() - TowerFigure.TEMP_SIZE/2,
+				getPosition().getY() - TowerFigure.TEMP_SIZE/2,
 				TowerFigure.TEMP_SIZE,
 				TowerFigure.TEMP_SIZE);
 		
@@ -39,16 +44,13 @@ public class CircleTowerFigure extends TowerFigure{
 
 	@Override
 	public void attack(){
-		if(this.hasTarget() && !this.isOnCooldown() &&
-				this.getTarget().isAlive()){
+		if(hasTarget() && !isOnCooldown() &&
+				getTarget().isAlive()){
 			projectiles.put(new CircleProjectileFigure(
-					this.getHue(),
-					this.getBaseDamage(),
-					new Position(this.getPosition())),
-					this.getTarget());
+					getHue(),
+					getBaseDamage(),
+					new Position(getPosition())),
+					getTarget());
 		}
 	}
-	
-	
-
 }

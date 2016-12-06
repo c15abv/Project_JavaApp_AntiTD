@@ -112,7 +112,7 @@ public class Game extends Canvas implements TimerListener{
 	}
 
 	@Override
-	public void receiveNotification(Integer id){
+	public void receiveNotification(Long id){
 		timer.terminate();
 		gameResult = GameResult.DEFENDER_WINNER;
 		gameState = GameState.ENDED;
