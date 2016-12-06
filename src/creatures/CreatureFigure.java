@@ -39,9 +39,9 @@ public abstract class CreatureFigure implements TimerListener{
 	private boolean finished;
 	private Lock lock;
 	private ArrayList<Action> onSpawnActionList;
-	private HashMap<Integer, Action> onSpawnTimedActionMap;
+	private HashMap<Long, Action> onSpawnTimedActionMap;
 	private ArrayList<Action> onDeathActionList;
-	private volatile ArrayList<Integer> notifiedTimedActions;
+	private volatile ArrayList<Long> notifiedTimedActions;
 	private ActionTimer actionTimer;
 	private ArrayList<Action> onActiveActionList;
 	private boolean hasSpawned;
@@ -65,7 +65,7 @@ public abstract class CreatureFigure implements TimerListener{
 	
 	public void update(){
 		if(isAlive && !hasReachedGoal){
-			if(hasSpawned){
+			if(!hasSpawned){
 				for(Action action : this.onSpawnActionList){
 					action.executeAction();
 				}
@@ -78,10 +78,10 @@ public abstract class CreatureFigure implements TimerListener{
 			}else{
 				try{
 					lock.lock();
-					for(Integer id : notifiedTimedActions){
+					for(Long id : notifiedTimedActions){
 						onSpawnTimedActionMap.get(id).executeAction();
 					}
-					notifiedTimedActions = new ArrayList<Integer>();
+					notifiedTimedActions = new ArrayList<Long>();
 				}catch(InterruptedException e){
 				}finally{
 					lock.unlock();
@@ -145,20 +145,26 @@ public abstract class CreatureFigure implements TimerListener{
 		final int prime = 92821;
 		int result = 1;
 		result = prime * result + hue;
+		
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if(this == obj){
 			return true;
-		if (obj == null)
+		}
+		if(obj == null){
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if(getClass() != obj.getClass()){
 			return false;
+		}
 		CreatureFigure other = (CreatureFigure) obj;
-		if (hue != other.hue)
+		if(hue != other.hue){
 			return false;
+		}
+		
 		return true;
 	}
 
@@ -166,8 +172,13 @@ public abstract class CreatureFigure implements TimerListener{
 		onSpawnActionList.add(action);
 	}
 	
-	public void addOnSpawnTimedAction(Integer id, Action action){
-		onSpawnTimedActionMap.put(id, action);
+	public void addOnSpawnTimedAction(int time, Action action){
+		long id;
+		if(hasActionTimer()){
+			id = actionTimer.getNewUniqueId();
+			onSpawnTimedActionMap.put(id, action);
+			actionTimer.setTimer(id, this, time);
+		}
 	}
 	
 	public void addOnDeathAction(Action action){
@@ -186,8 +197,12 @@ public abstract class CreatureFigure implements TimerListener{
 		this.actionTimer = actionTimer;
 	}
 	
+	public boolean hasActionTimer(){
+		return actionTimer != null;
+	}
+	
 	@Override
-	public void receiveNotification(Integer id){
+	public void receiveNotification(Long id){
 		try{
 			lock.lock();
 			notifiedTimedActions.add(id);
@@ -204,9 +219,9 @@ public abstract class CreatureFigure implements TimerListener{
 		finished = false;
 		hasSpawned = false;
 		onSpawnActionList = new ArrayList<Action>();
-		onSpawnTimedActionMap = new HashMap<Integer, Action>();
+		onSpawnTimedActionMap = new HashMap<Long, Action>();
 		onDeathActionList = new ArrayList<Action>();
-		notifiedTimedActions = new ArrayList<Integer>();
+		notifiedTimedActions = new ArrayList<Long>();
 		onActiveActionList = new ArrayList<Action>();
 		lock = new Lock();
 		

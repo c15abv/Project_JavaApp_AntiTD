@@ -16,7 +16,12 @@ public class TriangleTowerFigure extends TowerFigure{
 	
 	public TriangleTowerFigure(int baseDamage, int hue, int range,
 			Position position){
-		super(baseDamage, hue, range, position);
+		super(baseDamage, hue, range, COOLDOWN, position);
+	}
+	
+	public TriangleTowerFigure(int baseDamage, int hue, int range,
+			int cooldown, Position position){
+		super(baseDamage, hue, range, cooldown, position);
 	}
 
 	@Override

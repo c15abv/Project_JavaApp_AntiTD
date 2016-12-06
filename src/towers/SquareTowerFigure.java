@@ -15,9 +15,14 @@ public class SquareTowerFigure extends TowerFigure{
 	
 	public SquareTowerFigure(int baseDamage, int hue, int range,
 			Position position) {
-		super(baseDamage, hue, range, position);
+		this(baseDamage, hue, range, COOLDOWN, position);
 	}
-
+	
+	public SquareTowerFigure(int baseDamage, int hue, int range,
+			int cooldown, Position position) {
+		super(baseDamage, hue, range, cooldown, position);
+	}
+	
 	@Override
 	public void render(Graphics2D g2d){
 		g2d.setColor(this.getColor());

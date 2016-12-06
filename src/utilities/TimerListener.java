@@ -1,5 +1,5 @@
 package utilities;
 
 public interface TimerListener{
-	void receiveNotification(Integer id);
+	void receiveNotification(Long id);
 }
