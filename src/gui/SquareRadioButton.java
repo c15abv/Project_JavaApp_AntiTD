@@ -16,7 +16,7 @@ class SquareRadioButton extends FigureRadioButton {
 
 	@Override
 	public Dimension getPreferredSize() {
-		return new Dimension(80, 80);
+		return new Dimension(TEMP_SIZE, TEMP_SIZE);
 	}
 
 	@Override
@@ -24,11 +24,9 @@ class SquareRadioButton extends FigureRadioButton {
 		Polygon p = new Polygon();
 		p.addPoint(0, 0); // use this.getWidth() method if you want to
 							// create based on screen size
-		p.addPoint(0, 80);
-		p.addPoint(80, 80);
-		p.addPoint(80, 0);
-
-		int y1Points[] = { 0, 0, 80, 80 };
+		p.addPoint(0, TEMP_SIZE);
+		p.addPoint(TEMP_SIZE, TEMP_SIZE);
+		p.addPoint(TEMP_SIZE, 0);
 
 		return p;
 	}

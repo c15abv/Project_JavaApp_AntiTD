@@ -6,47 +6,112 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import start.Figures;
+import start.GameLevel;
 import start.Position;
 import utilities.ActionTimer;
 import utilities.ColorCreator;
+import utilities.Lock;
 import utilities.TimerListener;
 
 public abstract class CreatureFigure implements TimerListener{
-	protected static final int TEMP_SIZE = 50;
+	
+	public enum Orientation{
+		RIGHT, LEFT, RANDOM;
+	}
+	
+	public enum Direction{
+		FORWARD, BACKWARD, RANDOM;
+	}
+	
+	public static final int BASE_HITPOINTS = 100;
+	public static final int BASE_SIZE = 30;
 
 	private Color creatureColor;
+	private Orientation orientation;
+	private GameLevel level;
+	private Direction direction;
 	private int hue;
-	private float scale;
+	private double scale;
 	private Position position;
 	private int hitPoints;
+	private int startHitPoints;
 	private boolean isAlive;
-	private ArrayList<Action> onPermanentActiveActionList;
-	protected ArrayList<Action> onSpawnActionList;
+	private boolean finished;
+	private Lock lock;
+	private ArrayList<Action> onSpawnActionList;
 	private HashMap<Integer, Action> onSpawnTimedActionMap;
 	private ArrayList<Action> onDeathActionList;
 	private volatile ArrayList<Integer> notifiedTimedActions;
 	private ActionTimer actionTimer;
-	protected ArrayList<Action> onActiveActionList;
-	protected int hasSpawned;
-	protected boolean hasReachedGoal;
+	private ArrayList<Action> onActiveActionList;
+	private boolean hasSpawned;
+	private boolean hasReachedGoal;
 	
-	public CreatureFigure(int hue, float scale, Position position){
+	public CreatureFigure(int hue, double scale, Position position,
+			Orientation orientation, GameLevel level){
 		this.hue = hue;
 		this.scale = scale;
 		this.position = position;
 		this.creatureColor = ColorCreator.generateColorFromHue(hue);
+		this.orientation = orientation;
+		this.level = level;
 		
-		this.onActiveActionList = new ArrayList<>();
-		this.onSpawnActionList = new ArrayList<>();
-		this.hasSpawned = 0;
-		this.hasReachedGoal = false;
-
 		init();
 	}
 	
-	public abstract void update();
 	public abstract void render(Graphics2D g2d);
+	public abstract boolean isCollision(Position position);
 	public abstract Figures getShape();
+	
+	public void update(){
+		if(isAlive && !hasReachedGoal){
+			if(hasSpawned){
+				for(Action action : this.onSpawnActionList){
+					action.executeAction();
+				}
+				this.hasSpawned = true;
+			}
+			
+			if(false/*level.isGoalTile(position)*/){
+				hasReachedGoal = true;
+				finished = true;
+			}else{
+				try{
+					lock.lock();
+					for(Integer id : notifiedTimedActions){
+						onSpawnTimedActionMap.get(id).executeAction();
+					}
+					notifiedTimedActions = new ArrayList<Integer>();
+				}catch(InterruptedException e){
+				}finally{
+					lock.unlock();
+				}
+		
+				for(Action action : this.onActiveActionList){
+					action.executeAction();
+				}
+				
+				/*if(direction == Direction.BACKWARD){
+					if(level.isStartTile(position)){
+						direction = Direction.FORWARD;
+					}else{
+						position = level.getPreviousPosition(position,
+								orientation);
+					}
+				}
+				
+				if(direction == Direction.FORWARD){
+					position = level.getNextPosition(position,
+							orientation);
+				}*/
+			}
+		}else if(!isAlive && !finished){
+			for(Action action : onDeathActionList){
+				action.executeAction();
+			}
+			finished = true;
+		}
+	}
 	
 	public Color getColor(){
 		return creatureColor;
@@ -56,8 +121,6 @@ public abstract class CreatureFigure implements TimerListener{
 		 hitPoints -= damage;
 		 if(hitPoints <= 0){
 			 isAlive = false;
-			 //if can be resurrected (tile effect -> aura)
-			 //clean non-permanent action data structures
 		 }
 	}
 	
@@ -69,96 +132,126 @@ public abstract class CreatureFigure implements TimerListener{
 		return isAlive;
 	}
 	
-	@Override
-	public int hashCode(){
-		return 0;
+	public boolean isFinished(){
+		return finished;
+	}
+	
+	public int percentLife(){
+		return Math.round(hitPoints / startHitPoints * 100);
 	}
 	
 	@Override
-	public boolean equals(Object object){
+	public int hashCode() {
+		final int prime = 92821;
+		int result = 1;
+		result = prime * result + hue;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CreatureFigure other = (CreatureFigure) obj;
+		if (hue != other.hue)
+			return false;
 		return true;
 	}
-	
-	protected void addPermanentOnSpawnAction(Action action){
+
+	public void addOnSpawnAction(Action action){
 		onSpawnActionList.add(action);
 	}
 	
-	protected void addPermanentOnSpawnTimedAction(Integer id, Action action){
+	public void addOnSpawnTimedAction(Integer id, Action action){
 		onSpawnTimedActionMap.put(id, action);
-		onSpawnActionList.add(action);
 	}
 	
-	protected void addPermanentOnDeathAction(Action action){
+	public void addOnDeathAction(Action action){
 		onDeathActionList.add(action);
 	}
 	
-	protected void addOnSpawnAction(Action action){
-		onSpawnActionList.add(action);
-	}
-	
-	protected void addOnSpawnTimedAction(Integer id, Action action){
-	}
-	
-	protected void addOnDeathAction(Action action){
-	}
-	
-	protected void addPermanentActiveAction(Action action){
-		onPermanentActiveActionList.add(action);
-	}
-	
-	public ActionTimer getActionTimer() {
-		return actionTimer;
-	}
-
-	public void setActionTimer(ActionTimer actionTimer) {
-		this.actionTimer = actionTimer;
-	}
-
-	protected void addPermanentActiveTimedAction(Action action){
-	}
-	
-	protected void addActiveAction(Action action){
+	public void addActiveAction(Action action){
 		onActiveActionList.add(action);
 	}
 	
-	protected void addActiveTimedAction(Action action){
+	public ActionTimer getActionTimer(){
+		return actionTimer;
+	}
+
+	public void setActionTimer(ActionTimer actionTimer){
+		this.actionTimer = actionTimer;
 	}
 	
 	@Override
 	public void receiveNotification(Integer id){
-		notifiedTimedActions.add(id);
+		try{
+			lock.lock();
+			notifiedTimedActions.add(id);
+		}catch(InterruptedException e){
+		}finally{
+			lock.unlock();
+		}
 		//id is the key in onSpawnTimerActionMap.
 	}
 	
 	private void init(){
 		isAlive = true;
+		hasReachedGoal = false;
+		finished = false;
+		hasSpawned = false;
 		onSpawnActionList = new ArrayList<Action>();
 		onSpawnTimedActionMap = new HashMap<Integer, Action>();
 		onDeathActionList = new ArrayList<Action>();
 		notifiedTimedActions = new ArrayList<Integer>();
+		onActiveActionList = new ArrayList<Action>();
+		lock = new Lock();
+		
+		hitPoints = startHitPoints = (int)(BASE_HITPOINTS * scale);
+		direction = Direction.FORWARD;
 	}
 	
-	public int getHue() {
+	public int getHue(){
 		return hue;
 	}
 
-	public void setHue(int hue) {
-		this.hue = hue;
-	}
-
-	public float getScale() {
+	public double getScale(){
 		return scale;
 	}
 
-	public void setScale(float scale) {
+	public void setScale(float scale){
 		this.scale = scale;
 	}
 
-	public Position getPosition() {
+	public Position getPosition(){
 		return position;
 	}
 
-	public void setPosition(Position position) {
+	public void setPosition(Position position){
 		this.position = position;
 	}
+
+	public Orientation getOrientation(){
+		return orientation;
+	}
+
+	public void setOrientation(Orientation orientation){
+		this.orientation = orientation;
+	}
+
+	public Direction getDirection(){
+		return direction;
+	}
+
+	public void setDirection(Direction direction){
+		this.direction = direction;
+	}
+	
+	public boolean hasReachedGoal(){
+		return hasReachedGoal;
+	}
+	
 }

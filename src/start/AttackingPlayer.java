@@ -1,5 +1,6 @@
 package start;
 
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 import creatures.CreatureFigure;
@@ -17,10 +18,24 @@ public class AttackingPlayer extends Player{
 
 	@Override
 	public void update(){
+		CreatureFigure figure;
+		for(int i=0; i<currentHorde.size(); i++){
+			figure = currentHorde.get(i);
+			figure.update();
+			if(figure.hasReachedGoal()){
+				points++;
+			}
+			if(figure.isFinished()){
+				currentHorde.remove(i);
+			}
+		}
 	}
 
 	@Override
-	public void render(){
+	public void render(Graphics2D g2d){
+		for(CreatureFigure figure : currentHorde){
+			figure.render(g2d);
+		}
 	}
 	
 	public void addCreatureFigure(CreatureFigure figure){

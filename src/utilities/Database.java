@@ -1,5 +1,5 @@
 package utilities;
 
-public class Database {
+public class Database{
 
 }

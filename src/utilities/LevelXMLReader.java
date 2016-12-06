@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 package utilities;
 
 import start.GameLevel;
@@ -24,3 +25,23 @@ public class LevelXMLReader{
         return new GameLevel();
     }
 }
+=======
+package utilities;
+
+import start.GameLevel;
+
+public class LevelXMLReader{
+	
+	public LevelXMLReader(/*some xml file*/){
+	}
+	
+	/*private void load(){
+		
+	}*/
+	
+	//
+	public GameLevel toLevel(){
+		return new GameLevel(123);
+	}
+}
+>>>>>>> refs/remotes/origin/master

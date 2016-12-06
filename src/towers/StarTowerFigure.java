@@ -2,6 +2,7 @@ package towers;
 
 import java.awt.Graphics2D;
 
+import projectiles.StarProjectileFigure;
 import start.Figures;
 import start.Position;
 import utilities.CustomShapes;
@@ -25,6 +26,17 @@ public class StarTowerFigure extends TowerFigure{
 	@Override
 	public Figures getShape(){
 		return SHAPE;
+	}
+
+	@Override
+	public void attack() {
+		if(this.hasTarget()){
+			projectiles.put(new StarProjectileFigure(
+					this.getHue(),
+					this.getBaseDamage(),
+					new Position(this.getPosition())),
+					this.getTarget());
+		}
 	}
 
 }

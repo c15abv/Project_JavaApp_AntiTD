@@ -12,6 +12,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 
 public abstract class FigureRadioButton extends JRadioButton {
+	protected static final int TEMP_SIZE = 70;
 	private Shape shape = createShape();
 	protected Figures figureType;
 
@@ -27,7 +28,7 @@ public abstract class FigureRadioButton extends JRadioButton {
 
 	public void paintComponent(Graphics g) {
 		if (getModel().isSelected()) {
-			g.setColor(Color.BLACK);
+			g.setColor(Color.DARK_GRAY.darker().darker());
 		} else if (getModel().isRollover()) {
 			g.setColor(Color.DARK_GRAY);
 		} else {

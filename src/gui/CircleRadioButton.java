@@ -12,14 +12,14 @@ class CircleRadioButton extends FigureRadioButton {
 	@Override
 	public Shape createShape() {
 
-		Shape s = new Ellipse2D.Double(0, 0, 80, 80);
+		Shape s = new Ellipse2D.Double(0, 0, TEMP_SIZE, TEMP_SIZE);
 
 		return s;
 	}
 
 	@Override
 	public Dimension getPreferredSize() {
-		return new Dimension(80, 80);
+		return new Dimension(TEMP_SIZE, TEMP_SIZE);
 	}
 
 	@Override

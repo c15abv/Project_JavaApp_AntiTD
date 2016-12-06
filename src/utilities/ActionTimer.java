@@ -1,16 +1,17 @@
 package utilities;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class ActionTimer implements Runnable{
 
-	private volatile HashMap<Integer, ?> activeTimers;
-	
 	class TimedObject<T extends TimerListener>{
-		private T object;
-		private Integer time;
+		private volatile T object;
+		private volatile long time;
 		
-		TimedObject(T object, Integer time){
+		TimedObject(T object, long time){
 			this.object = object;
 			this.time = time;
 		}
@@ -19,27 +20,96 @@ public class ActionTimer implements Runnable{
 			return object;
 		}
 		
-		Integer getTime(){
+		double getTime(){
 			return time;
 		}
 	}
 	
+	private volatile HashMap<Integer, TimedObject<?>> activeTimers;
+	private volatile boolean isRunning;
+	private volatile boolean paused;
+	private Lock lock;
+	
+	public ActionTimer(){
+		activeTimers = new HashMap<Integer, TimedObject<?>>();
+		isRunning = true;
+		paused = false;
+		lock = new Lock();
+	}
+	
 	@Override
 	public void run(){
-		//iterate over activeTimers.
-		//check if current time >= TimedObject.time
-		//		if true: notify object.
+		while(isRunning){
+			if(!paused){
+				try{
+					lock.lock();
+					
+					Iterator<Entry<Integer, TimedObject<?>>> it = 
+							activeTimers.entrySet().iterator();
+					Map.Entry<Integer, TimedObject<?>> pair;
+				    while(it.hasNext()){
+				        pair = (Map.Entry<Integer, TimedObject<?>>)it.next();
+				        if(pair.getValue().time <= System.nanoTime()){
+				        	pair.getValue().object.receiveNotification(pair.getKey());
+				        	it.remove();
+				        }
+				    }
+				}catch(InterruptedException e){
+				}finally{
+					lock.unlock();
+				}
+			}
+		}
 	}
 	
 	public synchronized <T extends TimerListener> void setTimer(Integer id, 
-			T object, Integer delta){
-		//set time: current system time + delta
-		//create TimedObject with object and time.
-		//insert into hashmap with id.
+			T object, long delta){
+		try{
+			lock.lock();
+			activeTimers.put(id, new TimedObject<T>(object, (long)(delta * 10e5) 
+					+ System.nanoTime()));
+		}catch(InterruptedException e){
+		}finally{
+			lock.unlock();
+		}
 	}
 	
 	public synchronized void removeTimer(Integer id){
-		//removes TimedObject by id.
+		try{
+			lock.lock();
+			activeTimers.remove(id);
+		}catch(InterruptedException e){
+		}finally{
+			lock.unlock();
+		}
+	}
+	
+	public synchronized long timeLeft(Integer id){
+		long timeLeft = -1;
+		TimedObject<?> obj;
+		
+		try{
+			lock.lock();
+			obj = activeTimers.get(id);
+			timeLeft = (long) (obj.getTime() - System.nanoTime());
+		}catch(InterruptedException e){
+		}finally{
+			lock.unlock();
+		}
+		
+		return timeLeft;
+	}
+	
+	public synchronized void terminate(){
+		isRunning = false;
+	}
+	
+	public synchronized void pause(){
+		paused = true;
+	}
+	
+	public synchronized void resume(){
+		paused = false;
 	}
 	
 }

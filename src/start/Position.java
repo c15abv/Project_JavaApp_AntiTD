@@ -9,6 +9,11 @@ public class Position{
 		setX(x);
 		setY(y);
 	}
+	
+	public Position(Position position){
+		setX(position.getX());
+		setY(position.getY());
+	}
 
 	public int getX(){
 		return x;
