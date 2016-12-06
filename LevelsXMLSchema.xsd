@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-	<!--This schema validates maps for an Anti TD game. A levels xml file has 
+	<!--This schema validates maps for an Anti TD game. A corresponding levels xml file has 
 		to hold a complextype element "levels" that in turn can hold an unlimited 
 		number of "level" elements representing actual maps. Each map is built up 
 		by a matrix consisting of rows of cells. Where each cell represents a map 
@@ -60,6 +60,7 @@
 										<xs:element name="attackerCredit" type="xs:int"></xs:element>
 										<xs:element name="defenderCredit" type="xs:int"></xs:element>
 										<xs:element name="timeToFinish" type="xs:int"></xs:element>
+										<xs:element name="nrOfTemplates" type="xs:int"></xs:element>
 									</xs:sequence>
 								</xs:complexType>
 							</xs:element>

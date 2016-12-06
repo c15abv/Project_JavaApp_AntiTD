@@ -13,19 +13,9 @@ public class LevelXMLReader{
     }
 
     public LevelXMLReader(/*some xml file*/){
-    }
-
-    public void readXML(){
-
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
         
-        Document doc = builder.parse("");
     }
-
-    /*private void load(){
-
-	}*/
+    
 
 
 

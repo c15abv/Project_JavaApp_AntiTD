@@ -2,8 +2,8 @@
 <levels>
 	<level name="testLevel">
 		<row Index="1">
-		<!-- <cell landOn = "haste">W</cell> -->
-			<cell landOn = "haste">W</cell>
+			<!-- <cell landOn = "haste">W</cell> -->
+			<cell landOn="haste">W</cell>
 			<cell>W</cell>
 			<cell>W</cell>
 			<cell>G</cell>
@@ -12,11 +12,11 @@
 			<cell>W</cell>
 		</row>
 		<row Index="2">
-			<cell>T</cell>
-			<cell>T</cell>
-			<cell>T</cell>
+			<cell>W</cell>
+			<cell>W</cell>
+			<cell>W</cell>
 			<cell>P</cell>
-			<cell>T</cell>
+			<cell>W</cell>
 			<cell>W</cell>
 			<cell>W</cell>
 		</row>
@@ -32,8 +32,8 @@
 		<row Index="4">
 			<cell>T</cell>
 			<cell>P</cell>
-			<cell>P</cell>
-			<cell>P</cell>
+			<cell>T</cell>
+			<cell>T</cell>
 			<cell>P</cell>
 			<cell>T</cell>
 			<cell>W</cell>
@@ -66,22 +66,25 @@
 			<cell>W</cell>
 		</row>
 		<rules>
-			<attackerCredit>100</attackerCredit>
-			<defenderCredit>100</defenderCredit>
-			<timeToFinish>10</timeToFinish>			
+			<attackerCredit>101</attackerCredit>
+			<defenderCredit>101</defenderCredit>
+			<timeToFinish>11</timeToFinish>
+			<nrOfTemplates>7</nrOfTemplates>
 		</rules>
-		<!-- vet inte hur jag man ska identifiera klasserna.. Om dom ska 
-		ha ett eget element och sen en text med filens namn. Eller om det direkt bara ska vara namnet i textform...-->
+		<!-- vet inte hur jag man ska identifiera klasserna.. Om dom ska ha ett 
+			eget element och sen en text med filens namn. Eller om det direkt bara ska 
+			vara namnet i textform... -->
 		<landOnClassFiles>
 			<landOn>haste</landOn>
 			<landOn>cripple</landOn>
 		</landOnClassFiles>
 
 	</level>
-	
+
 	<!-- Är för tillfället bara en kopia av testlevel 1 -->
-	<level name="testLevel2">
+	<level name="testLevel 2">
 		<row Index="1">
+			<cell>W</cell>
 			<cell>W</cell>
 			<cell>W</cell>
 			<cell>W</cell>
@@ -91,8 +94,9 @@
 			<cell>W</cell>
 		</row>
 		<row Index="2">
-			<cell>T</cell>
-			<cell>T</cell>
+			<cell>W</cell>
+			<cell>W</cell>
+			<cell>W</cell>
 			<cell>T</cell>
 			<cell>P</cell>
 			<cell>T</cell>
@@ -100,6 +104,7 @@
 			<cell>W</cell>
 		</row>
 		<row Index="3">
+			<cell>W</cell>
 			<cell>T</cell>
 			<cell>P</cell>
 			<cell>P</cell>
@@ -109,15 +114,17 @@
 			<cell>W</cell>
 		</row>
 		<row Index="4">
+			<cell>W</cell>
 			<cell>T</cell>
 			<cell>P</cell>
-			<cell>P</cell>
-			<cell>P</cell>
+			<cell>W</cell>
+			<cell>W</cell>
 			<cell>P</cell>
 			<cell>T</cell>
 			<cell>W</cell>
 		</row>
 		<row Index="5">
+			<cell>W</cell>
 			<cell>T</cell>
 			<cell>P</cell>
 			<cell>T</cell>
@@ -127,6 +134,7 @@
 			<cell>W</cell>
 		</row>
 		<row Index="6">
+			<cell>W</cell>
 			<cell>W</cell>
 			<cell>P</cell>
 			<cell>P</cell>
@@ -139,6 +147,17 @@
 			<cell>W</cell>
 			<cell>W</cell>
 			<cell>W</cell>
+			<cell>W</cell>
+			<cell>P</cell>
+			<cell>W</cell>
+			<cell>W</cell>
+			<cell>W</cell>
+		</row>
+		<row Index="8">
+			<cell>W</cell>
+			<cell>W</cell>
+			<cell>W</cell>
+			<cell>W</cell>
 			<cell>S</cell>
 			<cell>W</cell>
 			<cell>W</cell>
@@ -147,11 +166,14 @@
 		<rules>
 			<attackerCredit>100</attackerCredit>
 			<defenderCredit>100</defenderCredit>
-			<timeToFinish>10</timeToFinish>			
+			<timeToFinish>10</timeToFinish>
+			<nrOfTemplates>5</nrOfTemplates>
 		</rules>
-		<!-- vet inte hur jag man ska identifiera klasserna.. Om dom ska 
-		ha ett eget element och sen en text med filens namn. Eller om det direkt bara ska vara namnet i textform...-->
+		<!-- vet inte hur jag man ska identifiera klasserna.. Om dom ska ha ett 
+			eget element och sen en text med filens namn. Eller om det direkt bara ska 
+			vara namnet i textform... -->
 		<landOnClassFiles>
+			<landOn>teleport</landOn>
 			<landOn>haste</landOn>
 			<landOn>cripple</landOn>
 		</landOnClassFiles>
