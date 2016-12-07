@@ -13,6 +13,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.JFrame;
 
 import creatures.CircleCreatureFigure;
+import creatures.CreatureFigure.Orientation;
 import creatures.SquareCreatureFigure;
 import creatures.TriangleCreatureFigure;
 import towers.AITowerFigures;
@@ -123,13 +124,13 @@ public class Test{
 		player2.setTowersAI(ai);
 		
 		CircleCreatureFigure fig = new CircleCreatureFigure(100,1,
-				new Position(100,100));
+				new Position(100,100), Orientation.RANDOM, null);
 		
 		TriangleCreatureFigure fig2 = new TriangleCreatureFigure(100,1,
-				new Position(100,200));
+				new Position(100,200), Orientation.RANDOM, null);
 		
 		SquareCreatureFigure fig3 = new SquareCreatureFigure(30,1,
-				new Position(400,300));
+				new Position(400,300), Orientation.RANDOM, null);
 		
 		fig.addActiveAction(() -> {
 			if(fig.getPosition().getX() < 500 &&

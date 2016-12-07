@@ -9,6 +9,7 @@ import tiles.Tile;
 public class GameLevel{
 
 	private HashMap<Position, Tile> levelMap;
+<<<<<<< HEAD
 	private ArrayList<String> rules;
 	private ArrayList<String> landOnFiles;
 	
@@ -78,6 +79,14 @@ public class GameLevel{
 		this.attackingPlayerScoreGoal = attackingPlayerScoreGoal;
 	}
 
+=======
+	private int attackingPlayerScoreGoal;
+	
+	public GameLevel(int attackingPlayerScoreGoal){
+		this.attackingPlayerScoreGoal = attackingPlayerScoreGoal;
+	}
+	
+>>>>>>> refs/remotes/origin/master
 	public Position getNextPosition(Position position, int steps, 
 			CreatureFigure.Orientation orientation){
 		
@@ -111,6 +120,9 @@ public class GameLevel{
 	public int getAttackingPlayerScoreGoal() {
 		return attackingPlayerScoreGoal;
 	}
+<<<<<<< HEAD
 
 	
+=======
+>>>>>>> refs/remotes/origin/master
 }

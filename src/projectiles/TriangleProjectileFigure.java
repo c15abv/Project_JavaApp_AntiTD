@@ -23,7 +23,7 @@ public class TriangleProjectileFigure extends ProjectileFigure{
 		super.update(figure);
 		if(figure.isCollision(this.getPosition())){
 			figure.setDamageTaken((int)(ProjectileFigure.calculateDamageMultiplier(
-					CircleProjectileFigure.shape, figure.getShape(),
+					this.getShape(), figure.getShape(),
 					this.getHue(), figure.getHue()) * this.damage));
 			this.setIsDead();
 		}
