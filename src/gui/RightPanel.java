@@ -73,6 +73,9 @@ public class RightPanel extends JPanel {
 	private boolean creatureSelected = false;
 	private JPanel creatureInfoPanel;
 	private JTextField creditTextField;
+	private JTextField hitPointsTextField;
+	private JTextField speedTextField;
+	
 
 	public RightPanel(int nrOfCreatureTemplates, int levelCredit) {
 		super();
@@ -294,6 +297,8 @@ public class RightPanel extends JPanel {
 	private void createCreateButton() {
 		createBtn = new JButton("Create");
 		Container container = this.getTopLevelAncestor();
+		
+
 
 		createBtn.addActionListener(new ActionListener() {
 
@@ -303,8 +308,17 @@ public class RightPanel extends JPanel {
 				try {
 					String creature = shapeBtnGroup.getSelection()
 							.getActionCommand();
+					
+					
+					
+					int index = 0;
+					int troopSize = troop.size();
+					if (troopSize != 0) {
+						index = troopSize;
+					}
+					
 
-					JRadioButton troopCreature = new TroopRadioButton(figure);
+					JRadioButton troopCreature = new TroopRadioButton(figure, index);
 					//troopCreature.setEnabled(false);
 					troopsBtnGroup.add(troopCreature);
 					
@@ -312,16 +326,18 @@ public class RightPanel extends JPanel {
 						public void itemStateChanged(ItemEvent e) {
 							AbstractButton aButton = (AbstractButton) e
 									.getSource();
-							System.out.println("hejsan");
 
 							ButtonModel aModel = aButton.getModel();
 							if (aModel.isSelected()) {
 								// ButtonModel m =
 								// creatureSelector.getSelection();
 								String btnShape = aButton.getText();
-								System.out.println("hej");
 								if (isPlayMode) {
-									
+									//FigureRepresentation figure = troop.get(index);
+									int index = Integer.parseInt(aButton.getActionCommand());
+									System.out.println("Index = "+index);
+									FigureRepresentation figure = troop.get(index);
+									updateCreaturePreview(figure);
 								//	troopPanel.getComponent(troopsBtnGroup.getSelection())
 									//updateCreaturePreview()
 								}
@@ -336,18 +352,39 @@ public class RightPanel extends JPanel {
 					container.setBorder(
 							BorderFactory.createDashedBorder(Color.DARK_GRAY));
 
-					int index = 0;
-					int troopSize = troop.size();
-					if (troopSize != 0) {
-						index = troopSize;
-					}
 					troop.add(figure);
+					
+					
+					
+					switch (Figures.valueOf(figure.getCreatureType().toString())) {
+					case TRIANGLE:
+						figure = new TriangleRepresentation(
+								colorSlider.getValue(),
+								(float) sizeSlider.getValue() / 100);
+						break;
 
+					case CIRCLE:
+						figure = new CircleRepresentation(
+								colorSlider.getValue(),
+								(float) sizeSlider.getValue() / 100);
+						break;
+
+					case SQUARE:
+						figure = new SquareRepresentation(
+								colorSlider.getValue(),
+								(float) sizeSlider.getValue() / 100);
+						break;
+					default:
+						break;
+					}
+					
 					// System.out.println(index);
 					troopPanel.remove(index);
 					troopPanel.add(container, index);
 					troopPanel.revalidate();
 					troopPanel.repaint();
+					
+					
 
 					message = "Type: " + figure.creatureType + "\nDirection: "
 							+ figure.direction + "\nIsTeleport: "
@@ -365,6 +402,11 @@ public class RightPanel extends JPanel {
 
 		});
 	}
+	
+	private void updateProperties(FigureRepresentation selectedFigure)	{
+		//selectedFigure.cost
+	}
+	
 
 	private JButton createBuyButton() {
 		JButton buyBtn = new JButton("Buy");
@@ -450,7 +492,7 @@ public class RightPanel extends JPanel {
 
 		GridBagConstraints c = new GridBagConstraints();
 
-		c.insets = new Insets(15, 15, 15, 15);
+		c.insets = new Insets(10, 0, 10, 0);
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 1;
 		c.weighty = 1;
@@ -463,9 +505,10 @@ public class RightPanel extends JPanel {
 
 		c.gridy = 1;
 
-		JButton placeTeleportBtn = new JButton("Place teleport");
-		gb.setConstraints(placeTeleportBtn, c);
-		playModePanel.add(placeTeleportBtn);
+		//JButton placeTeleportBtn = new JButton("Place teleport");
+		
+		gb.setConstraints(costTextField, c);
+		playModePanel.add(costTextField);
 
 		c.gridy = 2;
 		c.fill = GridBagConstraints.NONE;
