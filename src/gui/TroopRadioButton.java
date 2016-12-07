@@ -16,9 +16,16 @@ import java.awt.Graphics2D;
 @SuppressWarnings("serial")
 class TroopRadioButton extends FigureRadioButton {
 	private FigureRepresentation figure;
+	private int index;
 	
-	public TroopRadioButton(FigureRepresentation figure)	{
+	public int getIndex() {
+		return index;
+	}
+
+
+	public TroopRadioButton(FigureRepresentation figure, int index)	{
 		this.figure = figure;
+		this.index = index;
 		//this.figureType = figure.getCreatureType();
 		initButton();
 	}
@@ -50,6 +57,17 @@ class TroopRadioButton extends FigureRadioButton {
 
 		g.setColor(figure.getColor());
 		((Graphics2D) g).fill(shape);
+	}
+	
+	@Override
+	public void initButton() {
+		setFigureType();
+
+		this.setText(figureType.toString());
+		this.setContentAreaFilled(false);
+		this.setActionCommand(String.valueOf(index));
+		this.shape = createShape();
+
 	}
 
 	@Override

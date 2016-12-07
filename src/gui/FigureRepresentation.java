@@ -23,7 +23,15 @@ public abstract class FigureRepresentation extends JPanel {
 	protected int hue;
 	protected boolean isTeleportCreature = false;
 	protected Direction direction;
+	protected int index;
+	
+	public int getIndex() {
+		return index;
+	}
 
+	public void setIndex(int index) {
+		this.index = index;
+	}
 
 	protected int cost;
 
