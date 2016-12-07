@@ -1,10 +1,92 @@
-<?xml version="1.0"?>
-<xsd:schema
-	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<!--This schema validates maps for an Anti TD game. A levels xml file has 
+		to hold a complextype element "levels" that in turn can hold an unlimited 
+		number of "level" elements representing actual maps. Each map is built up 
+		by a matrix consisting of rows of cells. Where each cell represents a map 
+		tile. Each cell holds one of the enumerations W = wall, P = path, S = Start, 
+		G = goal and T = Tower area. To add more functionality, in terms of a landOn 
+		file, to a cell its attribute can be set. For example, to add an haste effect 
+		to a cell its attribute should be set to "haste". Furthermore the class file 
+		representing this effect has to be stated in the landOnClassFiles-element 
+		at the end of each level element. Finally, there is a rule element. that 
+		holds the set of rules that a map has to define. -->
 
-<xsd:element name="note">
-  <xsd:complexType>
-  </xsd:complexType>
-</xsd:element>
+	<xs:simpleType name="cellContent">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="W" />
+			<xs:enumeration value="P" />
+			<xs:enumeration value="S" />
+			<xs:enumeration value="G" />
+			<xs:enumeration value="T" />
+		</xs:restriction>
+	</xs:simpleType>
 
-</xsd:schema>
+	<xs:element name="levels">
+		<xs:complexType>
+			<xs:sequence>
+
+				<xs:element name="level" maxOccurs="10" minOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+
+							<xs:element name="row" maxOccurs="unbounded"
+								minOccurs="2">
+								<xs:complexType>
+									<xs:sequence>
+
+										<xs:element name="cell" maxOccurs="unbounded"
+											minOccurs="2">
+											<!--restrict what values there can be in cell elements -->
+											<xs:complexType>
+												<xs:simpleContent>
+													<xs:extension base="cellContent">
+														<xs:attribute name="landOn" type="xs:string" />
+													</xs:extension>
+												</xs:simpleContent>
+											</xs:complexType>
+
+										</xs:element>
+
+									</xs:sequence>
+									<xs:attribute name="Index" type="xs:int"></xs:attribute>
+								</xs:complexType>
+							</xs:element>
+
+							<!-- Describes the set of rules a map should hold -->
+							<xs:element name="rules">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="attackerCredit" type="xs:int"></xs:element>
+										<xs:element name="defenderCredit" type="xs:int"></xs:element>
+										<xs:element name="timeToFinish" type="xs:int"></xs:element>
+										<xs:element name="nrOfTemplates" type="xs:int"></xs:element>
+										<xs:element name="attackingPlayerScoreGoal" type="xs:int"></xs:element>										
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+
+							<!-- Describes what what special area class files that the game should 
+								load. The class files are specified by entering the file name into a landOn 
+								element -->
+							<xs:element name="landOnClassFiles">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="landOn" maxOccurs="unbounded">
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+
+						</xs:sequence>
+						<xs:attribute name="Index" type="xs:int">
+						</xs:attribute>
+						<xs:attribute name="name" type="xs:string"></xs:attribute>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="name" type="xs:string"></xs:attribute>
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>

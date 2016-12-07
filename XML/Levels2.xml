@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<levels>
+	<level name="testLevel">
+		<row Index="1">
+			<!-- <cell landOn = "haste">W</cell> -->
+			<cell landOn="haste">W</cell>
+			<cell>W</cell>
+			<cell>W</cell>
+			<cell>G</cell>
+			<cell>W</cell>
+			<cell>W</cell>
+			<cell>W</cell>
+		</row>
+		<row Index="2">
+			<cell>W</cell>
+			<cell>W</cell>
+			<cell>W</cell>
+			<cell>P</cell>
+			<cell>W</cell>
+			<cell>W</cell>
+			<cell>W</cell>
+		</row>
+		<row Index="3">
+			<cell>T</cell>
+			<cell>P</cell>
+			<cell>P</cell>
+			<cell>P</cell>
+			<cell>P</cell>
+			<cell>T</cell>
+			<cell>W</cell>
+		</row>
+		<row Index="4">
+			<cell>T</cell>
+			<cell>P</cell>
+			<cell>T</cell>
+			<cell>T</cell>
+			<cell>P</cell>
+			<cell>T</cell>
+			<cell>W</cell>
+		</row>
+		<row Index="5">
+			<cell>T</cell>
+			<cell>P</cell>
+			<cell>T</cell>
+			<cell>T</cell>
+			<cell>P</cell>
+			<cell>T</cell>
+			<cell>W</cell>
+		</row>
+		<row Index="6">
+			<cell>W</cell>
+			<cell>P</cell>
+			<cell>P</cell>
+			<cell>P</cell>
+			<cell>P</cell>
+			<cell>T</cell>
+			<cell>W</cell>
+		</row>
+		<row Index="7">
+			<cell>W</cell>
+			<cell>W</cell>
+			<cell>W</cell>
+			<cell>S</cell>
+			<cell>W</cell>
+			<cell>W</cell>
+			<cell>W</cell>
+		</row>
+		<rules>
+			<attackerCredit>101</attackerCredit>
+			<defenderCredit>101</defenderCredit>
+			<timeToFinish>11</timeToFinish>
+			<nrOfTemplates>7</nrOfTemplates>
+		</rules>
+		<!-- vet inte hur jag man ska identifiera klasserna.. Om dom ska ha ett 
+			eget element och sen en text med filens namn. Eller om det direkt bara ska 
+			vara namnet i textform... -->
+		<landOnClassFiles>
+			<landOn>haste</landOn>
+			<landOn>cripple</landOn>
+		</landOnClassFiles>
+
+	</level>
+
+	
+		
+</levels>

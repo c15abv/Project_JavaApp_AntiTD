@@ -46,7 +46,7 @@ public class LevelXMLReader{
 	}*/
 
 	//
-<<<<<<< HEAD
+
 	public GameLevel toLevel(String xmlMapFile){
 
 		Position position = null;
@@ -168,11 +168,8 @@ public class LevelXMLReader{
 			//hantera fler fel
 		}
 		return gameLevel;
-=======
-	public GameLevel toLevel(){
-		return new GameLevel(123);
->>>>>>> refs/remotes/origin/master
 	}
+	
 	public boolean validateXmlAgainstXsds(String xmlFile, String validationFile)  
     {
         SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
