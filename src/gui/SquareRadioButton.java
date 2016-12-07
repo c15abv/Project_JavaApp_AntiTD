@@ -2,18 +2,16 @@ package gui;
 
 import java.awt.Polygon;
 import java.awt.Shape;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-
-import javax.swing.JButton;
-import javax.swing.JRadioButton;
-
 import start.Figures;
-
 import java.awt.Dimension;
 
+@SuppressWarnings("serial")
 class SquareRadioButton extends FigureRadioButton {
 
+	public SquareRadioButton() {
+		initButton();
+	}
+	
 	@Override
 	public Dimension getPreferredSize() {
 		return new Dimension(TEMP_SIZE, TEMP_SIZE);
