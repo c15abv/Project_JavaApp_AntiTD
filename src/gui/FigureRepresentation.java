@@ -4,71 +4,91 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Insets;
-import java.awt.Polygon;
 import java.awt.Shape;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
+import start.Direction;
 import start.Figures;
 import utilities.ColorCreator;
 
-public class FigureRepresentation extends JPanel {
+@SuppressWarnings("serial")
+public abstract class FigureRepresentation extends JPanel {
 	protected static final int TEMP_SIZE = 70;
-	private Figures creatureType;
-	private int hue;
-	private float scale;
-	private Shape shape = createShape();
+	protected Figures creatureType;
+	protected Color color = UIManager.getColor("control");
+	protected float scale = 1;
+	protected Shape shape = createShape();
+	protected int hue;
+	protected boolean isTeleportCreature = false;
+	protected Direction direction;
 
-	public FigureRepresentation(Figures creatureType, int hue, float scale) {
+
+	protected int cost;
+
+	public int getCost() {
+		return cost;
+	}
+
+	public void setCost(int cost) {
+		this.cost = cost;
+	}
+
+	public FigureRepresentation() {
 		super();
-		this.creatureType = creatureType;
+	}
+
+	public boolean isTeleportCreature() {
+		return isTeleportCreature;
+	}
+
+	public void setIsTeleportCreature(boolean isTeleportCreature) {
+		this.isTeleportCreature = isTeleportCreature;
+	}
+
+	public Direction getDirection() {
+		return direction;
+	}
+
+	public void setDirection(Direction direction) {
+		this.direction = direction;
+	}
+
+	public FigureRepresentation(int hue, float scale) {
+		super();
+		this.color = ColorCreator.generateColorFromHue(hue);
 		this.hue = hue;
 		this.scale = scale;
 
 	}
 
-	private Shape createShape() {
-		Polygon p = new Polygon();
-		p.addPoint(0, 0); // use this.getWidth() method if you want to
-							// create based on screen size
-		p.addPoint(0, (int)(TEMP_SIZE*scale));
-		p.addPoint((int)(TEMP_SIZE*scale), (int)(TEMP_SIZE*scale));
-		p.addPoint((int)(TEMP_SIZE*scale), 0);	
-
-		return p;
-	}
+	public abstract Shape createShape();
 
 	@Override
 	public void paintComponent(Graphics g) {
-		//super.paintComponent(g);
-		
-		g.setColor(ColorCreator.generateColorFromHue(this.hue));
+		// super.paintComponent(g);
+
+		g.setColor(color);
 		this.shape = createShape();
 		((Graphics2D) g).fill(shape);
 	}
-	
+
 	@Override
-	public void repaint(){
+	public void repaint() {
 		super.repaint();
-		
+
 	}
 
 	@Override
 	public Dimension getPreferredSize() {
-		return new Dimension((int)(TEMP_SIZE*scale), (int)(TEMP_SIZE*scale));
+		return new Dimension((int) (TEMP_SIZE * scale),
+				(int) (TEMP_SIZE * scale));
 	}
 
 	public Figures getCreatureType() {
 		return creatureType;
 	}
-	
-
-	public void setCreatureType(Figures creatureType) {
-		this.creatureType = creatureType;
-	}
-	
 
 	public int getHue() {
 		return hue;
@@ -76,6 +96,7 @@ public class FigureRepresentation extends JPanel {
 
 	public void setHue(int hue) {
 		this.hue = hue;
+		this.color = ColorCreator.generateColorFromHue(hue);
 	}
 
 	public float getScale() {
@@ -85,4 +106,14 @@ public class FigureRepresentation extends JPanel {
 	public void setScale(float scale) {
 		this.scale = scale;
 	}
+
+	public Shape getShape() {
+		return shape;
+	}
+
+	public Color getColor() {
+		return color;
+	}
+	
+	
 }

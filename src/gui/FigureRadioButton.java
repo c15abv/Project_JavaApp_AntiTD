@@ -11,16 +11,16 @@ import start.Figures;
 import java.awt.Color;
 import java.awt.Dimension;
 
+@SuppressWarnings("serial")
 public abstract class FigureRadioButton extends JRadioButton {
-	protected static final int TEMP_SIZE = 70;
-	private Shape shape = createShape();
+	protected static final int TEMP_SIZE = 50;
+	protected Shape shape;
 	protected Figures figureType;
 
-	public FigureRadioButton() {
+	/*public FigureRadioButton() {
 		super();
-		setFigureType();
 		initButton();
-	}
+	}*/
 
 	public void paintBorder(Graphics g) {
 		((Graphics2D) g).draw(shape);
@@ -43,9 +43,12 @@ public abstract class FigureRadioButton extends JRadioButton {
 	}
 
 	public void initButton() {
-		this.setText(this.figureType.toString());
+		setFigureType();
+
+		this.setText(figureType.toString());
 		this.setContentAreaFilled(false);
 		this.setActionCommand(this.getText());
+		this.shape = createShape();
 
 	}
 
