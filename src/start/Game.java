@@ -63,13 +63,10 @@ public class Game extends Canvas implements TimerListener{
 		this.setIgnoreRepaint(true);
 		this.setSize(SIZE_X, SIZE_Y);
 		
-		this.createBufferStrategy(2);
-		buffer = this.getBufferStrategy();
-		
 		graphicsE = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		device = graphicsE.getDefaultScreenDevice();
 		configuration = device.getDefaultConfiguration();
-		bufferedImage = configuration.createCompatibleImage(600, 600);
+		bufferedImage = configuration.createCompatibleImage(800, 600);
 		
 		g = null;
 		g2d = null;
@@ -79,19 +76,27 @@ public class Game extends Canvas implements TimerListener{
 		if(gameState == GameState.RUNNING){
 			defender.update();
 			attacker.update();
-			if(attacker.getPoints() >= level.getAttackingPlayerScoreGoal()){
+			/*if(attacker.getPoints() >= level.getAttackingPlayerScoreGoal()){
 				gameResult = GameResult.ATTACKER_WINNER;
 				endGame();
-			}
+			}*/
 		}
 	}
 	
 	public void render(){
+		
+		buffer = this.getBufferStrategy();
+		if(buffer == null){
+			this.createBufferStrategy(2);
+			return;
+		}
+		
 		g2d = bufferedImage.createGraphics();
 		g2d.setColor(Color.BLACK);
 		g2d.fillRect(0, 0, SIZE_X, SIZE_Y);
 		
 		//render stuff
+		level.render(g2d);
 		defender.render(g2d);
 		attacker.render(g2d);
 		
@@ -112,7 +117,7 @@ public class Game extends Canvas implements TimerListener{
 	}
 
 	@Override
-	public void receiveNotification(Integer id){
+	public void receiveNotification(Long id){
 		timer.terminate();
 		gameResult = GameResult.DEFENDER_WINNER;
 		gameState = GameState.ENDED;
@@ -152,5 +157,8 @@ public class Game extends Canvas implements TimerListener{
 		return gameResult;
 	}
 	
+	public synchronized ActionTimer getTimer(){
+		return timer;
+	}
 	
 }

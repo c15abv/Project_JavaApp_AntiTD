@@ -2,7 +2,6 @@ package creatures;
 
 import java.awt.Graphics2D;
 
-import creatures.CreatureFigure.Orientation;
 import start.Figures;
 import start.GameLevel;
 import start.Position;
@@ -15,8 +14,16 @@ public class SquareCreatureFigure extends CreatureFigure {
 			Orientation orientation, GameLevel level){
 		super(hue, scale, position, orientation, level);
 	}
+	
+	public void render(Graphics2D g2d) {
+		g2d.setColor(this.getColor());
+		g2d.fillRect((int)(this.getPosition().getX()),
+				(int)(this.getPosition().getY()),
+				(int)(this.getScale() * CreatureFigure.BASE_SIZE),
+				(int)(this.getScale() * CreatureFigure.BASE_SIZE));
+	}
 
-	@Override
+	/*@Override
 	public void render(Graphics2D g2d) {
 		g2d.setColor(this.getColor());
 		g2d.fillRect((int)(this.getPosition().getX() -
@@ -25,7 +32,7 @@ public class SquareCreatureFigure extends CreatureFigure {
 						(this.getScale() * CreatureFigure.BASE_SIZE / 2)),
 				(int)(this.getScale() * CreatureFigure.BASE_SIZE),
 				(int)(this.getScale() * CreatureFigure.BASE_SIZE));
-	}
+	}*/
 
 	@Override
 	public Figures getShape() {
@@ -44,14 +51,12 @@ public class SquareCreatureFigure extends CreatureFigure {
 			return false;
 		}
 		
-		if(dy / dx <= 1){
+		if(dx == 0){
+			collPointAngle = 0;
+		}else if(dy / dx <= 1){
 			collPointAngle = Math.atan(dy / dx);
 		}else{
-			if(dx > 0){
-				collPointAngle = 0;
-			}else{
-				collPointAngle = Math.PI / 2 - Math.atan(dy / dx);
-			}
+			collPointAngle = Math.PI / 2 - Math.atan(dy / dx);
 		}
 		
 		innerRadius = this.getScale()  * CreatureFigure.BASE_SIZE / 

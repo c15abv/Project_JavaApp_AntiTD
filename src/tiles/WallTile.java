@@ -1,5 +1,8 @@
 package tiles;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+
 import start.Position;
 
 public class WallTile extends Tile{
@@ -16,8 +19,12 @@ public class WallTile extends Tile{
 	}	
 
 	@Override
-	public void render() {
-		//render black
+	public void render(Graphics2D g2d) {
+		g2d.setColor(Color.BLUE);
+		g2d.fillRect(this.getPosition().getX() - Tile.size/2,
+				this.getPosition().getY() - Tile.size/2,
+				Tile.size,
+				Tile.size);
 	}
 
 }
