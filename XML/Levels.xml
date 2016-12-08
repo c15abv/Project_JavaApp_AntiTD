@@ -1,83 +1,190 @@
-<?xml version="1.0"?>
-<levels
-	xmlns="http://www.w3schools.com"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="LevelsXMLSchema.xsd">
-
-	<Level name = "testLevel">
+<?xml version="1.0" encoding="UTF-8"?>
+<levels>
+	<level name="testLevel">
 		<row Index="1">
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>G</cell>
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>W</cell>
+			<!-- <cell landOn = "haste">W</cell> -->
+			<tile>W</tile>
+			<tile landOn="haste" direction="HORIZONTAL_T_SOUTH">W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>G</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
 		</row>
 		<row Index="2">
-			<cell>T</cell>
-			<cell>T</cell>
-			<cell>T</cell>
-			<cell>p</cell>
-			<cell>T</cell>
-			<cell>W</cell>
-			<cell>W</cell>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
 		</row>
 		<row Index="3">
-			<cell>T</cell>
-			<cell>P</cell>
-			<cell>P</cell>
-			<cell>p</cell>
-			<cell>P</cell>
-			<cell>T</cell>
-			<cell>W</cell>
+			<tile>W</tile>
+			<tile>T</tile>
+			<tile>P</tile>
+			<tile>P</tile>
+			<tile>P</tile>
+			<tile>P</tile>
+			<tile>T</tile>
+			<tile>W</tile>
 		</row>
-		<row index="4">
-			<cell>T</cell>
-			<cell>P</cell>
-			<cell>P</cell>
-			<cell>P</cell>
-			<cell>P</cell>
-			<cell>T</cell>
-			<cell>W</cell>
+		<row Index="4">
+			<tile>W</tile>
+			<tile>T</tile>
+			<tile>P</tile>
+			<tile>T</tile>
+			<tile>T</tile>
+			<tile>P</tile>
+			<tile>T</tile>
+			<tile>W</tile>
 		</row>
 		<row Index="5">
-			<cell>T</cell>
-			<cell>P</cell>
-			<cell>T</cell>
-			<cell>T</cell>
-			<cell>P</cell>
-			<cell>T</cell>
-			<cell>W</cell>
+			<tile>W</tile>
+			<tile>T</tile>
+			<tile>P</tile>
+			<tile>T</tile>
+			<tile>T</tile>
+			<tile>P</tile>
+			<tile>T</tile>
+			<tile>W</tile>
 		</row>
 		<row Index="6">
-			<cell>W</cell>
-			<cell>P</cell>
-			<cell>P</cell>
-			<cell>P</cell>
-			<cell>P</cell>
-			<cell>T</cell>
-			<cell>W</cell>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>P</tile>
+			<tile>P</tile>
+			<tile>P</tile>
+			<tile>P</tile>
+			<tile>T</tile>
+			<tile>W</tile>
 		</row>
 		<row Index="7">
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>S</cell>
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>W</cell>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>S</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+		</row>
+		<rules>
+			<attackerCredit>101</attackerCredit>
+			<defenderCredit>101</defenderCredit>
+			<timeToFinish>11</timeToFinish>
+			<nrOfTemplates>7</nrOfTemplates>
+		</rules>
+		<!-- vet inte hur jag man ska identifiera klasserna.. Om dom ska ha ett 
+			eget element och sen en text med filens namn. Eller om det direkt bara ska 
+			vara namnet i textform... -->
+		<landOnClassFiles>
+			<landOn>haste</landOn>
+			<landOn>cripple</landOn>
+		</landOnClassFiles>
+
+	</level>
+
+	<!-- Är för tillfället bara en kopia av testlevel 1 -->
+	<level name="testLevel 2">
+		<row Index="1">
+			<!-- <cell landOn = "haste">W</cell> -->
+			<tile>W</tile>
+			<tile landOn="haste">W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>G</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="2">
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="3">
+			<tile>W</tile>
+			<tile>T</tile>
+			<tile>P</tile>
+			<tile>P</tile>
+			<tile>P</tile>
+			<tile>P</tile>
+			<tile>T</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="4">
+			<tile>W</tile>
+			<tile>T</tile>
+			<tile>P</tile>
+			<tile>T</tile>
+			<tile>T</tile>
+			<tile>P</tile>
+			<tile>T</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="5">
+			<tile>W</tile>
+			<tile>T</tile>
+			<tile>P</tile>
+			<tile>T</tile>
+			<tile>T</tile>
+			<tile>P</tile>
+			<tile>T</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="6">
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>P</tile>
+			<tile>P</tile>
+			<tile>P</tile>
+			<tile>P</tile>
+			<tile>T</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="7">
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="8">
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>S</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
 		</row>
 		<rules>
 			<attackerCredit>100</attackerCredit>
 			<defenderCredit>100</defenderCredit>
-			<timeToFinish>10</timeToFinish>			
+			<timeToFinish>10</timeToFinish>
+			<nrOfTemplates>5</nrOfTemplates>
 		</rules>
-		<!-- vet inte hur jag man ska identifiera klasserna.. Om dom ska 
-		ha ett eget element och sen en text med filens namn. Eller om det direkt bara ska vara namnet i textform...-->
+		<!-- vet inte hur jag man ska identifiera klasserna.. Om dom ska ha ett 
+			eget element och sen en text med filens namn. Eller om det direkt bara ska 
+			vara namnet i textform... -->
 		<landOnClassFiles>
-			<haste></haste>
-			<cripple></cripple>
+			<landOn>haste</landOn>
+			<landOn>cripple</landOn>
 		</landOnClassFiles>
-	</Level>
+
+	</level>
+
 </levels>
