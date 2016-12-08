@@ -17,13 +17,13 @@ public class CircleCreatureFigure extends CreatureFigure{
 
 	@Override
 	public void render(Graphics2D g2d){
-		g2d.setColor(this.getColor());
-		g2d.fillOval((int)(this.getPosition().getX() -
-				(this.getScale() * CreatureFigure.BASE_SIZE / 2)),
-				(int)(this.getPosition().getY() - 
-						(this.getScale() * CreatureFigure.BASE_SIZE / 2)),
-				(int)(this.getScale() * CreatureFigure.BASE_SIZE),
-				(int)(this.getScale() * CreatureFigure.BASE_SIZE));
+		g2d.setColor(getColor());
+		g2d.fillOval((int)(getPosition().getX() -
+				(getScale() * CreatureFigure.BASE_SIZE / 2)),
+				(int)(getPosition().getY() - 
+						(getScale() * CreatureFigure.BASE_SIZE / 2)),
+				(int)(getScale() * CreatureFigure.BASE_SIZE),
+				(int)(getScale() * CreatureFigure.BASE_SIZE));
 	}
 
 	@Override
@@ -33,8 +33,8 @@ public class CircleCreatureFigure extends CreatureFigure{
 
 	@Override
 	public boolean isCollision(Position position) {
-		int dx = Math.abs(position.getX() - this.getPosition().getX());
-		int dy = Math.abs(position.getY() - this.getPosition().getY());
+		int dx = Math.abs(position.getX() - getPosition().getX());
+		int dy = Math.abs(position.getY() - getPosition().getY());
 		double radius = this.getScale() * CreatureFigure.BASE_SIZE / 2;
 		
 		if(dx > radius || dy > radius){

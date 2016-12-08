@@ -4,8 +4,8 @@ import java.awt.Color;
 
 public class ColorCreator{
 	
-	private static final double VALUE = 0.5;
-	private static final double SATURATION = 1.0;
+	public static final double VALUE = 0.5;
+	public static final double SATURATION = 1.0;
 	
 	public static Color generateColorFromHue(int hue){
 		float hue_rad = (float)(hue) / (float)(360);

@@ -7,6 +7,28 @@ import java.util.Map.Entry;
 
 public class ActionTimer implements Runnable{
 
+	class IdCounter{
+		public static final int DEFAULT = 0;
+		
+		private long id;
+		
+		IdCounter(){
+			this(DEFAULT);
+		}
+		
+		IdCounter(long id){
+			this.id = id;
+		}
+		
+		void increment(){
+			id++;
+		}
+		
+		long getId(){
+			return id;
+		}
+	}
+	
 	class TimedObject<T extends TimerListener>{
 		private volatile T object;
 		private volatile long time;
@@ -25,13 +47,15 @@ public class ActionTimer implements Runnable{
 		}
 	}
 	
-	private volatile HashMap<Integer, TimedObject<?>> activeTimers;
+	private volatile IdCounter idCounter;
+	private volatile HashMap<Long, TimedObject<?>> activeTimers;
 	private volatile boolean isRunning;
 	private volatile boolean paused;
 	private Lock lock;
 	
 	public ActionTimer(){
-		activeTimers = new HashMap<Integer, TimedObject<?>>();
+		idCounter = new IdCounter();
+		activeTimers = new HashMap<Long, TimedObject<?>>();
 		isRunning = true;
 		paused = false;
 		lock = new Lock();
@@ -44,11 +68,11 @@ public class ActionTimer implements Runnable{
 				try{
 					lock.lock();
 					
-					Iterator<Entry<Integer, TimedObject<?>>> it = 
+					Iterator<Entry<Long, TimedObject<?>>> it = 
 							activeTimers.entrySet().iterator();
-					Map.Entry<Integer, TimedObject<?>> pair;
+					Map.Entry<Long, TimedObject<?>> pair;
 				    while(it.hasNext()){
-				        pair = (Map.Entry<Integer, TimedObject<?>>)it.next();
+				        pair = (Map.Entry<Long, TimedObject<?>>)it.next();
 				        if(pair.getValue().time <= System.nanoTime()){
 				        	pair.getValue().object.receiveNotification(pair.getKey());
 				        	it.remove();
@@ -62,7 +86,7 @@ public class ActionTimer implements Runnable{
 		}
 	}
 	
-	public synchronized <T extends TimerListener> void setTimer(Integer id, 
+	public synchronized <T extends TimerListener> void setTimer(long id, 
 			T object, long delta){
 		try{
 			lock.lock();
@@ -74,7 +98,7 @@ public class ActionTimer implements Runnable{
 		}
 	}
 	
-	public synchronized void removeTimer(Integer id){
+	public synchronized void removeTimer(Long id){
 		try{
 			lock.lock();
 			activeTimers.remove(id);
@@ -84,20 +108,32 @@ public class ActionTimer implements Runnable{
 		}
 	}
 	
-	public synchronized long timeLeft(Integer id){
+	public synchronized long timeLeft(Long id){
 		long timeLeft = -1;
 		TimedObject<?> obj;
 		
 		try{
 			lock.lock();
 			obj = activeTimers.get(id);
-			timeLeft = (long) (obj.getTime() - System.nanoTime());
+			if(obj != null){
+				if(obj.getTime() - System.nanoTime() < 0){
+					timeLeft = 0;
+				}else{
+					timeLeft = (long) (obj.getTime() - System.nanoTime());
+				}
+			}
 		}catch(InterruptedException e){
 		}finally{
 			lock.unlock();
 		}
 		
 		return timeLeft;
+	}
+	
+	public synchronized long getNewUniqueId(){
+		long id = idCounter.getId();
+		idCounter.increment();
+		return id;
 	}
 	
 	public synchronized void terminate(){
