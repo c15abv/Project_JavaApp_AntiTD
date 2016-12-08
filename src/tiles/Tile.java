@@ -1,17 +1,19 @@
 package tiles;
 
+import java.awt.Graphics2D;
+
 import start.Position;
 
 public abstract class Tile{
 
 	private Position position;
-	private int size; //some size
+	public static final int size = 50; 
 	
 	public Tile(Position position){
 		this.position = position;
 	}
 	
-	public abstract void render();
+	public abstract void render(Graphics2D g2d);
 	
 	@Override
 	public int hashCode(){
@@ -21,5 +23,8 @@ public abstract class Tile{
 	@Override
 	public boolean equals(Object object){
 		return true;
+	}
+	public Position getPosition(){
+		return position;
 	}
 }

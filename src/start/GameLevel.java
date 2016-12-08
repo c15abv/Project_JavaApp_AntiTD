@@ -1,7 +1,9 @@
 package start;
 
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import creatures.CreatureFigure;
 import tiles.Tile;
@@ -31,7 +33,15 @@ public class GameLevel{
 		attackerCredit = 100;
 		defenderCredit = 100;
 		timeToFinish = 120;
-	}	
+	}
+	public void render(Graphics2D g2d){
+		for (Map.Entry<Position, Tile> entry : levelMap.entrySet()) {
+		    Position key = entry.getKey();
+		    Tile  value = entry.getValue();
+		    value.render(g2d);
+		    
+		}
+	}
 	
 	public int getAttackerCredit() {
 		return attackerCredit;
