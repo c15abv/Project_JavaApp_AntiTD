@@ -7,6 +7,12 @@ import start.Figures;
 import start.Position;
 import utilities.CustomShapes;
 
+/**
+ * StarProjectileFigure.
+ * 
+ * @author Alexander Beliaev
+ * @version 1.0
+ */
 public class StarProjectileFigure extends ProjectileFigure{
 
 	public static final Figures shape = Figures.STAR;
@@ -32,7 +38,7 @@ public class StarProjectileFigure extends ProjectileFigure{
 	@Override
 	public void render(Graphics2D g2d){
 		g2d.setColor(this.getColor());
-		g2d.fill(CustomShapes.createStar(this.getPosition(),
+		g2d.draw(CustomShapes.createStar(this.getPosition(),
 				ProjectileFigure.TEMP_SIZE));
 	}
 

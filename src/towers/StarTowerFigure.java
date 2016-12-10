@@ -7,6 +7,12 @@ import start.Figures;
 import start.Position;
 import utilities.CustomShapes;
 
+/**
+ * StarTowerFigure.
+ * 
+ * @author Alexander Beliaev
+ * @version 1.0
+ */
 public class StarTowerFigure extends TowerFigure{
 
 	public static final Figures SHAPE = Figures.STAR;
@@ -24,7 +30,7 @@ public class StarTowerFigure extends TowerFigure{
 	@Override
 	public void render(Graphics2D g2d){
 		g2d.setColor(this.getColor());
-		g2d.fill(CustomShapes.createStar(this.getPosition(),
+		g2d.draw(CustomShapes.createStar(this.getPosition(),
 				TowerFigure.TEMP_SIZE));
 	}
 

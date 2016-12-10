@@ -3,22 +3,28 @@ package start;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
+import creatures.AICreatureFigures;
 import creatures.CreatureFigure;
 
 public class AttackingPlayer extends Player{
 
 	private ArrayList<CreatureFigure> currentHorde;
+	private AICreatureFigures ai;
 	private int points;
 	
-	public AttackingPlayer(int credits){
-		super(credits);
+	public AttackingPlayer(int credits, GameLevel level){
+		super(credits, level);
 		currentHorde = new ArrayList<CreatureFigure>();
 		points = 0;
+		ai = new AICreatureFigures(this);
 	}
 
 	@Override
 	public void update(){
 		CreatureFigure figure;
+		
+		ai.update();
+		
 		for(int i=0; i<currentHorde.size(); i++){
 			figure = currentHorde.get(i);
 			figure.update();

@@ -1,11 +1,12 @@
 package tiles;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import creatures.CreatureFigure;
 import creatures.CreatureFigure.Orientation;
 import start.Position;
 
@@ -14,20 +15,75 @@ public class PathTile extends Tile{
 	public enum ValidPath{
 		HORIZONTAL, VERTICAL, HORIZONTAL_T_SOUTH,
 		HORIZONTAL_T_NORTH, VERTICAL_T_EAST,
-		VERTICAL_T_WEST, WEST_T, EAST_T, CROSSROAD;
+		VERTICAL_T_WEST, WEST_T, EAST_T, CROSSROAD,
+		L_TURN_HORIZONTAL_SOUTH_TO_EAST, L_TURN_HORIZONTAL_NORTH_TO_WEST,
+		L_TURN_HORIZONTAL_NORTH_TO_EAST, L_TURN_HORIZONTAL_SOUTH_TO_WEST,
+		NORTH, WEST, EAST, SOUTH;
 	}
 	
 	public enum Direction{
 		NORTH, EAST, WEST, SOUTH, NA;
 	}
 	
-	class PostionPair{
+	public class ConnectedPositions{
+		private HashMap<Direction, Position> map;
+		private Position position;
 		
-		HashMap<Direction, PositionNext> map;
-		Position position;
+		ConnectedPositions(Position position){
+			this.position = position;
+			map = new HashMap<Direction, Position>();
+		}
 		
-		PostionPair(Position position, Direction ... directions){
-			ArrayList<Direction> dirsTemp = new ArrayList<Direction>();
+		void add(Direction dirTo){
+			Position newPosition;
+			switch(dirTo){
+			case EAST:
+				newPosition = new Position(position.getX() + 1,
+						position.getY());
+				break;
+			case NORTH:
+				newPosition = new Position(position.getX(),
+						position.getY() - 1);
+				break;
+			case SOUTH:
+				newPosition = new Position(position.getX(),
+						position.getY() + 1);
+				break;
+			case WEST:
+				newPosition = new Position(position.getX() - 1,
+						position.getY());
+				break;
+			case NA:
+			default:
+				newPosition = position;
+				break;
+			}
+			
+			map.put(dirTo, newPosition);
+		}
+		
+		public HashMap<Direction, Position> getMap(){
+			return new HashMap<Direction, Position>(map);
+		}
+		
+	}
+	
+	public class PositionConnection{
+		/*HashMap<Direction, PositionNext> map;
+		private Position position;*/
+		private ConnectedPositions conPos;
+		
+		PositionConnection(Position position, Direction ... directions){
+			conPos = new ConnectedPositions(position);
+			
+			for(Direction dir : directions){
+				conPos.add(dir);
+			}
+			
+		}
+			
+			/*ArrayList<Direction> dirsTemp = new ArrayList<Direction>();
+			map = new HashMap<Direction, PositionNext>();
 			this.position = position;
 			
 			for(Direction dir : directions){
@@ -36,13 +92,22 @@ public class PathTile extends Tile{
 						dirsTemp.add(dirTemp);
 					}
 				}
-				map.put(dir, create(dir, 
+				
+				if(dirsTemp.isEmpty()){
+					map.put(dir, create(Direction.NA, dir));
+				}else{
+					map.put(dir, create(dir, 
 						dirsTemp.toArray(new Direction[dirsTemp.size()])));
+				}
 			}
+		}*/
+		
+		public ConnectedPositions getConnectedPositions(){
+			return conPos;
 		}
 		
-		public PositionNext getPair(Direction dir){
-			return map.get(dir);
+		/*public PositionNext getConnection(Direction dirFrom){
+			return map.get(dirFrom);
 		}
 		
 		private PositionNext create(Direction dirFrom, Direction ... dirTos){
@@ -66,6 +131,7 @@ public class PathTile extends Tile{
 								new Position(position.getX() - 1,
 										position.getY()));
 						break;
+					case NA:
 					default:
 						break;
 					}
@@ -87,6 +153,7 @@ public class PathTile extends Tile{
 								new Position(position.getX() - 1,
 										position.getY()));
 						break;
+					case NA:
 					default:
 						break;
 					}
@@ -107,46 +174,75 @@ public class PathTile extends Tile{
 								new Position(position.getX() - 1,
 										position.getY()));
 						break;
+					case NA:
 					default:
 						break;
 					}
 				case WEST:
 					switch(dirTo){
 					case EAST:
-						posNext.setPosForward(Direction.EAST,
+						posNext.setPosForward(Direction.WEST,
 								new Position(position.getX() + 1,
 										position.getY()));
 						break;
 					case NORTH:
-						posNext.setPosLeft(Direction.EAST,
+						posNext.setPosLeft(Direction.WEST,
 								new Position(position.getX(),
 										position.getY() - 1));
 						break;
 					case SOUTH:
-						posNext.setPosRight(Direction.EAST,
+						posNext.setPosRight(Direction.WEST,
 								new Position(position.getX(),
 										position.getY() + 1));
+						break;
+					case NA:
+					default:
+						break;
+					}
+				case NA:
+				default:
+					switch(dirTo){
+					case EAST:
+						posNext.setPos(Direction.EAST,
+								new Position(position.getX() + 1,
+										position.getY()));
+						break;
+					case NORTH:
+						posNext.setPos(Direction.NORTH,
+								new Position(position.getX(),
+										position.getY() - 1));
+						break;
+					case SOUTH:
+						posNext.setPos(Direction.SOUTH,
+								new Position(position.getX(),
+										position.getY() + 1));
+						break;
+					case WEST:
+						posNext.setPos(Direction.WEST,
+								new Position(position.getX() - 1,
+										position.getY()));
 						break;
 					default:
 						break;
 					}
-				default:
 					break;
 				}
 			}
 			
+			if(posNext.isEmpty())
+				System.out.println("is empty: " + posNext.isEmpty() + "; " + posNext);
+			
 			return posNext;
-		}
+		}*/
 	}
 	
-	class PositionNext{
-		
+	public class PositionNext{
 		private HashMap<Direction, HashMap<Orientation, Position>> posMap;
 		private HashMap<Orientation, Position> rightMap;
 		private HashMap<Orientation, Position> leftMap;
 		private HashMap<Orientation, Position> forwardMap;
 		
-		PositionNext(){
+		public PositionNext(){
 			posMap = new HashMap<Direction, HashMap<Orientation, Position>>();
 			rightMap = new HashMap<Orientation, Position>();
 			leftMap = new HashMap<Orientation, Position>();
@@ -168,103 +264,113 @@ public class PathTile extends Tile{
 			posMap.put(dir, forwardMap);
 		}
 		
-		Position getPos(Direction dir,
+		void setPos(Direction dir, Position pos){
+			forwardMap.put(Orientation.FORWARD, pos);
+			leftMap.put(Orientation.LEFT, pos);
+			rightMap.put(Orientation.RIGHT, pos);
+			posMap.put(dir, forwardMap);
+			posMap.put(dir, leftMap);
+			posMap.put(dir, rightMap);
+		}
+		
+		public Position getPos(Direction dir,
 				Orientation orient){
 			return posMap.get(dir).get(orient);
 		}
 		
-		HashMap<Orientation, Position> getPosMap(Direction dir){
+		public HashMap<Orientation, Position> getPosMap(Direction dir){
+			if(posMap.get(dir) == null){
+				return null;
+			}
 			return new HashMap<Orientation, Position>(posMap.get(dir));
+		}
+		
+		public boolean isEmpty(){
+			return posMap.isEmpty();
 		}
 	}
 	
-	private HashMap<Position, PostionPair> positionPairMap;
+	private Position start1, start2, end1, end2;
+	
+	private HashMap<Position, PositionConnection> positionPairMap;
 	private String tileType;
 	private String landOnEffect;
 	private ValidPath path;
 
-	public PathTile(Position position, ValidPath path) {
-		super(position);
-		this.path = path;
-		positionPairMap = new HashMap<Position, PostionPair>();
-		generateValidPath();
+	public PathTile(Position position, ValidPath path){
+		this(position, null, null, path);
 	}
 	
-	public PathTile(Position position, String tileType){
-		super(position);
-		this.tileType = tileType;
+	public PathTile(Position position, String tileType, ValidPath path){
+		this(position, tileType, null, path);
 	}	
 	
-	public PathTile(Position position, String tileType, String landOnEffect){
+	public PathTile(Position position, String tileType, String landOnEffect,
+			ValidPath path){
 		super(position);
 		this.tileType = tileType;
 		this.landOnEffect = landOnEffect;
-		
+		this.path = path;
+		positionPairMap = new HashMap<Position, PositionConnection>();
+		generateValidPath();
 	}
 	
-	public Position getNextPosition(CreatureFigure figure){
-		PostionPair pair = positionPairMap.get(figure.getPosition());
-		PositionNext next = pair.getPair(figure.getNavigation());
-		Position returnPos = null;
-		HashMap<Orientation, Position> map;
-		Direction direction = Direction.NA;
-		
-		switch(figure.getNavigation()){
-		case EAST:
-			direction = Direction.WEST;
-			break;
-		case NORTH:
-			direction = Direction.SOUTH;
-			break;
-		case SOUTH:
-			direction = Direction.NORTH;
-			break;
-		case WEST:
-			direction = Direction.EAST;
-			break;
-		default:
-			break;
-		}
-		
-		map = next.getPosMap(direction);
-		
-		switch(figure.getOrientation()){
-		case FORWARD:
-			if((returnPos = map.get(Orientation.FORWARD)) == null){
-				
-			}
-			break;
-		case LEFT:
-			if((returnPos = map.get(Orientation.LEFT)) == null){
-				
-			}
-			break;
-		case RANDOM:
-			break;
-		case RIGHT:
-			if((returnPos = map.get(Orientation.RIGHT)) == null){
-				
-			}
-			break;
-		default:
-			break;
-		}
-		
-		return null;
+	@Override
+	public boolean walkable(){
+		return true;
+	}
+	
+	@Override
+	public boolean buildable(){
+		return false;
+	}
+	
+	public boolean isGoalPosition(Position position){
+		return false;
+	}
+	
+	public boolean isStartPosition(Position position){
+		return false;
+	}
+	
+	public PositionConnection getPosPair(Position position){
+		PositionConnection pair;
+		return (pair = positionPairMap.get(position)) == null ? 
+				positionPairMap.get(getPosition()) : pair;
 	}
 
 	@Override
+	public void update(){}
+	
+	@Override
 	public void render(Graphics2D g2d) {
-		g2d.setColor(Color.BLACK);
-		g2d.fillRect(this.getPosition().getX() - Tile.size/2,
-				this.getPosition().getY() - Tile.size/2,
-				Tile.size,
-				Tile.size);
+		float[] dashingPattern1 = {2f, 2f};
+		Stroke stroke = new BasicStroke(2f, BasicStroke.CAP_BUTT,
+		        BasicStroke.JOIN_MITER, 1.0f, dashingPattern1, 2.0f);
+		 
+		final Graphics2D g = (Graphics2D)g2d.create();
+	    try{
+	    	g.setColor(Color.BLACK);
+			g.fillRect(this.getPosition().getX() - Tile.size/2,
+					this.getPosition().getY() - Tile.size/2,
+					Tile.size,
+					Tile.size);
+			
+			g.setColor(Color.RED);
+			g.setStroke(stroke);
+			if(start1 != null){
+				g.drawLine(start1.getX(), start1.getY(), end1.getX(), end1.getY());
+			}
+			if(start2 != null){
+				g.drawLine(start2.getX(), start2.getY(), end2.getX(), end2.getY());
+			}
+	    }finally{
+	         g.dispose();
+	    }
 	}
 	
-	
-	
 	private void generateValidPath(){
+		start1 = start2 = end1 = end2 = null;
 		switch(path){
 		case EAST_T:
 			generateEastT();
@@ -293,12 +399,47 @@ public class PathTile extends Tile{
 		case CROSSROAD:
 			generateCrossroad();
 			break;
+		case EAST:
+			generateEastSingle();
+			break;
+		case NORTH:
+			generateNorthSingle();
+			break;
+		case SOUTH:
+			generateSouthSingle();
+			break;
+		case WEST:
+			generateWestSingle();
+			break;
+		case L_TURN_HORIZONTAL_NORTH_TO_EAST:
+			generateLTurnEastToHorNorth();
+			break;
+		case L_TURN_HORIZONTAL_SOUTH_TO_WEST:
+			generateLTurnWestToHorSouth();
+			break;
+		case L_TURN_HORIZONTAL_SOUTH_TO_EAST:
+			generateLTurnEastToHorSouth();
+			break;
+		case L_TURN_HORIZONTAL_NORTH_TO_WEST:
+			generateLTurnWestToHorNorth();
+			break;
+		default:
+			break;
 		}
 	}
 	
 	private void generateEastT(){
-		PostionPair tempPair;
+		PositionConnection tempPair;
 		Position tempPos;
+		
+		start1 = new Position(getPosition().getX() + Tile.size / 2,
+				getPosition().getY() + Tile.size / 2);
+		end1 = new Position(getPosition().getX() + Tile.size - 1,
+				getPosition().getY() + Tile.size / 2);
+		start2 = new Position(getPosition().getX() + Tile.size / 2,
+				getPosition().getY());
+		end2 = new Position(getPosition().getX() + Tile.size / 2,
+				getPosition().getY() + Tile.size - 1);
 		
 		for(int i=0; i <= Tile.size; i++){
 			tempPos = new Position(
@@ -310,7 +451,7 @@ public class PathTile extends Tile{
 						getPosition().getX() + i,
 						getPosition().getY()
 							+ Tile.size / 2);
-				tempPair = new PostionPair(
+				tempPair = new PositionConnection(
 						tempPos,
 						Direction.WEST,
 						Direction.EAST);
@@ -318,13 +459,13 @@ public class PathTile extends Tile{
 			}
 			
 			if(i == Tile.size / 2){
-				tempPair = new PostionPair(
+				tempPair = new PositionConnection(
 						tempPos,
 						Direction.NORTH,
 						Direction.WEST,
 						Direction.SOUTH);
 			}else{
-				tempPair = new PostionPair(
+				tempPair = new PositionConnection(
 						tempPos,
 						Direction.NORTH,
 						Direction.SOUTH);
@@ -334,8 +475,17 @@ public class PathTile extends Tile{
 	}
 	
 	private void generateWestT(){
-		PostionPair tempPair;
+		PositionConnection tempPair;
 		Position tempPos;
+		
+		start1 = new Position(getPosition().getX(),
+				getPosition().getY() + Tile.size / 2);
+		end1 = new Position(getPosition().getX() + Tile.size / 2,
+				getPosition().getY() + Tile.size / 2);
+		start2 = new Position(getPosition().getX() + Tile.size / 2,
+				getPosition().getY());
+		end2 = new Position(getPosition().getX() + Tile.size / 2,
+				getPosition().getY() + Tile.size - 1);
 		
 		for(int i=0; i <= Tile.size; i++){
 			if(i > Tile.size / 2){
@@ -343,7 +493,7 @@ public class PathTile extends Tile{
 						getPosition().getX() + i,
 						getPosition().getY()
 							+ Tile.size / 2);
-				tempPair = new PostionPair(
+				tempPair = new PositionConnection(
 						tempPos,
 						Direction.WEST,
 						Direction.EAST);
@@ -355,13 +505,13 @@ public class PathTile extends Tile{
 					getPosition().getY() + i);
 			
 			if(i == Tile.size / 2){
-				tempPair = new PostionPair(
+				tempPair = new PositionConnection(
 						tempPos,
 						Direction.NORTH,
 						Direction.EAST,
 						Direction.SOUTH);
 			}else{
-				tempPair = new PostionPair(
+				tempPair = new PositionConnection(
 						tempPos,
 						Direction.NORTH,
 						Direction.SOUTH);
@@ -372,51 +522,67 @@ public class PathTile extends Tile{
 	}
 	
 	private void generateHorizontal(){
-		PostionPair tempPair;
+		PositionConnection tempPair;
 		Position tempPos;
 		
-		for(int i=0; i <= Tile.size; i++){
+		start1 = new Position(getPosition().getX() - Tile.size / 2,
+				getPosition().getY());
+		end1 = new Position(getPosition().getX() + Tile.size / 2,
+				getPosition().getY());
+		
+		for(int i = -Tile.size / 2; i <= Tile.size / 2; i++){
 			tempPos = new Position(
-					getPosition().getX(),
-					getPosition().getY() + i);
-			tempPair = new PostionPair(
+					getPosition().getX() + i,
+					getPosition().getY());
+			tempPair = new PositionConnection(
 						tempPos,
 						Direction.WEST,
-						Direction.EAST
-						);
-				
+						Direction.EAST);
 			positionPairMap.put(tempPos, tempPair);
 		}
 	}
 	
 	private void generateVertical(){
-		PostionPair tempPair;
+		PositionConnection tempPair;
 		Position tempPos;
 		
-		for(int i=0; i <= Tile.size; i++){
+		start1 = new Position(getPosition().getX(),
+				getPosition().getY() - Tile.size / 2);
+		end1 = new Position(getPosition().getX(),
+				getPosition().getY() + Tile.size / 2 + 1);
+		
+		for(int i = -Tile.size / 2; i <= Tile.size / 2; i++){
 			tempPos = new Position(
 					getPosition().getX(),
 					getPosition().getY() + i);
-			tempPair = new PostionPair(
+			tempPair = new PositionConnection(
 						tempPos,
 						Direction.SOUTH,
-						Direction.NORTH
-						);
+						Direction.NORTH);
 				
 			positionPairMap.put(tempPos, tempPair);
 		}
 	}
 	
 	private void generateHorizontalTSouth(){
-		PostionPair tempPair;
+		PositionConnection tempPair;
 		Position tempPos;
 		
+		start1 = new Position(getPosition().getX(),
+				getPosition().getY() + Tile.size / 2);
+		end1 = new Position(getPosition().getX() + Tile.size - 1,
+				getPosition().getY() + Tile.size / 2);
+		start2 = new Position(getPosition().getX() + Tile.size / 2,
+				getPosition().getY() + Tile.size / 2);
+		end2 = new Position(getPosition().getX() + Tile.size / 2,
+				getPosition().getY() + Tile.size - 1);
+		
 		for(int i=0; i <= Tile.size; i++){
-			if(i > 25){
+			if(i > Tile.size / 2){
 				tempPos = new Position(
-						getPosition().getX() + 25,
+						getPosition().getX() + Tile.size / 2,
 						getPosition().getY() + i);
-				tempPair = new PostionPair(
+				tempPair = new PositionConnection(
 						tempPos,
 						Direction.SOUTH,
 						Direction.NORTH);
@@ -427,14 +593,14 @@ public class PathTile extends Tile{
 					getPosition().getX(),
 					getPosition().getY() + i);
 			
-			if(i == 25){
-				tempPair = new PostionPair(
+			if(i == Tile.size / 2){
+				tempPair = new PositionConnection(
 						tempPos,
 						Direction.WEST,
 						Direction.SOUTH,
 						Direction.EAST);
 			}else{
-				tempPair = new PostionPair(
+				tempPair = new PositionConnection(
 							tempPos,
 							Direction.WEST,
 							Direction.EAST);
@@ -445,15 +611,24 @@ public class PathTile extends Tile{
 	}
 	
 	private void generateHorizontalTNorth(){
-		PostionPair tempPair;
+		PositionConnection tempPair;
 		Position tempPos;
+		
+		start1 = new Position(getPosition().getX(),
+				getPosition().getY() + Tile.size / 2);
+		end1 = new Position(getPosition().getX() + Tile.size - 1,
+				getPosition().getY() + Tile.size / 2);
+		start2 = new Position(getPosition().getX() + Tile.size / 2,
+				getPosition().getY() + Tile.size / 2);
+		end2 = new Position(getPosition().getX() + Tile.size / 2,
+				getPosition().getY());
 		
 		for(int i=0; i <= Tile.size; i++){
 			if(i < Tile.size / 2){
 				tempPos = new Position(
 						getPosition().getX(),
 						getPosition().getY() + i);
-				tempPair = new PostionPair(
+				tempPair = new PositionConnection(
 						tempPos,
 						Direction.SOUTH,
 						Direction.NORTH);
@@ -465,13 +640,13 @@ public class PathTile extends Tile{
 					getPosition().getY() + i);
 			
 			if(i == Tile.size / 2){
-				tempPair = new PostionPair(
+				tempPair = new PositionConnection(
 						tempPos,
 						Direction.WEST,
 						Direction.NORTH,
 						Direction.EAST);
 			}else{
-				tempPair = new PostionPair(
+				tempPair = new PositionConnection(
 							tempPos,
 							Direction.WEST,
 							Direction.EAST);
@@ -482,8 +657,17 @@ public class PathTile extends Tile{
 	}
 	
 	private void generateVerticalTWest(){
-		PostionPair tempPair;
+		PositionConnection tempPair;
 		Position tempPos;
+		
+		start1 = new Position(getPosition().getX() + Tile.size / 2,
+				getPosition().getY());
+		end1 = new Position(getPosition().getX() + Tile.size / 2,
+				getPosition().getY() + Tile.size - 1);
+		start2 = new Position(getPosition().getX() + Tile.size / 2,
+				getPosition().getY() + Tile.size / 2);
+		end2 = new Position(getPosition().getX(),
+				getPosition().getY()  + Tile.size / 2);
 		
 		for(int i=0; i <= Tile.size; i++){
 			if(i < Tile.size / 2){
@@ -491,7 +675,7 @@ public class PathTile extends Tile{
 						getPosition().getX() + i,
 						getPosition().getY()
 							+ Tile.size / 2);
-				tempPair = new PostionPair(
+				tempPair = new PositionConnection(
 						tempPos,
 						Direction.WEST,
 						Direction.EAST);
@@ -502,13 +686,13 @@ public class PathTile extends Tile{
 					getPosition().getX(),
 					getPosition().getY() + i);
 			if(i == Tile.size / 2){
-				tempPair = new PostionPair(
+				tempPair = new PositionConnection(
 						tempPos,
 						Direction.SOUTH,
 						Direction.WEST,
 						Direction.NORTH);
 			}else{
-				tempPair = new PostionPair(
+				tempPair = new PositionConnection(
 							tempPos,
 							Direction.SOUTH,
 							Direction.NORTH);
@@ -519,8 +703,17 @@ public class PathTile extends Tile{
 	}
 	
 	private void generateVerticalTEast(){
-		PostionPair tempPair;
+		PositionConnection tempPair;
 		Position tempPos;
+		
+		start1 = new Position(getPosition().getX() + Tile.size / 2,
+				getPosition().getY());
+		end1 = new Position(getPosition().getX() + Tile.size / 2,
+				getPosition().getY() + Tile.size - 1);
+		start2 = new Position(getPosition().getX() + Tile.size / 2,
+				getPosition().getY() + Tile.size / 2);
+		end2 = new Position(getPosition().getX() + Tile.size - 1,
+				getPosition().getY()  + Tile.size / 2);
 		
 		for(int i=0; i <= Tile.size; i++){
 			if(i > Tile.size / 2){
@@ -528,7 +721,7 @@ public class PathTile extends Tile{
 						getPosition().getX() + i,
 						getPosition().getY()
 							+ Tile.size / 2);
-				tempPair = new PostionPair(
+				tempPair = new PositionConnection(
 						tempPos,
 						Direction.WEST,
 						Direction.EAST);
@@ -539,13 +732,13 @@ public class PathTile extends Tile{
 					getPosition().getX(),
 					getPosition().getY() + i);
 			if(i == Tile.size / 2){
-				tempPair = new PostionPair(
+				tempPair = new PositionConnection(
 						tempPos,
 						Direction.SOUTH,
 						Direction.EAST,
 						Direction.NORTH);
 			}else{
-				tempPair = new PostionPair(
+				tempPair = new PositionConnection(
 							tempPos,
 							Direction.SOUTH,
 							Direction.NORTH);
@@ -556,42 +749,355 @@ public class PathTile extends Tile{
 	}
 	
 	private void generateCrossroad(){
-		PostionPair tempPair;
+		PositionConnection tempPair;
 		Position tempPos;
 		
-		for(int i=0; i <= Tile.size; i++){
+		start1 = new Position(getPosition().getX() - Tile.size / 2 - 1,
+				getPosition().getY());
+		end1 = new Position(getPosition().getX() + Tile.size / 2 + 1,
+				getPosition().getY());
+		start2 = new Position(getPosition().getX(),
+				getPosition().getY() - Tile.size / 2);
+		end2 = new Position(getPosition().getX(),
+				getPosition().getY() + Tile.size / 2);
+		
+		tempPos = new Position(
+				getPosition().getX(),
+				getPosition().getY());
+		tempPair = new PositionConnection(
+				tempPos,
+				Direction.WEST,
+				Direction.EAST,
+				Direction.NORTH,
+				Direction.SOUTH);
+		positionPairMap.put(tempPos, tempPair);
+		
+		for(int i = 1; i <= Tile.size / 2; i++){
+			tempPos = new Position(
+					getPosition().getX() + i,
+					getPosition().getY());
+			tempPair = new PositionConnection(
+					tempPos,
+					Direction.WEST,
+					Direction.EAST);
+			positionPairMap.put(tempPos, tempPair);
 			
-			if(i == Tile.size / 2){
-				tempPos = new Position(
-						getPosition().getX() + i,
-						getPosition().getY() + i);
-				tempPair = new PostionPair(
-						tempPos,
-						Direction.WEST,
-						Direction.EAST,
-						Direction.NORTH,
-						Direction.SOUTH);
-				positionPairMap.put(tempPos, tempPair);
-			}else{
-				tempPos = new Position(
-						getPosition().getX() + i,
-						getPosition().getY());
-				tempPair = new PostionPair(
+			tempPos = new Position(
+					getPosition().getX(),
+					getPosition().getY() + i);
+			tempPair = new PositionConnection(
+					tempPos,
+					Direction.NORTH,
+					Direction.SOUTH);
+			positionPairMap.put(tempPos, tempPair);
+		}
+		
+		for(int i = - Tile.size / 2; i < Tile.size / 2; i++){
+			tempPos = new Position(
+					getPosition().getX() + i,
+					getPosition().getY());
+			tempPair = new PositionConnection(
+					tempPos,
+					Direction.WEST,
+					Direction.EAST);
+			positionPairMap.put(tempPos, tempPair);
+			
+			tempPos = new Position(
+					getPosition().getX(),
+					getPosition().getY() + i);
+			tempPair = new PositionConnection(
+					tempPos,
+					Direction.NORTH,
+					Direction.SOUTH);
+			positionPairMap.put(tempPos, tempPair);
+		}
+	}
+	
+	private void generateEastSingle(){
+		PositionConnection tempPair;
+		Position tempPos;
+		
+		start1 = new Position(getPosition().getX(),
+				getPosition().getY());
+		end1 = new Position(getPosition().getX() + Tile.size / 2 - 1,
+				getPosition().getY());
+		
+		tempPos = new Position(
+				getPosition().getX(),
+				getPosition().getY());
+		tempPair = new PositionConnection(
+				tempPos,
+				Direction.EAST);
+		positionPairMap.put(tempPos, tempPair);
+		
+		for(int i = 1; i <= Tile.size / 2; i++){
+			tempPos = new Position(
+					getPosition().getX() + i,
+					getPosition().getY());
+			tempPair = new PositionConnection(
 						tempPos,
 						Direction.WEST,
 						Direction.EAST);
-				positionPairMap.put(tempPos, tempPair);
-				
-				tempPos = new Position(
-						getPosition().getX(),
-						getPosition().getY() + i);
-				tempPair = new PostionPair(
+			positionPairMap.put(tempPos, tempPair);
+		}
+	}
+	
+	private void generateWestSingle(){
+		PositionConnection tempPair;
+		Position tempPos;
+		
+		start1 = new Position(getPosition().getX() - Tile.size / 2,
+				getPosition().getY());
+		end1 = new Position(getPosition().getX(),
+				getPosition().getY());
+		
+		tempPos = new Position(
+				getPosition().getX(),
+				getPosition().getY());
+		tempPair = new PositionConnection(
+				tempPos,
+				Direction.WEST);
+		positionPairMap.put(tempPos, tempPair);
+		
+		for(int i = 1; i <= Tile.size / 2; i++){
+			tempPos = new Position(
+					getPosition().getX() - i,
+					getPosition().getY());
+			tempPair = new PositionConnection(
+						tempPos,
+						Direction.WEST,
+						Direction.EAST);
+			positionPairMap.put(tempPos, tempPair);
+		}
+	}
+	
+	private void generateNorthSingle(){
+		PositionConnection tempPair;
+		Position tempPos;
+		
+		start1 = new Position(getPosition().getX(),
+				getPosition().getY() - Tile.size / 2);
+		end1 = new Position(getPosition().getX(),
+				getPosition().getY());
+		
+		tempPos = new Position(
+				getPosition().getX(),
+				getPosition().getY());
+		tempPair = new PositionConnection(
+				tempPos,
+				Direction.NORTH);
+		positionPairMap.put(tempPos, tempPair);
+		
+		for(int i = 1; i <= Tile.size / 2; i++){
+			tempPos = new Position(
+					getPosition().getX(),
+					getPosition().getY() - i);
+			tempPair = new PositionConnection(
 						tempPos,
 						Direction.NORTH,
 						Direction.SOUTH);
-				positionPairMap.put(tempPos, tempPair);
-			}
+			positionPairMap.put(tempPos, tempPair);
 		}
 	}
-
+	
+	private void generateSouthSingle(){
+		PositionConnection tempPair;
+		Position tempPos;
+		
+		start1 = new Position(getPosition().getX(),
+				getPosition().getY());
+		end1 = new Position(getPosition().getX(),
+				getPosition().getY() + Tile.size / 2);
+		
+		tempPos = new Position(
+				getPosition().getX(),
+				getPosition().getY());
+		tempPair = new PositionConnection(
+				tempPos,
+				Direction.SOUTH);
+		positionPairMap.put(tempPos, tempPair);
+		
+		for(int i = 1; i <= Tile.size / 2; i++){
+			tempPos = new Position(
+					getPosition().getX(),
+					getPosition().getY() + i);
+			tempPair = new PositionConnection(
+						tempPos,
+						Direction.NORTH,
+						Direction.SOUTH);
+			positionPairMap.put(tempPos, tempPair);
+		}
+	}
+	
+	private void generateLTurnEastToHorNorth(){
+		PositionConnection tempPair;
+		Position tempPos;
+		
+		start1 = new Position(getPosition().getX(),
+				getPosition().getY() - Tile.size / 2);
+		end1 = new Position(getPosition().getX(),
+				getPosition().getY());
+		start2 = new Position(getPosition().getX(),
+				getPosition().getY());
+		end2 = new Position(getPosition().getX() + Tile.size / 2,
+				getPosition().getY());
+		
+		tempPos = new Position(
+				getPosition().getX(),
+				getPosition().getY());
+		tempPair = new PositionConnection(
+				tempPos,
+				Direction.EAST,
+				Direction.NORTH);
+		positionPairMap.put(tempPos, tempPair);
+		
+		for(int i = 0; i <= Tile.size / 2; i++){
+			tempPos = new Position(
+					getPosition().getX() + i + 1,
+					getPosition().getY());
+			tempPair = new PositionConnection(
+						tempPos,
+						Direction.WEST,
+						Direction.EAST);
+			positionPairMap.put(tempPos, tempPair);
+			
+			tempPos = new Position(
+					getPosition().getX(),
+					getPosition().getY() - i - 1);
+			tempPair = new PositionConnection(
+						tempPos,
+						Direction.NORTH,
+						Direction.SOUTH);
+			positionPairMap.put(tempPos, tempPair);
+		}
+	}
+	
+	private void generateLTurnWestToHorNorth(){
+		PositionConnection tempPair;
+		Position tempPos;
+		
+		start1 = new Position(getPosition().getX() + Tile.size / 2,
+				getPosition().getY() + Tile.size / 2);
+		end1 = new Position(getPosition().getX(),
+				getPosition().getY()  + Tile.size / 2);
+		start2 = new Position(getPosition().getX() + Tile.size / 2,
+				getPosition().getY() + Tile.size / 2);
+		end2 = new Position(getPosition().getX() + Tile.size / 2,
+				getPosition().getY());
+		
+		tempPos = new Position(
+				getPosition().getX() + Tile.size / 2,
+				getPosition().getY() + Tile.size / 2);
+		tempPair = new PositionConnection(
+				tempPos,
+				Direction.WEST,
+				Direction.NORTH);
+		positionPairMap.put(tempPos, tempPair);
+		
+		for(int i = 0; i < Tile.size / 2; i++){
+			tempPos = new Position(
+					getPosition().getX() + i,
+					getPosition().getY() + Tile.size / 2);
+			tempPair = new PositionConnection(
+						tempPos,
+						Direction.WEST,
+						Direction.EAST);
+			positionPairMap.put(tempPos, tempPair);
+			
+			tempPos = new Position(
+					getPosition().getX() + Tile.size / 2,
+					getPosition().getY() + i);
+			tempPair = new PositionConnection(
+						tempPos,
+						Direction.NORTH,
+						Direction.SOUTH);
+			positionPairMap.put(tempPos, tempPair);
+		}
+	}
+	
+	private void generateLTurnEastToHorSouth(){
+		PositionConnection tempPair;
+		Position tempPos;
+		
+		start2 = new Position(getPosition().getX() + Tile.size / 2,
+				getPosition().getY() + Tile.size / 2);
+		end2 = new Position(getPosition().getX() + Tile.size - 1,
+				getPosition().getY()  + Tile.size / 2);
+		start1 = new Position(getPosition().getX() + Tile.size / 2,
+				getPosition().getY() + Tile.size / 2);
+		end1 = new Position(getPosition().getX() + Tile.size / 2,
+				getPosition().getY()  + Tile.size - 1);
+		
+		tempPos = new Position(
+				getPosition().getX() + Tile.size / 2,
+				getPosition().getY() + Tile.size / 2);
+		tempPair = new PositionConnection(
+				tempPos,
+				Direction.EAST,
+				Direction.SOUTH);
+		positionPairMap.put(tempPos, tempPair);
+		
+		for(int i = Tile.size / 2 + 1; i <= Tile.size; i++){
+			tempPos = new Position(
+					getPosition().getX() + i,
+					getPosition().getY() + Tile.size / 2);
+			tempPair = new PositionConnection(
+						tempPos,
+						Direction.WEST,
+						Direction.EAST);
+			positionPairMap.put(tempPos, tempPair);
+			
+			tempPos = new Position(
+					getPosition().getX() + Tile.size / 2,
+					getPosition().getY() + i);
+			tempPair = new PositionConnection(
+						tempPos,
+						Direction.NORTH,
+						Direction.SOUTH);
+			positionPairMap.put(tempPos, tempPair);
+		}
+	}
+	
+	private void generateLTurnWestToHorSouth(){
+		PositionConnection tempPair;
+		Position tempPos;
+		
+		start1 = new Position(getPosition().getX() - Tile.size / 2,
+				getPosition().getY());
+		end1 = new Position(getPosition().getX(),
+				getPosition().getY());
+		start2 = new Position(getPosition().getX(),
+				getPosition().getY());
+		end2 = new Position(getPosition().getX(),
+				getPosition().getY()  + Tile.size / 2);
+		
+		tempPos = new Position(
+				getPosition().getX(),
+				getPosition().getY());
+		tempPair = new PositionConnection(
+				tempPos,
+				Direction.WEST,
+				Direction.SOUTH);
+		positionPairMap.put(tempPos, tempPair);
+		
+		for(int i = 1; i <= Tile.size / 2; i++){
+			tempPos = new Position(
+					getPosition().getX() - i,
+					getPosition().getY());
+			tempPair = new PositionConnection(
+						tempPos,
+						Direction.WEST,
+						Direction.EAST);
+			positionPairMap.put(tempPos, tempPair);
+			
+			tempPos = new Position(
+					getPosition().getX(),
+					getPosition().getY() + i);
+			tempPair = new PositionConnection(
+						tempPos,
+						Direction.NORTH,
+						Direction.SOUTH);
+			positionPairMap.put(tempPos, tempPair);
+		}
+	}
 }

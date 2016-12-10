@@ -2,33 +2,36 @@ package start;
 
 public class Position{
 
-	private int x;
-	private int y;
+	private final int x, y, delta;
 	
 	public Position(int x, int y){
-		setX(x);
-		setY(y);
+		this(x, y, 1);
 	}
 	
 	public Position(Position position){
-		setX(position.getX());
-		setY(position.getY());
+		this(position.getX(), position.getY(), 1);
 	}
-
+	
+	public Position(Position position, int delta){
+		this(position.getX(), position.getY(), delta);
+	}
+	
+	public Position(int x, int y, int delta){
+		this.x = x;
+		this.y = y;
+		this.delta = delta;
+	}
+	
 	public int getX(){
 		return x;
-	}
-
-	private void setX(int x){
-		this.x = x;
 	}
 
 	public int getY(){
 		return y;
 	}
-
-	private void setY(int y){
-		this.y = y;
+	
+	public int getDelta(){
+		return delta;
 	}
 
 	@Override
@@ -36,12 +39,14 @@ public class Position{
 		final int prime = 92821;
 		int result = 1;
 		result = prime * result + x;
-		result = prime * result + y;
+		result += prime * result + y;
+		if(delta > 1)
+			System.out.println(result);
 		return result;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(Object obj){
 		if(this == obj){
 			return true;
 		}
@@ -59,5 +64,18 @@ public class Position{
 			return false;
 		}
 		return true;
+	}
+	
+	@Override
+	public String toString(){
+		return "x: " + x + "; y: " + y + "; " +
+				super.toString();
+	}
+	
+	public AreaPosition toArea(){
+		int newX, newY;
+		newX = (x / delta) * delta;
+		newY = (y / delta) * delta;
+		return new AreaPosition(newX, newY, delta, delta);
 	}
 }

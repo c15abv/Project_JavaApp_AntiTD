@@ -10,7 +10,7 @@ import tiles.Tile;
 
 public class GameLevel{
 
-	private HashMap<Position, Tile> levelMap;
+	private HashMap<AreaPosition, Tile> levelMap;
 
 	private ArrayList<String> rules;
 	private ArrayList<String> landOnFiles;
@@ -20,7 +20,7 @@ public class GameLevel{
 	private int defenderCredit;
 	private int timeToFinish;
 	
-	public GameLevel(int attackingPlayerScoreGoal, ArrayList<String> rules, ArrayList<String> landOnFiles, HashMap<Position, Tile> levelMap){
+	public GameLevel(int attackingPlayerScoreGoal, ArrayList<String> rules, ArrayList<String> landOnFiles, HashMap<AreaPosition, Tile> levelMap){
 		this.attackingPlayerScoreGoal = attackingPlayerScoreGoal;
 		this.rules = rules;
 		this.landOnFiles = landOnFiles;
@@ -34,12 +34,18 @@ public class GameLevel{
 		defenderCredit = 100;
 		timeToFinish = 120;
 	}
+	
+	public void update(){
+		for(Map.Entry<AreaPosition, Tile> entry : levelMap.entrySet()){
+			entry.getValue().update();
+		}
+	}
+	
 	public void render(Graphics2D g2d){
-		for (Map.Entry<Position, Tile> entry : levelMap.entrySet()) {
+		for (Map.Entry<AreaPosition, Tile> entry : levelMap.entrySet()){
 		    Position key = entry.getKey();
 		    Tile  value = entry.getValue();
 		    value.render(g2d);
-		    
 		}
 	}
 	
@@ -61,11 +67,11 @@ public class GameLevel{
 	public void setTimeToFinish(int timeToFinish) {
 		this.timeToFinish = timeToFinish;
 	}
-	public HashMap<Position, Tile> getLevelMap() {
+	public HashMap<AreaPosition, Tile> getLevelMap() {
 		return levelMap;
 	}
 
-	public void setLevelMap(HashMap<Position, Tile> levelMap) {
+	public void setLevelMap(HashMap<AreaPosition, Tile> levelMap) {
 		this.levelMap = levelMap;
 	}
 	

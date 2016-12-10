@@ -11,14 +11,25 @@ public class VoidTile extends Tile{
 		super(position);
 	}
 	
-
+	@Override
+	public void update(){}
+	
 	@Override
 	public void render(Graphics2D g2d) {
-		g2d.setColor(Color.GREEN);
+		g2d.setColor(Color.BLACK);
 		g2d.fillRect(this.getPosition().getX() - Tile.size/2,
 				this.getPosition().getY() - Tile.size/2,
 				Tile.size,
 				Tile.size);
 	}
+	
+	@Override
+	public boolean walkable(){
+		return false;
+	}
 
+	@Override
+	public boolean buildable(){
+		return true;
+	}
 }

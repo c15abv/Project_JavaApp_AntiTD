@@ -1,5 +1,11 @@
 package utilities;
 
+/**
+ * Lock.
+ * 
+ * @author Alexander Beliaev
+ * @version 1.0
+ */
 public class Lock{
 
 	private boolean isLocked = false;

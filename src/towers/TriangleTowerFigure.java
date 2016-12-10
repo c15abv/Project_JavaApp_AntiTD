@@ -10,6 +10,12 @@ import start.Figures;
 import start.Position;
 import utilities.CustomShapes;
 
+/**
+ * TriangleTowerFigure.
+ * 
+ * @author Alexander Beliaev
+ * @version 1.0
+ */
 public class TriangleTowerFigure extends TowerFigure{
 
 	public static final Figures SHAPE = Figures.TRIANGLE;
@@ -27,7 +33,7 @@ public class TriangleTowerFigure extends TowerFigure{
 	@Override
 	public void render(Graphics2D g2d){
 		g2d.setColor(this.getColor());
-		g2d.fill(CustomShapes.createTriangle(this.getPosition(),
+		g2d.draw(CustomShapes.createTriangle(this.getPosition(),
 				TowerFigure.TEMP_SIZE));
 		
 		for(Map.Entry<ProjectileFigure, CreatureFigure> entry : 

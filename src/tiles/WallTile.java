@@ -17,6 +17,9 @@ public class WallTile extends Tile{
 		super(position);
 		this.tileType = tileType;
 	}	
+	
+	@Override
+	public void update(){}
 
 	@Override
 	public void render(Graphics2D g2d) {
@@ -26,5 +29,14 @@ public class WallTile extends Tile{
 				Tile.size,
 				Tile.size);
 	}
+	
+	@Override
+	public boolean walkable(){
+		return false;
+	}
 
+	@Override
+	public boolean buildable(){
+		return false;
+	}
 }
