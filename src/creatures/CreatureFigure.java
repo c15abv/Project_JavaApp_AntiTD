@@ -8,6 +8,7 @@ import java.util.HashMap;
 import start.Figures;
 import start.GameLevel;
 import start.Position;
+import tiles.PathTile;
 import utilities.ActionTimer;
 import utilities.ColorCreator;
 import utilities.Lock;
@@ -16,7 +17,7 @@ import utilities.TimerListener;
 public abstract class CreatureFigure implements TimerListener{
 	
 	public enum Orientation{
-		RIGHT, LEFT, RANDOM;
+		RIGHT, LEFT, RANDOM, FORWARD;
 	}
 	
 	public enum Direction{
@@ -28,8 +29,9 @@ public abstract class CreatureFigure implements TimerListener{
 
 	private Color creatureColor;
 	private Orientation orientation;
-	private GameLevel level;
+	private PathTile.Direction navigation;
 	private Direction direction;
+	private GameLevel level;
 	private int hue;
 	private double scale;
 	private Position position;
@@ -227,6 +229,7 @@ public abstract class CreatureFigure implements TimerListener{
 		
 		hitPoints = startHitPoints = (int)(BASE_HITPOINTS * scale);
 		direction = Direction.FORWARD;
+		navigation = PathTile.Direction.NA;
 	}
 	
 	public int getHue(){
@@ -267,6 +270,14 @@ public abstract class CreatureFigure implements TimerListener{
 	
 	public boolean hasReachedGoal(){
 		return hasReachedGoal;
+	}
+	
+	public PathTile.Direction getNavigation(){
+		return navigation;
+	}
+	
+	public void setNavigation(PathTile.Direction navigation){
+		this.navigation = navigation;
 	}
 	
 }

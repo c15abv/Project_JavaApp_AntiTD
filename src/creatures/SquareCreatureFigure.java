@@ -14,8 +14,16 @@ public class SquareCreatureFigure extends CreatureFigure {
 			Orientation orientation, GameLevel level){
 		super(hue, scale, position, orientation, level);
 	}
+	
+	public void render(Graphics2D g2d) {
+		g2d.setColor(this.getColor());
+		g2d.fillRect((int)(this.getPosition().getX()),
+				(int)(this.getPosition().getY()),
+				(int)(this.getScale() * CreatureFigure.BASE_SIZE),
+				(int)(this.getScale() * CreatureFigure.BASE_SIZE));
+	}
 
-	@Override
+	/*@Override
 	public void render(Graphics2D g2d) {
 		g2d.setColor(this.getColor());
 		g2d.fillRect((int)(this.getPosition().getX() -
@@ -24,7 +32,7 @@ public class SquareCreatureFigure extends CreatureFigure {
 						(this.getScale() * CreatureFigure.BASE_SIZE / 2)),
 				(int)(this.getScale() * CreatureFigure.BASE_SIZE),
 				(int)(this.getScale() * CreatureFigure.BASE_SIZE));
-	}
+	}*/
 
 	@Override
 	public Figures getShape() {
