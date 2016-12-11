@@ -1,82 +1,109 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!-- <xs:enumeration value="HORIZONTAL_SOUTH" />
+<xs:enumeration value="HORIZONTAL_NORTH" />
+			<xs:enumeration value="HORIZONTAL" />
+			<xs:enumeration value="VERTICAL"/>			
+			<xs:enumeration value="VERTICAL_T_EAST" />
+			<xs:enumeration value="VERTICAL_T_WEST" />
+			<xs:enumeration value="WEST_T" />
+			<xs:enumeration value="EAST_T" />
+			<xs:enumeration value="CROSSROAD" />
+			-->
 <levels>
-	<level name="testLevel">
+	<level name="testLevel 1">
 		<row Index="1">
 			<!-- <cell landOn = "haste">W</cell> -->
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>G</cell>
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>W</cell>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile direction="SOUTH">G</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
 		</row>
 		<row Index="2">
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell landOn="teleport">P</cell>
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>W</cell>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
 		</row>
 		<row Index="3">
-			<cell>T</cell>
-			<cell>P</cell>
-			<cell>P</cell>
-			<cell>P</cell>
-			<cell>P</cell>
-			<cell>T</cell>
-			<cell>W</cell>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile landOn="teleport" direction="VERTICAL">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="HORIZONTAL_T_NORTH">P</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
 		</row>
 		<row Index="4">
-			<cell>T</cell>
-			<cell>P</cell>
-			<cell>T</cell>
-			<cell>T</cell>
-			<cell>P</cell>
-			<cell>T</cell>
-			<cell>W</cell>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
 		</row>
 		<row Index="5">
-			<cell>T</cell>
-			<cell>P</cell>
-			<cell>T</cell>
-			<cell>T</cell>
-			<cell>P</cell>
-			<cell>T</cell>
-			<cell>W</cell>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
 		</row>
 		<row Index="6">
-			<cell>W</cell>
-			<cell>P</cell>
-			<cell>P</cell>
-			<cell>P</cell>
-			<cell>P</cell>
-			<cell>T</cell>
-			<cell>W</cell>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
 		</row>
 		<row Index="7">
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>S</cell>
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>W</cell>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile direction="HORIZONTAL_T_SOUTH">P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="8">
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile direction="NORTH">S</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
 		</row>
 		<rules>
 			<attackerCredit>101</attackerCredit>
 			<defenderCredit>101</defenderCredit>
 			<timeToFinish>11</timeToFinish>
-			<nrOfTemplates>7</nrOfTemplates>			
-			<attackingPlayerScoreGoal>0</attackingPlayerScoreGoal>
+			<nrOfTemplates>7</nrOfTemplates>
+			<attackingPlayerScoreGoal>8</attackingPlayerScoreGoal>
 		</rules>
 		<!-- vet inte hur jag man ska identifiera klasserna.. Om dom ska ha ett 
 			eget element och sen en text med filens namn. Eller om det direkt bara ska 
 			vara namnet i textform... -->
 		<landOnClassFiles>
-			<landOn>haste</landOn>
 			<landOn>teleport</landOn>
 		</landOnClassFiles>
 
@@ -85,91 +112,92 @@
 	<!-- Är för tillfället bara en kopia av testlevel 1 -->
 	<level name="testLevel 2">
 		<row Index="1">
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>G</cell>
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>W</cell>
+			<!-- <cell landOn = "haste">W</cell> -->
+			<tile>W</tile>
+			<tile landOn="haste">W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>S</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
 		</row>
 		<row Index="2">
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>T</cell>
-			<cell>P</cell>
-			<cell>T</cell>
-			<cell>W</cell>
-			<cell>W</cell>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
 		</row>
 		<row Index="3">
-			<cell>W</cell>
-			<cell>T</cell>
-			<cell>P</cell>
-			<cell>P</cell>
-			<cell>P</cell>
-			<cell>P</cell>
-			<cell>T</cell>
-			<cell>W</cell>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>P</tile>
+			<tile>P</tile>
+			<tile>P</tile>
+			<tile>P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
 		</row>
 		<row Index="4">
-			<cell>W</cell>
-			<cell>T</cell>
-			<cell>P</cell>
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>P</cell>
-			<cell>T</cell>
-			<cell>W</cell>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
 		</row>
 		<row Index="5">
-			<cell>W</cell>
-			<cell>T</cell>
-			<cell>P</cell>
-			<cell>T</cell>
-			<cell>T</cell>
-			<cell>P</cell>
-			<cell>T</cell>
-			<cell>W</cell>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
 		</row>
 		<row Index="6">
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>P</cell>
-			<cell>P</cell>
-			<cell>P</cell>
-			<cell>P</cell>
-			<cell>T</cell>
-			<cell>W</cell>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>P</tile>
+			<tile>P</tile>
+			<tile>P</tile>
+			<tile>P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
 		</row>
 		<row Index="7">
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>P</cell>
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>W</cell>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
 		</row>
 		<row Index="8">
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>S</cell>
-			<cell>W</cell>
-			<cell>W</cell>
-			<cell>W</cell>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>G</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
 		</row>
 		<rules>
 			<attackerCredit>100</attackerCredit>
 			<defenderCredit>100</defenderCredit>
 			<timeToFinish>10</timeToFinish>
 			<nrOfTemplates>5</nrOfTemplates>
-			<attackingPlayerScoreGoal>0</attackingPlayerScoreGoal>
+			<attackingPlayerScoreGoal>8</attackingPlayerScoreGoal>
 		</rules>
 		<!-- vet inte hur jag man ska identifiera klasserna.. Om dom ska ha ett 
 			eget element och sen en text med filens namn. Eller om det direkt bara ska 
@@ -177,6 +205,104 @@
 		<landOnClassFiles>
 			<landOn>haste</landOn>
 			<landOn>cripple</landOn>
+		</landOnClassFiles>
+	</level>
+	
+	<!-- Är för tillfället bara en kopia av testlevel 1 -->
+	<level name="testLevel 3">
+		<row Index="1">
+			<!-- <cell landOn = "haste">W</cell> -->
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile direction="SOUTH">G</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="2">
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="3">
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile landOn="teleport" direction="VERTICAL">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="HORIZONTAL_T_NORTH">P</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="4">
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="5">
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="6">
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="7">
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile direction="HORIZONTAL_T_SOUTH">P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="8">
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile direction="NORTH">S</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+		</row>
+		<rules>
+			<attackerCredit>101</attackerCredit>
+			<defenderCredit>101</defenderCredit>
+			<timeToFinish>11</timeToFinish>
+			<nrOfTemplates>7</nrOfTemplates>
+			<attackingPlayerScoreGoal>8</attackingPlayerScoreGoal>
+		</rules>
+		<!-- vet inte hur jag man ska identifiera klasserna.. Om dom ska ha ett 
+			eget element och sen en text med filens namn. Eller om det direkt bara ska 
+			vara namnet i textform... -->
+		<landOnClassFiles>
+			<landOn>teleport</landOn>
 		</landOnClassFiles>
 
 	</level>
