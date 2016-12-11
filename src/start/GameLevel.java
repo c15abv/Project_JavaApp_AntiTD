@@ -20,7 +20,8 @@ public class GameLevel{
 	private int defenderCredit;
 	private int timeToFinish;
 	
-	public GameLevel(int attackingPlayerScoreGoal, ArrayList<String> rules, ArrayList<String> landOnFiles, HashMap<AreaPosition, Tile> levelMap){
+	public GameLevel(int attackingPlayerScoreGoal, ArrayList<String> rules,
+			 ArrayList<String> landOnFiles, HashMap<AreaPosition, Tile> levelMap){
 		this.attackingPlayerScoreGoal = attackingPlayerScoreGoal;
 		this.rules = rules;
 		this.landOnFiles = landOnFiles;
@@ -109,13 +110,6 @@ public class GameLevel{
 	
 	public boolean positionHasLandOnEffect(Position position){
 		return true;
-	}
-	
-	public void enableTileEffect(CreatureFigure creature){
-		//if tile has effect
-		//get tile with creature position from levelMap
-		//if previous position was not on the same tile
-		//cast effect on creature
 	}
 	
 	public boolean isGoalTile(Position position){
