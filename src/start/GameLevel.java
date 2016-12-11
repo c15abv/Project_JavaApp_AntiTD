@@ -53,21 +53,27 @@ public class GameLevel{
 	public int getAttackerCredit() {
 		return attackerCredit;
 	}
+	
 	public void setAttackerCredit(int attackerCredit) {
 		this.attackerCredit = attackerCredit;
 	}
+	
 	public int getDefenderCredit() {
 		return defenderCredit;
 	}
+	
 	public void setDefenderCredit(int defenderCredit) {
 		this.defenderCredit = defenderCredit;
 	}
+	
 	public int getTimeToFinish() {
 		return timeToFinish;
 	}
+	
 	public void setTimeToFinish(int timeToFinish) {
 		this.timeToFinish = timeToFinish;
 	}
+	
 	public HashMap<AreaPosition, Tile> getLevelMap() {
 		return levelMap;
 	}
@@ -94,30 +100,6 @@ public class GameLevel{
 
 	public void setAttackingPlayerScoreGoal(int attackingPlayerScoreGoal) {
 		this.attackingPlayerScoreGoal = attackingPlayerScoreGoal;
-	}
-
-
-	public Position getNextPosition(Position position, int steps, 
-			CreatureFigure.Orientation orientation){
-		
-		return new Position(1,0);
-	}
-	
-	public Position getPreviousPosition(Position position, int steps,
-			CreatureFigure.Orientation orientation){
-		return new Position(0,0);
-	}
-	
-	public boolean positionHasLandOnEffect(Position position){
-		return true;
-	}
-	
-	public boolean isGoalTile(Position position){
-		return false;
-	}
-	
-	public boolean isStartTile(Position position){
-		return false;
 	}
 	
 	public int getAttackingPlayerScoreGoal() {
