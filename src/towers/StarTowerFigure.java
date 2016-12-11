@@ -1,7 +1,10 @@
 package towers;
 
 import java.awt.Graphics2D;
+import java.util.Map;
 
+import creatures.CreatureFigure;
+import projectiles.ProjectileFigure;
 import projectiles.StarProjectileFigure;
 import start.Figures;
 import start.Position;
@@ -32,6 +35,11 @@ public class StarTowerFigure extends TowerFigure{
 		g2d.setColor(this.getColor());
 		g2d.draw(CustomShapes.createStar(this.getPosition(),
 				TowerFigure.TEMP_SIZE));
+		
+		for(Map.Entry<ProjectileFigure, CreatureFigure> entry : 
+				projectiles.entrySet()){
+			entry.getKey().render(g2d);
+		}
 	}
 
 	@Override

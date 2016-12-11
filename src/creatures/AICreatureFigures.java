@@ -9,10 +9,9 @@ import start.AreaPosition;
 import start.AttackingPlayer;
 import start.GameLevel;
 import start.Position;
+import tiles.ConnectedPositions;
 import tiles.PathTile;
-import tiles.PathTile.ConnectedPositions;
 import tiles.PathTile.Direction;
-import tiles.PathTile.PositionNext;
 import tiles.PathTile.PositionConnection;
 import tiles.Tile;
 
@@ -43,33 +42,16 @@ public class AICreatureFigures{
 				connected = pair.getConnectedPositions();
 				if(!setNewPos(connected, figure)){
 					figure.remove();
+				}else if(((PathTile)tile).isGoalPosition(figure.getPosition())){
+					figure.setHasReachedGoal(true);
+					figure.setFinished(true);
+				}else if(((PathTile)tile).hasEffect()){
+					((PathTile)tile).landOn(figure);
 				}
 			}else{
 				figure.remove();
 			}
 		}
-		
-		/*for(CreatureFigure figure : horde){
-			figPos = new Position(figure.getPosition().getX()
-					+ Tile.size / 2, figure.getPosition().getY()
-					+ Tile.size / 2, Tile.size);
-			if((tile = map.get(figPos.toArea())) != null &&
-					tile.walkable()){
-				pair = ((PathTile)tile).getPosPair(figure.getPosition());
-				if(!setNewPos(pair, figure)){
-					figure.remove();
-				}
-			}else if(tile != null && !tile.walkable()){
-				figure.setNavigation(figure.getNavigationFrom());
-				pair = ((PathTile)tile).getPosPair(figure.getPosition());
-				if(!setNewPos(pair, figure)){
-					figure.remove();
-				}
-			}else{
-				System.out.println(tile);
-				figure.remove();
-			}
-		}*/
 	}
 	
 	private boolean setNewPos(ConnectedPositions connected, CreatureFigure figure){
@@ -78,6 +60,26 @@ public class AICreatureFigures{
 		Orientation orient = figure.getOrientation();
 		int randomInt = 0;
 		Direction translatedDir = null;
+		PathMemory memory = figure.getMemory();
+		
+		if(connected.changesDirection(figure.getNavigationFrom())){
+			memory.addPosition(figure.getPosition(), connected,
+					figure.getNavigationFrom());
+		}
+		
+		memory.removeDirection(figure.getPosition(), figure.getNavigationFrom());
+		
+		if(memory.positionExplored(figure.getPosition())){
+			translatedDir = memory.getBackTrackDirection();
+			if(translatedDir == null){
+				return false;
+			}
+			System.out.println("back");
+			figure.setNavigation(translatedDir);
+			newPos = posMap.get(translatedDir);
+			figure.setPosition(newPos);
+			return true;
+		}
 		
 		if(orient == Orientation.RANDOM){
 			orient = (randomInt = new Random().nextInt(3)) == 0 ? 
@@ -85,16 +87,28 @@ public class AICreatureFigures{
 							Orientation.LEFT : Orientation.RIGHT;
 		}
 		
-		translatedDir = getTranslatedDirection(figure.getNavigation(),
-				orient);
-		
-		if((newPos = posMap.get(translatedDir)) != null){
-			figure.setNavigation(translatedDir);
-			figure.setPosition(newPos);
-			return true;
-		}
-		
-		for(int i = 0; newPos == null && i < 3; i++){
+		for(int i = 0; i < 3; i++){
+			translatedDir = getTranslatedDirection(figure.getNavigation(),
+					orient);
+			newPos = posMap.get(translatedDir);
+			
+			if(newPos != null){
+				if(connected.changesDirection(figure.getNavigationFrom()) &&
+						memory.isValidDirection(figure.getPosition(), translatedDir)){
+					figure.setNavigation(translatedDir);
+					memory.rememberBackTrackDirection(figure.getNavigationFrom());
+					memory.removeDirection(figure.getPosition(),
+							figure.getNavigation());
+					figure.setPosition(newPos);
+					return true;
+				}else if(translatedDir == figure.getNavigation() &&
+						connected.getNumberOfConnections() <= 2){
+					figure.setNavigation(translatedDir);
+					figure.setPosition(newPos);
+					return true;
+				}
+			}
+			
 			switch(orient){
 			case FORWARD:
 				orient = Orientation.LEFT;
@@ -108,20 +122,14 @@ public class AICreatureFigures{
 			default:
 				break;
 			}
-			
-			translatedDir = getTranslatedDirection(figure.getNavigation(),
-					orient);
-			newPos = posMap.get(translatedDir);
 		}
 		
-		
-		if(newPos != null){
+		translatedDir = memory.getBackTrackDirection();
+		if(translatedDir != null){
+			newPos = posMap.get(translatedDir);
 			figure.setNavigation(translatedDir);
 			figure.setPosition(newPos);
-			return true;
-		}else if((newPos = posMap.get(opposite(figure.getNavigation()))) != null){
-			figure.setNavigation(opposite(figure.getNavigation()));
-			figure.setPosition(newPos);
+			System.out.println("back");
 			return true;
 		}
 		
@@ -176,122 +184,6 @@ public class AICreatureFigures{
 			}
 		default:
 			return null;
-		}
-	}
-	
-	/*private boolean setNewPos(PositionConnection pair, CreatureFigure figure){
-		Position nextPosition = null;
-		
-		if((nextPosition = getNewPos(pair, figure)) != null){
-			figure.setPosition(nextPosition);
-			return true;
-		}else{
-			return false;
-		}
-	}*/
-	
-	/*private Position getNewPos(PositionConnection pair, CreatureFigure figure){
-		Direction direction = figure.getNavigationFrom();
-		PositionNext next;
-		Position returnPos;
-		HashMap<Orientation, Position> map;
-		Orientation orient;
-		int randomInt;
-		
-		if(direction == Direction.NA){
-			direction = opposite(figure.getNavigation());
-		}
-		
-		if((next = pair.getConnection(direction)) == null){
-			direction = figure.getNavigation();
-		}
-		
-		for(int i=0; (next = pair.getConnection(direction)) == null && i < 4; i++){
-			switch(direction){
-			case EAST:
-				direction = Direction.NORTH;
-				break;
-			case NORTH:
-				direction = Direction.WEST;
-				break;
-			case SOUTH:
-				direction = Direction.EAST;
-				break;
-			case WEST:
-				direction = Direction.SOUTH;
-				break;
-			default:
-				direction = Direction.EAST;
-				i--;
-			}
-		}
-		
-		if(next == null){
-			return null;
-		}
-	
-		returnPos = null;
-		orient = figure.getOrientation();
-		map = next.getPosMap(direction);
-		
-		if(map == null){
-			System.out.println("null");
-		}
-		
-		if(orient == Orientation.RANDOM){
-			orient = (randomInt = new Random().nextInt(3)) == 0 ? 
-					Orientation.FORWARD : randomInt == 1 ?
-							Orientation.LEFT : Orientation.RIGHT;
-		}
-		
-		switch(orient){
-		case FORWARD:
-			if((returnPos = map.get(Orientation.FORWARD)) != null ||
-					(returnPos = map.get(Orientation.RIGHT)) != null ||
-					(returnPos = map.get(Orientation.LEFT)) != null){
-				return returnPos;
-			}
-			break;
-		case LEFT:
-			if((returnPos = map.get(Orientation.LEFT)) != null ||
-					(returnPos = map.get(Orientation.FORWARD)) != null ||
-					(returnPos = map.get(Orientation.RIGHT)) != null){
-				return returnPos;
-			}
-			break;
-		case RIGHT:
-			if((returnPos = map.get(Orientation.RIGHT)) != null ||
-					(returnPos = map.get(Orientation.FORWARD)) != null ||
-					(returnPos = map.get(Orientation.LEFT)) != null){
-				return returnPos;
-			}
-			break;
-		default:
-			return null;
-		}
-		
-		//backward
-		if(returnPos == null){
-			returnPos = next.getPos(figure.getNavigation(),
-					Orientation.FORWARD);
-		}
-		
-		return returnPos;
-	}*/
-	
-	private Direction opposite(Direction direction){
-		switch(direction){
-		case EAST:
-			return Direction.WEST;
-		case NORTH:
-			return Direction.SOUTH;
-		case SOUTH:
-			return Direction.NORTH;
-		case WEST:
-			return Direction.EAST;
-		case NA:
-		default:
-			return Direction.NA;
 		}
 	}
 }

@@ -37,8 +37,10 @@ public class AITowerFigures{
 		//keep this feature?
 		for(TowerFigure tower : currentDefence){
 			if(!tower.isOnCooldown() && (!tower.hasTarget() || 
-					!tower.getTarget().isAlive() ||
-					!targetWithinRange(tower, tower.getTarget()))){
+					(tower.hasTarget() && 
+					(!tower.getTarget().isAlive() ||
+					tower.getTarget().hasReachedGoal() ||
+					!targetWithinRange(tower, tower.getTarget()))))){
 				findTarget(tower);
 			}
 			

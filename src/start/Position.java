@@ -40,8 +40,6 @@ public class Position{
 		int result = 1;
 		result = prime * result + x;
 		result += prime * result + y;
-		if(delta > 1)
-			System.out.println(result);
 		return result;
 	}
 
