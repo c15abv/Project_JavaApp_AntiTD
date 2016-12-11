@@ -6,6 +6,12 @@ import creatures.CreatureFigure;
 import start.Figures;
 import start.Position;
 
+/**
+ * SquareProjectileFigure.
+ * 
+ * @author Alexander Beliaev
+ * @version 1.0
+ */
 public class SquareProjectileFigure extends ProjectileFigure{
 
 	public static final Figures shape = Figures.SQUARE;
@@ -31,7 +37,7 @@ public class SquareProjectileFigure extends ProjectileFigure{
 	@Override
 	public void render(Graphics2D g2d){
 		g2d.setColor(this.getColor());
-		g2d.fillRect(this.getPosition().getX() - ProjectileFigure.TEMP_SIZE/2,
+		g2d.drawRect(this.getPosition().getX() - ProjectileFigure.TEMP_SIZE/2,
 				this.getPosition().getY() - ProjectileFigure.TEMP_SIZE/2,
 				ProjectileFigure.TEMP_SIZE,
 				ProjectileFigure.TEMP_SIZE);

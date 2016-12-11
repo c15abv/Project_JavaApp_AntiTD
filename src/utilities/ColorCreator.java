@@ -2,6 +2,12 @@ package utilities;
 
 import java.awt.Color;
 
+/**
+ * ColorCreator.
+ * 
+ * @author Alexander Beliaev
+ * @version 1.0
+ */
 public class ColorCreator{
 	
 	public static final double VALUE = 0.5;

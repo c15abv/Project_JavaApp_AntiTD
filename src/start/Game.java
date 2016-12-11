@@ -73,6 +73,7 @@ public class Game extends Canvas implements TimerListener{
 	}
 	
 	public void update(){
+		level.update();
 		if(gameState == GameState.RUNNING){
 			defender.update();
 			attacker.update();
@@ -84,7 +85,6 @@ public class Game extends Canvas implements TimerListener{
 	}
 	
 	public void render(){
-		
 		buffer = this.getBufferStrategy();
 		if(buffer == null){
 			this.createBufferStrategy(2);

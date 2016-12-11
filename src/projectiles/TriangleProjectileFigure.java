@@ -7,6 +7,12 @@ import start.Figures;
 import start.Position;
 import utilities.CustomShapes;
 
+/**
+ * TriangleProjectileFigure.
+ * 
+ * @author Alexander Beliaev
+ * @version 1.0
+ */
 public class TriangleProjectileFigure extends ProjectileFigure{
 	
 	public static final Figures shape = Figures.TRIANGLE;
@@ -32,7 +38,7 @@ public class TriangleProjectileFigure extends ProjectileFigure{
 	@Override
 	public void render(Graphics2D g2d){
 		g2d.setColor(this.getColor());
-		g2d.fill(CustomShapes.createTriangle(this.getPosition(),
+		g2d.draw(CustomShapes.createTriangle(this.getPosition(),
 				ProjectileFigure.TEMP_SIZE));
 	}
 

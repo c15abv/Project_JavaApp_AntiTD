@@ -9,6 +9,7 @@ import start.Figures;
 import start.GameLevel;
 import start.Position;
 import tiles.PathTile;
+import tiles.PathTile.Direction;
 import utilities.ActionTimer;
 import utilities.ColorCreator;
 import utilities.Lock;
@@ -20,17 +21,14 @@ public abstract class CreatureFigure implements TimerListener{
 		RIGHT, LEFT, RANDOM, FORWARD;
 	}
 	
-	public enum Direction{
-		FORWARD, BACKWARD, RANDOM;
-	}
-	
 	public static final int BASE_HITPOINTS = 100;
 	public static final int BASE_SIZE = 30;
 
 	private Color creatureColor;
 	private Orientation orientation;
 	private PathTile.Direction navigation;
-	private Direction direction;
+	private PathTile.Direction navigationFrom;
+	private PathMemory memory;
 	private GameLevel level;
 	private int hue;
 	private double scale;
@@ -66,6 +64,7 @@ public abstract class CreatureFigure implements TimerListener{
 	public abstract Figures getShape();
 	
 	public void update(){
+		//System.out.println(getNavigationFrom()+ ": "+ getPosition().toString());
 		if(isAlive && !hasReachedGoal){
 			if(!hasSpawned){
 				for(Action action : this.onSpawnActionList){
@@ -73,39 +72,19 @@ public abstract class CreatureFigure implements TimerListener{
 				}
 				this.hasSpawned = true;
 			}
-			
-			if(false/*level.isGoalTile(position)*/){
-				hasReachedGoal = true;
-				finished = true;
-			}else{
-				try{
-					lock.lock();
-					for(Long id : notifiedTimedActions){
-						onSpawnTimedActionMap.get(id).executeAction();
-					}
-					notifiedTimedActions = new ArrayList<Long>();
-				}catch(InterruptedException e){
-				}finally{
-					lock.unlock();
+			try{
+				lock.lock();
+				for(Long id : notifiedTimedActions){
+					onSpawnTimedActionMap.get(id).executeAction();
 				}
-		
-				for(Action action : this.onActiveActionList){
-					action.executeAction();
-				}
-				
-				/*if(direction == Direction.BACKWARD){
-					if(level.isStartTile(position)){
-						direction = Direction.FORWARD;
-					}else{
-						position = level.getPreviousPosition(position,
-								orientation);
-					}
-				}
-				
-				if(direction == Direction.FORWARD){
-					position = level.getNextPosition(position,
-							orientation);
-				}*/
+				notifiedTimedActions = new ArrayList<Long>();
+			}catch(InterruptedException e){
+			}finally{
+				lock.unlock();
+			}
+	
+			for(Action action : this.onActiveActionList){
+				action.executeAction();
 			}
 		}else if(!isAlive && !finished){
 			for(Action action : onDeathActionList){
@@ -120,10 +99,13 @@ public abstract class CreatureFigure implements TimerListener{
 	}
 	
 	public void setDamageTaken(int damage){
-		 hitPoints -= damage;
-		 if(hitPoints <= 0){
-			 isAlive = false;
-		 }
+		if(!hasReachedGoal){
+			hitPoints -= damage;
+		}
+		if(hitPoints <= 0){
+			isAlive = false;
+		}
+		
 	}
 	
 	public int getHitPoints(){
@@ -132,6 +114,11 @@ public abstract class CreatureFigure implements TimerListener{
 	
 	public boolean isAlive(){
 		return isAlive;
+	}
+	
+	protected void remove(){
+		isAlive = false;
+		finished = true;
 	}
 	
 	public boolean isFinished(){
@@ -226,10 +213,10 @@ public abstract class CreatureFigure implements TimerListener{
 		notifiedTimedActions = new ArrayList<Long>();
 		onActiveActionList = new ArrayList<Action>();
 		lock = new Lock();
+		memory = new PathMemory();
 		
 		hitPoints = startHitPoints = (int)(BASE_HITPOINTS * scale);
-		direction = Direction.FORWARD;
-		navigation = PathTile.Direction.NA;
+		navigation = navigationFrom = PathTile.Direction.NA;
 	}
 	
 	public int getHue(){
@@ -259,25 +246,50 @@ public abstract class CreatureFigure implements TimerListener{
 	public void setOrientation(Orientation orientation){
 		this.orientation = orientation;
 	}
-
-	public Direction getDirection(){
-		return direction;
-	}
-
-	public void setDirection(Direction direction){
-		this.direction = direction;
-	}
 	
 	public boolean hasReachedGoal(){
 		return hasReachedGoal;
+	}
+	
+	protected void setHasReachedGoal(boolean hasReachedGoal){
+		this.hasReachedGoal = hasReachedGoal;
+	}
+	
+	protected void setFinished(boolean finished){
+		this.finished = finished;
 	}
 	
 	public PathTile.Direction getNavigation(){
 		return navigation;
 	}
 	
+	public PathTile.Direction getNavigationFrom(){
+		return navigationFrom;
+	}
+	
+	public PathMemory getMemory(){
+		return memory;
+	}
+	
 	public void setNavigation(PathTile.Direction navigation){
 		this.navigation = navigation;
+		switch(navigation){
+		case EAST:
+			navigationFrom = PathTile.Direction.WEST;
+			break;
+		case NORTH:
+			navigationFrom = PathTile.Direction.SOUTH;
+			break;
+		case SOUTH:
+			navigationFrom = PathTile.Direction.NORTH;
+			break;
+		case WEST:
+			navigationFrom = PathTile.Direction.EAST;
+			break;
+		default:
+			break;
+		
+		}
 	}
 	
 }

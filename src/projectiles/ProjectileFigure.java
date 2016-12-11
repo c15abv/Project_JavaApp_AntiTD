@@ -9,6 +9,12 @@ import start.Position;
 import towers.AITowerFigures;
 import utilities.ColorCreator;
 
+/**
+ * ProjectileFigure.
+ * 
+ * @author Alexander Beliaev
+ * @version 1.0
+ */
 public abstract class ProjectileFigure{
 	
 	public static final int TEMP_SIZE = 10;
@@ -29,25 +35,27 @@ public abstract class ProjectileFigure{
 	}
 	
 	public void update(CreatureFigure figure){
-		updates++;
+		int deltaX, deltaY;
+		double scaleX, scaleY, newX, newY;
 		double speed = SPEED;
-		if(updates < 30){
-			speed *= (double)updates/(double)30;
-		}
-		
 		Position position = figure.getPosition();
 		double distance = AITowerFigures.getTargetDistance(this.position, 
 				position);
-		int deltaX = this.position.getX() - position.getX();
-		int deltaY = this.position.getY() - position.getY();
-		double scaleX = deltaX / distance * (-1);
-		double scaleY = deltaY / distance * (-1);
-		double newX = this.position.getX() + speed * scaleX;
-		double newY = this.position.getY() + speed * scaleY;
 		
-		if(distance <= SPEED){
+		if(++updates < 30){
+			speed *= (double)updates/(double)30;
+		}
+		
+		if(distance <= speed){
 			this.position = new Position(position);
 		}else{
+			deltaX = this.position.getX() - position.getX();
+			deltaY = this.position.getY() - position.getY();
+			scaleX = deltaX / distance * (-1);
+			scaleY = deltaY / distance * (-1);
+			newX = this.position.getX() + speed * scaleX;
+			newY = this.position.getY() + speed * scaleY;
+			
 			this.position = new Position((int)newX, (int)newY);
 		}
 	}

@@ -3,6 +3,12 @@ package towers;
 import start.Figures;
 import start.Position;
 
+/**
+ * TowerFigureTemplate.
+ * 
+ * @author Alexander Beliaev
+ * @version 1.0
+ */
 public class TowerFigureTemplate{
 	
 	private Figures towerType;
