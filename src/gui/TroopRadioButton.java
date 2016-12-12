@@ -43,12 +43,12 @@ class TroopRadioButton extends FigureRadioButton {
 			//g.setColor(Color.DARK_GRAY.darker().darker());
 			//this.setForeground(Color.DARK_GRAY.darker().darker());
 			//figure.setHue(0);
-			this.getParent().setBackground(Color.GREEN);
+			this.getParent().setBackground(Color.GRAY);
 		} else if (getModel().isRollover()) {
 			//g.setColor(Color.DARK_GRAY);
 			//figure.setHue(100);
 
-			this.getParent().setBackground(Color.GREEN.brighter());
+			this.getParent().setBackground(Color.GRAY.brighter());
 		} else {
 			//g.setColor(Color.GRAY);
 			//figure.setHue(200);

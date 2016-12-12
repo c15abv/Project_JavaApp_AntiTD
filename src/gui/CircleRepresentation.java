@@ -2,6 +2,8 @@ package gui;
 
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
+
+import creatures.CreatureFigure.Orientation;
 import start.Figures;
 
 @SuppressWarnings("serial")
@@ -11,8 +13,8 @@ class CircleRepresentation extends FigureRepresentation {
 		this.creatureType = Figures.CIRCLE;
 	}
 	
-	public CircleRepresentation(int hue, float scale) {
-		super(hue, scale);
+	public CircleRepresentation(int hue, float scale, boolean isTeleporterCreature, Orientation orientation, int cost) {
+		super(hue, scale, isTeleporterCreature, orientation, cost);
 		this.creatureType = Figures.CIRCLE;
 	}
 

@@ -1,11 +1,11 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -16,50 +16,43 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.ButtonModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
-import creatures.CircleCreatureFigure;
-import creatures.CreatureFigure;
-import creatures.CreatureFigureTemplate;
-import start.Figures;
-import start.Position;
+import start.Game;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
+@SuppressWarnings("serial")
 public class GameView extends JFrame {
 	private JFrame frame;
-	private Color rightPanelColor = UIManager.getColor("control");
 	private Color upperPanelColor = Color.DARK_GRAY;
 	private Color lowerPanelColor = Color.DARK_GRAY;
+	private LevelInfo levelInfo;
+	private JPanel centerPanel;
+	private Canvas gameCanvas;
 
 	public static void main(String[] args) {
-		GameView gv = new GameView();
-		gv.show();
+		/*LevelInfo levelInfo = new LevelInfo(3, 50, 100, 500);
+		
+		GameView gv = new GameView(levelInfo);
+		gv.show();*/
 	}
 
-	public GameView() {
+	public GameView(LevelInfo levelInfo, Canvas game) {
+		this.levelInfo = levelInfo;
+		this.gameCanvas = game;
+		
 		initUI();
 
 	}
@@ -69,15 +62,16 @@ public class GameView extends JFrame {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		centerFrame();
-
+		
 		JPanel upperPanel = buildUpperPanel();
-		JPanel rightPanel = new RightPanel(3, 100);
-		JPanel leftPanel = buildCenterPanel();
+		centerPanel = buildCenterPanel();
+		JPanel rightPanel = new RightPanel(levelInfo);
+
 		JPanel lowerPanel = buildLowerPanel();
 
 		frame.add(upperPanel, BorderLayout.NORTH);
 		frame.add(rightPanel, BorderLayout.EAST);
-		frame.add(leftPanel, BorderLayout.CENTER);
+		frame.add(centerPanel, BorderLayout.CENTER);
 		frame.add(lowerPanel, BorderLayout.SOUTH);
 
 		frame.pack();
@@ -147,9 +141,10 @@ public class GameView extends JFrame {
 	}
 
 	private JPanel buildCenterPanel() {
-		JPanel leftPanel = new JPanel();
-		leftPanel.setBackground(Color.GREEN);
-		return leftPanel;
+		JPanel centerPanel = new JPanel();
+				
+		centerPanel.setBackground(Color.WHITE);
+		return centerPanel;
 	}
 
 	private JPanel buildUpperPanel() {
@@ -236,6 +231,19 @@ public class GameView extends JFrame {
 				KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.getAccessibleContext()
 				.setAccessibleDescription("This doesn't really do anything");
+		
+		menuItem.addActionListener(new ActionListener()	{
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				centerPanel.add(gameCanvas);
+				centerPanel.revalidate();
+				centerPanel.repaint();
+				
+			}
+			
+		});
+		
 		menu.add(menuItem);
 
 		JToggleButton pauseAndResumeBtn = createPauseAndResumeButton();
@@ -267,6 +275,7 @@ public class GameView extends JFrame {
 	}
 	
 	private JToggleButton createPauseAndResumeButton() {
+		@SuppressWarnings("serial")
 		Action toggleAction = new AbstractAction("  Pause") {
 
 			@Override

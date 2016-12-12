@@ -9,6 +9,7 @@ import java.awt.Shape;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
+import creatures.CreatureFigure.Orientation;
 import start.Direction;
 import start.Figures;
 import utilities.ColorCreator;
@@ -22,7 +23,7 @@ public abstract class FigureRepresentation extends JPanel {
 	protected Shape shape = createShape();
 	protected int hue;
 	protected boolean isTeleportCreature = false;
-	protected Direction direction;
+	protected Orientation orientation;
 	protected int index;
 	
 	public int getIndex() {
@@ -55,19 +56,23 @@ public abstract class FigureRepresentation extends JPanel {
 		this.isTeleportCreature = isTeleportCreature;
 	}
 
-	public Direction getDirection() {
-		return direction;
+	public Orientation getOrientation() {
+		return orientation;
+	}
+	
+
+	public void setOrientation(Orientation orientation) {
+		this.orientation = orientation;
 	}
 
-	public void setDirection(Direction direction) {
-		this.direction = direction;
-	}
-
-	public FigureRepresentation(int hue, float scale) {
+	public FigureRepresentation(int hue, float scale, boolean isTeleportCreature, Orientation orientation, int cost) {
 		super();
 		this.color = ColorCreator.generateColorFromHue(hue);
 		this.hue = hue;
 		this.scale = scale;
+		this.isTeleportCreature = isTeleportCreature;
+		this.orientation = orientation;
+		this.cost = cost;
 
 	}
 
