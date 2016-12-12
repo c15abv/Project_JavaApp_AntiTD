@@ -5,6 +5,7 @@ import java.util.Stack;
 
 import start.Position;
 import tiles.ConnectedPositions;
+import tiles.PathTile;
 import tiles.PathTile.Direction;
 
 public class PathMemory{
@@ -22,12 +23,32 @@ public class PathMemory{
 		}
 	}
 	
+	class DirectionHolder{
+		private Position position;
+		private Direction direction;
+		
+		DirectionHolder(Position position, Direction direction){
+			this.position = position;
+			this.direction = direction;
+		}
+		
+		Position getPosition(){
+			return position;
+		}
+		
+		Direction getDirection(){
+			return direction;
+		}
+	}
+	
 	private HashMap<Position, RememberedPositionConnection> remMap;
-	private Stack<Direction> remDir;
+	private Stack<DirectionHolder> remDir;
+	private Position mostRecentCrossing;
 	
 	public PathMemory(){
 		remMap = new HashMap<Position, RememberedPositionConnection>();
-		remDir = new Stack<Direction>();
+		remDir = new Stack<DirectionHolder>();
+		mostRecentCrossing = null;
 	}
 	
 	public boolean addPosition(Position position, ConnectedPositions conPos,
@@ -41,8 +62,9 @@ public class PathMemory{
 		return false;
 	}
 	
-	public void rememberBackTrackDirection(Direction dirFrom){
-		remDir.add(dirFrom);
+	public void rememberBackTrackDirection(Position position,
+			Direction dirFrom){
+		remDir.add(new DirectionHolder(position, dirFrom));
 	}
 	
 	public void removeDirection(Position position, Direction dir){
@@ -77,9 +99,32 @@ public class PathMemory{
 	
 	public Direction getBackTrackDirection(){
 		if(!remDir.isEmpty()){
-			return remDir.pop();
+			return remDir.pop().getDirection();
 		}
 		return null;
+	}
+	
+	public Direction getBackTrackDirection(Position position){
+		DirectionHolder holder = null;
+		
+		while(!remDir.isEmpty()){
+			holder = remDir.pop();
+			if(holder.getPosition().equals(position) &&
+					!remDir.isEmpty()){
+				return remDir.pop().getDirection();
+			}
+		}
+		return null;
+	}
+	
+	public void setMostRecentCrossing(ConnectedPositions conPos){
+		if(conPos.getNumberOfConnections() > 2){
+			mostRecentCrossing = conPos.getPosition();
+		}
+	}
+	
+	public Position getMostRecentCrossing(){
+		return mostRecentCrossing;
 	}
 	
 }

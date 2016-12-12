@@ -126,7 +126,7 @@ public abstract class CreatureFigure implements TimerListener{
 	}
 	
 	public int percentLife(){
-		return Math.round(hitPoints / startHitPoints * 100);
+		return Math.round((int)((double)hitPoints * 100 / (double)startHitPoints));
 	}
 	
 	@Override
