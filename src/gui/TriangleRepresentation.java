@@ -2,6 +2,8 @@ package gui;
 
 import java.awt.Polygon;
 import java.awt.Shape;
+
+import creatures.CreatureFigure.Orientation;
 import start.Figures;
 
 @SuppressWarnings("serial")
@@ -11,8 +13,8 @@ class TriangleRepresentation extends FigureRepresentation {
 		this.creatureType = Figures.TRIANGLE;
 	}
 
-	public TriangleRepresentation(int hue, float scale) {
-		super(hue, scale);
+	public TriangleRepresentation(int hue, float scale, boolean isTeleporterCreature, Orientation orientation, int cost) {
+		super(hue, scale, isTeleporterCreature, orientation, cost);
 		this.creatureType = Figures.TRIANGLE;
 	}
 
