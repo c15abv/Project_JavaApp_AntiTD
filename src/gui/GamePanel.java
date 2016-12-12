@@ -14,19 +14,20 @@ public abstract class GamePanel extends JPanel {
 	protected Color backgroundColor = UIManager.getColor("control");
 	protected JPanel creaturePreview;
 	protected FigureRepresentation figure;
+	protected String panelTitle;
 
 	public GamePanel() {
 		initPanel();
 	}
 
-	public void setStyle(String borderTitle) {
+	public void setStyle() {
 		this.setBackground(backgroundColor);
 
 		Border raisedetched = BorderFactory
 				.createEtchedBorder(EtchedBorder.RAISED);
 
 		TitledBorder titledBorder = BorderFactory
-				.createTitledBorder(raisedetched, borderTitle);
+				.createTitledBorder(raisedetched, panelTitle);
 		titledBorder.setTitleJustification(TitledBorder.CENTER);
 		this.setBorder(titledBorder);
 	}
