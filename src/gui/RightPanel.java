@@ -1,7 +1,6 @@
 package gui;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -39,16 +38,13 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import creatures.CreatureFigureTemplate;
-import start.Direction;
+import creatures.CreatureFigure.Orientation;
 import start.Figures;
 
 @SuppressWarnings("serial")
 public class RightPanel extends JPanel {
-	private int nrOfCreatureTemplates;
 	private List<FigureRepresentation> troop = new ArrayList<>();
 	private Color backgroundColor = UIManager.getColor("control");
-	private Font titleFont = new Font("Arial", Font.PLAIN, 15);
 	private Font textFont = new Font("Arial", Font.BOLD, 30);
 	private int currentCredit;
 	private JPanel modePanel;
@@ -61,26 +57,26 @@ public class RightPanel extends JPanel {
 	private FigureRepresentation figure;
 	private JSlider colorSlider;
 	private JSlider sizeSlider;
-	private int creatureCost = 50;
 	private int currentCreatureCost = 0;
 	private JPanel troopPanel;
 	private JPanel creatorModePanel;
 	private JPanel playModePanel;
 	private JPanel settingsPanel;
 	private JTextField costTextField;
-	private int costTextFieldIndex;
-	private int teleporterCost = 80;
 	private boolean creatureSelected = false;
 	private JPanel creatureInfoPanel;
 	private JTextField creditTextField;
 	private JTextField hitPointsTextField;
 	private JTextField speedTextField;
-	
+	private JTextField teleporterTextField;
+	private JTextField directionTextField;
+	private LevelInfo levelInfo;
 
-	public RightPanel(int nrOfCreatureTemplates, int levelCredit) {
+	public RightPanel(LevelInfo levelInfo) {
 		super();
-		this.nrOfCreatureTemplates = nrOfCreatureTemplates;
-		this.currentCredit = levelCredit;
+		this.currentCreatureCost = 0;
+		this.levelInfo = levelInfo;
+		this.currentCredit = levelInfo.getStartCredit();
 
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -97,7 +93,6 @@ public class RightPanel extends JPanel {
 
 		troopPanel = new JPanel();
 		initTroopPanel();
-		// stroopPanel.setAlignmentY(Component.TOP_ALIGNMENT);
 
 		c.gridx = 0;
 		c.gridy = 0;
@@ -158,22 +153,18 @@ public class RightPanel extends JPanel {
 
 	private void initTroopPanel() {
 		troopPanel.setLayout(new BoxLayout(troopPanel, BoxLayout.PAGE_AXIS));
-		// troopPanel.setLayout(new GridLayout(nrOfCreatureTemplates+2, 0, 15,
-		// 0));
+
 		setStyle(troopPanel, "YOUR TROOP");
 
-		for (int i = 0; i < nrOfCreatureTemplates; i++) {
+		for (int i = 0; i < levelInfo.getNrOfTroops(); i++) {
 
 			JPanel emptyCreature = new EmptyFigureRepresentation();
 			Border border = BorderFactory.createDashedBorder(Color.DARK_GRAY);
-			// Border empty = new EmptyBorder(30,30,30,30);
 			JPanel container = new JPanel();
 			container.setBorder(border);
 
 			container.add(emptyCreature);
 
-			// emptyCreature.setAlignmentX(Component.CENTER_ALIGNMENT);
-			// emptyCreature.setAlignmentY(Component.CENTER_ALIGNMENT);
 			troopPanel.add(container);
 
 		}
@@ -182,7 +173,7 @@ public class RightPanel extends JPanel {
 
 			@Override
 			public void componentAdded(ContainerEvent arg0) {
-				if (troop.size() == nrOfCreatureTemplates) {
+				if (troop.size() == levelInfo.getNrOfTroops()) {
 					createBtn.setEnabled(false);
 					startGameBtn.setEnabled(true);
 				}
@@ -191,7 +182,6 @@ public class RightPanel extends JPanel {
 
 			@Override
 			public void componentRemoved(ContainerEvent arg0) {
-				// TODO Auto-generated method stub
 
 			}
 
@@ -199,7 +189,6 @@ public class RightPanel extends JPanel {
 
 		troopPanel.revalidate();
 		troopPanel.repaint();
-
 	}
 
 	private void initCreatorModePanel() {
@@ -222,7 +211,6 @@ public class RightPanel extends JPanel {
 		creatorModePanel.add(shapesPanel);
 
 		c.gridy = 1;
-		// c.insets = new Insets(0, 15, 0, 15);
 
 		JCheckBox teleporterCheckBox = createTeleporterCheckBox();
 		gb.setConstraints(teleporterCheckBox, c);
@@ -242,14 +230,13 @@ public class RightPanel extends JPanel {
 
 		c.gridy = 4;
 
-		JPanel directionPanel = createDirectionPanel();
-		gb.setConstraints(directionPanel, c);
-		creatorModePanel.add(directionPanel);
+		JPanel orientationPanel = createOrientationPanel();
+		gb.setConstraints(orientationPanel, c);
+		creatorModePanel.add(orientationPanel);
 
 		c.gridy = 5;
 
 		createCostTextField();
-		costTextFieldIndex = c.gridy;
 		gb.setConstraints(costTextField, c);
 		creatorModePanel.add(costTextField);
 
@@ -270,8 +257,50 @@ public class RightPanel extends JPanel {
 
 	}
 
+	private JPanel createOrientationPanel() {
+		JPanel directionPanel = new JPanel();
+
+		JRadioButton leftRadioBtn = new JRadioButton("Left");
+		leftRadioBtn.setActionCommand(Orientation.LEFT.name());
+		JRadioButton rightRadioBtn = new JRadioButton("Right");
+		rightRadioBtn.setActionCommand(Orientation.RIGHT.name());
+
+		ItemListener itemListener = new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				AbstractButton aButton = (AbstractButton) e.getSource();
+
+				ButtonModel aModel = aButton.getModel();
+				if (aModel.isSelected()) {
+					String orientation = aButton.getActionCommand();
+
+					if (orientation.equals(Orientation.LEFT.name())) {
+						figure.setOrientation(Orientation.LEFT);
+
+					} else {
+						figure.setOrientation(Orientation.RIGHT);
+					}
+
+				}
+			}
+		};
+
+		leftRadioBtn.addItemListener(itemListener);
+		rightRadioBtn.addItemListener(itemListener);
+
+		ButtonGroup leftRightBtnGroup = new ButtonGroup();
+		leftRightBtnGroup.add(leftRadioBtn);
+		leftRightBtnGroup.add(rightRadioBtn);
+
+		directionPanel.add(leftRadioBtn);
+		directionPanel.add(rightRadioBtn);
+		setStyle(directionPanel, "CHOOSE DIRECTION");
+
+		return directionPanel;
+	}
+
 	private void updateCostTextField() {
 		costTextField.setText(String.valueOf(currentCreatureCost));
+		figure.setCost(currentCreatureCost);
 	}
 
 	private JCheckBox createTeleporterCheckBox() {
@@ -279,14 +308,16 @@ public class RightPanel extends JPanel {
 
 		teleporter.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
+				int telePorterCost = levelInfo.getTeleporterCost();
 				if (teleporter.isSelected()) {
-					updateCurrentCost(teleporterCost);
+					updateCurrentCost(telePorterCost);
 					figure.setIsTeleportCreature(true);
 				} else {
-					updateCurrentCost(-teleporterCost);
+					updateCurrentCost(-telePorterCost);
 					figure.setIsTeleportCreature(false);
 				}
 				updateCostTextField();
+				figure.setCost(currentCreatureCost);
 
 			}
 		});
@@ -297,8 +328,6 @@ public class RightPanel extends JPanel {
 	private void createCreateButton() {
 		createBtn = new JButton("Create");
 		Container container = this.getTopLevelAncestor();
-		
-
 
 		createBtn.addActionListener(new ActionListener() {
 
@@ -306,22 +335,16 @@ public class RightPanel extends JPanel {
 				String message;
 
 				try {
-					String creature = shapeBtnGroup.getSelection()
-							.getActionCommand();
-					
-					
-					
 					int index = 0;
 					int troopSize = troop.size();
 					if (troopSize != 0) {
 						index = troopSize;
 					}
-					
 
-					JRadioButton troopCreature = new TroopRadioButton(figure, index);
-					//troopCreature.setEnabled(false);
+					JRadioButton troopCreature = new TroopRadioButton(figure,
+							index);
 					troopsBtnGroup.add(troopCreature);
-					
+
 					ItemListener itemListener = new ItemListener() {
 						public void itemStateChanged(ItemEvent e) {
 							AbstractButton aButton = (AbstractButton) e
@@ -329,17 +352,31 @@ public class RightPanel extends JPanel {
 
 							ButtonModel aModel = aButton.getModel();
 							if (aModel.isSelected()) {
-								// ButtonModel m =
-								// creatureSelector.getSelection();
-								String btnShape = aButton.getText();
+
 								if (isPlayMode) {
-									//FigureRepresentation figure = troop.get(index);
-									int index = Integer.parseInt(aButton.getActionCommand());
-									System.out.println("Index = "+index);
-									FigureRepresentation figure = troop.get(index);
+									int index = Integer.parseInt(
+											aButton.getActionCommand());
+									FigureRepresentation figure = troop
+											.get(index);
 									updateCreaturePreview(figure);
-								//	troopPanel.getComponent(troopsBtnGroup.getSelection())
-									//updateCreaturePreview()
+
+									hitPointsTextField.setText("HP: " + "?");
+									speedTextField.setText("Speed" + "?");
+									directionTextField.setText("Orientation: "
+											+ figure.orientation.name());
+
+									if (figure.isTeleportCreature) {
+										teleporterTextField.setText(
+												"Teleporter: " + "Yes");
+									} else {
+										teleporterTextField
+												.setText("Teleporter: " + "No");
+
+									}
+
+									currentCreatureCost = figure.cost;
+									updateCostTextField();
+
 								}
 							}
 						}
@@ -352,45 +389,24 @@ public class RightPanel extends JPanel {
 					container.setBorder(
 							BorderFactory.createDashedBorder(Color.DARK_GRAY));
 
-					troop.add(figure);
-					
-					
-					
-					switch (Figures.valueOf(figure.getCreatureType().toString())) {
-					case TRIANGLE:
-						figure = new TriangleRepresentation(
-								colorSlider.getValue(),
-								(float) sizeSlider.getValue() / 100);
-						break;
+					if (figure.getOrientation() != null) {
+						troop.add(figure);
 
-					case CIRCLE:
-						figure = new CircleRepresentation(
-								colorSlider.getValue(),
-								(float) sizeSlider.getValue() / 100);
-						break;
+						message = "Type: " + figure.creatureType
+								+ "\nOrientation: " + figure.orientation
+								+ "\nIsTeleport: " + figure.isTeleportCreature;
 
-					case SQUARE:
-						figure = new SquareRepresentation(
-								colorSlider.getValue(),
-								(float) sizeSlider.getValue() / 100);
-						break;
-					default:
-						break;
+						createNewCreature(figure.getCreatureType().name());
+
+						troopPanel.remove(index);
+						troopPanel.add(container, index);
+						troopPanel.revalidate();
+						troopPanel.repaint();
+
+						calculateCreatureCost();
+					} else {
+						message = "Select orientation of creature.";
 					}
-					
-					// System.out.println(index);
-					troopPanel.remove(index);
-					troopPanel.add(container, index);
-					troopPanel.revalidate();
-					troopPanel.repaint();
-					
-					
-
-					message = "Type: " + figure.creatureType + "\nDirection: "
-							+ figure.direction + "\nIsTeleport: "
-							+ figure.isTeleportCreature;
-
-					calculateCreatureCost();
 
 				} catch (NullPointerException e) {
 					message = "Select troop first.";
@@ -402,11 +418,34 @@ public class RightPanel extends JPanel {
 
 		});
 	}
-	
-	private void updateProperties(FigureRepresentation selectedFigure)	{
-		//selectedFigure.cost
+
+	private void createNewCreature(String creatureType) {
+		switch (Figures.valueOf(creatureType)) {
+		case TRIANGLE:
+			figure = new TriangleRepresentation(colorSlider.getValue(),
+					(float) sizeSlider.getValue() / 100,
+					figure.isTeleportCreature, figure.getOrientation(),
+					figure.cost);
+
+			break;
+
+		case CIRCLE:
+			figure = new CircleRepresentation(colorSlider.getValue(),
+					(float) sizeSlider.getValue() / 100,
+					figure.isTeleportCreature, figure.getOrientation(),
+					figure.cost);
+			break;
+
+		case SQUARE:
+			figure = new SquareRepresentation(colorSlider.getValue(),
+					(float) sizeSlider.getValue() / 100,
+					figure.isTeleportCreature, figure.getOrientation(),
+					figure.cost);
+			break;
+		default:
+			break;
+		}
 	}
-	
 
 	private JButton createBuyButton() {
 		JButton buyBtn = new JButton("Buy");
@@ -480,13 +519,12 @@ public class RightPanel extends JPanel {
 	}
 
 	private void initPlayModePanel() {
-		playModePanel = new JPanel();/*
-										 * {
-										 * 
-										 * @Override public Dimension
-										 * getPreferredSize() { return
-										 * creatorModePanel.getSize(); } };
-										 */
+		playModePanel = new JPanel() {
+			@Override
+			public Dimension getPreferredSize() {
+				return creatorModePanel.getSize();
+			}
+		};
 
 		GridBagLayout gb = new GridBagLayout();
 
@@ -505,8 +543,6 @@ public class RightPanel extends JPanel {
 
 		c.gridy = 1;
 
-		//JButton placeTeleportBtn = new JButton("Place teleport");
-		
 		gb.setConstraints(costTextField, c);
 		playModePanel.add(costTextField);
 
@@ -526,11 +562,10 @@ public class RightPanel extends JPanel {
 		GridBagConstraints c = new GridBagConstraints();
 		creatureInfoPanel = new JPanel();
 		setStyle(creatureInfoPanel, "PROPERTIES");
-		JTextField hitPointsTextField = createNewPropertyTextField("HP");
-		JTextField speedTextField = createNewPropertyTextField("Speed");
-		JTextField directionTextField = createNewPropertyTextField("Direction");
-		JTextField teleporterTextField = createNewPropertyTextField(
-				"Teleporter");
+		hitPointsTextField = createNewPropertyTextField("HP");
+		speedTextField = createNewPropertyTextField("Speed");
+		directionTextField = createNewPropertyTextField("Direction");
+		teleporterTextField = createNewPropertyTextField("Teleporter");
 
 		c.insets = new Insets(10, 10, 10, 10);
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -615,15 +650,11 @@ public class RightPanel extends JPanel {
 		// sizeSlider.setSnapToTicks(true);
 
 		java.util.Hashtable<Integer, JLabel> labelTable = new java.util.Hashtable<Integer, JLabel>();
-		// labelTable.put(new Integer(200), new JLabel("2.0"));
-		// labelTable.put(new Integer(175), new JLabel("1.75"));
+
 		labelTable.put(new Integer(150), new JLabel("1.50"));
-		// labelTable.put(new Integer(125), new JLabel("1.25"));
 		labelTable.put(new Integer(100), new JLabel("1.0"));
-		// labelTable.put(new Integer(75), new JLabel("0.75"));
 		labelTable.put(new Integer(50), new JLabel("0.50"));
-		// labelTable.put(new Integer(25), new JLabel("0.25"));
-		// labelTable.put(new Integer(0), new JLabel("0.0"));
+
 		sizeSlider.setLabelTable(labelTable);
 
 		sizeSlider.addChangeListener(new ChangeListener() {
@@ -640,7 +671,6 @@ public class RightPanel extends JPanel {
 	}
 
 	private void createCreaturePreview() {
-		// creaturePreview = new TriangleRepresentation();
 
 		creaturePreview = new JPanel();
 
@@ -676,39 +706,17 @@ public class RightPanel extends JPanel {
 
 				ButtonModel aModel = aButton.getModel();
 				if (aModel.isSelected()) {
-					// ButtonModel m = creatureSelector.getSelection();
 					String btnShape = aButton.getText();
 
-					switch (Figures.valueOf(btnShape)) {
-					case TRIANGLE:
-						figure = new TriangleRepresentation(
-								colorSlider.getValue(),
-								(float) sizeSlider.getValue() / 100);
-						break;
+					createNewCreature(btnShape);
 
-					case CIRCLE:
-						figure = new CircleRepresentation(
-								colorSlider.getValue(),
-								(float) sizeSlider.getValue() / 100);
-						break;
-
-					case SQUARE:
-						figure = new SquareRepresentation(
-								colorSlider.getValue(),
-								(float) sizeSlider.getValue() / 100);
-						break;
-					default:
-						break;
-					}
 					updateCreaturePreview(figure);
 					if (!creatureSelected) {
-						updateCurrentCost(creatureCost);
+						updateCurrentCost(levelInfo.getCreatureCost());
 						updateCostTextField();
 						creatureSelected = true;
 
 					}
-					// updateCreatureCost();
-
 				}
 
 			}
@@ -757,64 +765,9 @@ public class RightPanel extends JPanel {
 		figure.setCost(currentCreatureCost);
 	}
 
-	private void updateCreatureCost() {
-
-		Component toRemove = creatorModePanel.getComponent(costTextFieldIndex);
-		GridBagLayout layout = (GridBagLayout) creatorModePanel.getLayout();
-		GridBagConstraints gbc = layout.getConstraints(toRemove);
-		creatorModePanel.remove(toRemove);
-		creatorModePanel.add(costTextField, gbc, costTextFieldIndex);
-		creatorModePanel.revalidate();
-		creatorModePanel.repaint();
-	}
-
-	private JPanel createDirectionPanel() {
-		JPanel directionPanel = new JPanel();
-
-		JRadioButton leftRadioBtn = new JRadioButton("Left");
-		leftRadioBtn.setActionCommand(Direction.LEFT.name());
-		JRadioButton rightRadioBtn = new JRadioButton("Right");
-		rightRadioBtn.setActionCommand(Direction.RIGHT.name());
-
-		ItemListener itemListener = new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				AbstractButton aButton = (AbstractButton) e.getSource();
-
-				ButtonModel aModel = aButton.getModel();
-				if (aModel.isSelected()) {
-					String direction = aButton.getActionCommand();
-
-					if (direction.equals(Direction.LEFT.name())) {
-						figure.setDirection(Direction.LEFT);
-					} else {
-						figure.setDirection(Direction.RIGHT);
-					}
-				}
-			}
-		};
-
-		leftRadioBtn.addItemListener(itemListener);
-		rightRadioBtn.addItemListener(itemListener);
-
-		ButtonGroup leftRightBtnGroup = new ButtonGroup();
-		leftRightBtnGroup.add(leftRadioBtn);
-		leftRightBtnGroup.add(rightRadioBtn);
-
-		directionPanel.add(leftRadioBtn);
-		directionPanel.add(rightRadioBtn);
-		setStyle(directionPanel, "CHOOSE DIRECTION");
-
-		return directionPanel;
-	}
-
 	private void updateCreaturePreview(FigureRepresentation figure) {
 		creaturePreview.removeAll();
 		creaturePreview.add(figure);
-		creaturePreview.validate();
-		creaturePreview.repaint();
-	}
-
-	private void updateCreaturePreview() {
 		creaturePreview.validate();
 		creaturePreview.repaint();
 	}
