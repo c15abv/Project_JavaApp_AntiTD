@@ -10,6 +10,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 
+import creatures.AttackingPlayer;
 import towers.AITowerFigures;
 import towers.DefendingPlayer;
 import utilities.ActionTimer;
@@ -77,10 +78,10 @@ public class Game extends Canvas implements TimerListener{
 		if(gameState == GameState.RUNNING){
 			defender.update();
 			attacker.update();
-			/*if(attacker.getPoints() >= level.getAttackingPlayerScoreGoal()){
+			if(attacker.getPoints() >= level.getAttackingPlayerScoreGoal()){
 				gameResult = GameResult.ATTACKER_WINNER;
 				endGame();
-			}*/
+			}
 		}
 	}
 	

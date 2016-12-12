@@ -2,8 +2,8 @@ package towers;
 
 import java.util.ArrayList;
 
+import creatures.AttackingPlayer;
 import creatures.CreatureFigure;
-import start.AttackingPlayer;
 import start.Figures;
 import start.Position;
 import utilities.ColorCreator;

@@ -20,10 +20,6 @@ public class GameLevel{
 	private int attackingPlayerScoreGoal = DEFAULT_PLAYER_SCORE_GOAL;
 	private int attackerCredit = DEFAULT_CREDIT;
 	private int defenderCredit = DEFAULT_CREDIT;
-	private int timeToFinish = DEFAULT_TIME; 
-	
-	public GameLevel(){
-		this(DEFAULT_PLAYER_SCORE_GOAL, null, null, null);
 	}
 	
 	public GameLevel(int attackingPlayerScoreGoal, ArrayList<String> rules,
@@ -40,8 +36,7 @@ public class GameLevel{
 			this.levelMap = new HashMap<AreaPosition, Tile>();
 		}
 	}
-	
-	
+
 	public void update(){
 		for(Map.Entry<AreaPosition, Tile> entry : levelMap.entrySet()){
 			entry.getValue().update();

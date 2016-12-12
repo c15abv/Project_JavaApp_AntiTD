@@ -30,6 +30,22 @@ public class CreatureFigureTemplate{
 		return cost;
 	}
 	
+	public Figures getCreatureType() {
+		return creatureType;
+	}
+
+	public int getHue() {
+		return hue;
+	}
+
+	public float getScale() {
+		return scale;
+	}
+
+	public Orientation getOrientation() {
+		return orientation;
+	}
+
 	public CreatureFigure createNewCreature(Position position){
 		return creatureType == Figures.CIRCLE ? 
 				createNewCircleCreature(position) : 

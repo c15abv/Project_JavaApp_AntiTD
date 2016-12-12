@@ -1,10 +1,10 @@
-package start;
+package creatures;
 
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
-import creatures.AICreatureFigures;
-import creatures.CreatureFigure;
+import start.GameLevel;
+import start.Player;
 
 public class AttackingPlayer extends Player{
 
