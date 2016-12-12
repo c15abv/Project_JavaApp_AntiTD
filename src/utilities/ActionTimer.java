@@ -5,6 +5,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+/**
+ * ActionTimer.
+ * 
+ * @author Alexander Beliaev
+ * @version 1.0
+ */
 public class ActionTimer implements Runnable{
 
 	class IdCounter{

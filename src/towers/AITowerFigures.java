@@ -8,6 +8,12 @@ import start.Figures;
 import start.Position;
 import utilities.ColorCreator;
 
+/**
+ * AITowerFigures.
+ * 
+ * @author Alexander Beliaev
+ * @version 1.0
+ */
 public class AITowerFigures{
 
 	
@@ -27,12 +33,14 @@ public class AITowerFigures{
 		currentHorde = attacker.getHorde();
 		currentDefence = defender.getDefence();
 		
-		//fixates when finds target;
+		//fixates when found new target;
 		//keep this feature?
 		for(TowerFigure tower : currentDefence){
 			if(!tower.isOnCooldown() && (!tower.hasTarget() || 
-					!tower.getTarget().isAlive() ||
-					!targetWithinRange(tower, tower.getTarget()))){
+					(tower.hasTarget() && 
+					(!tower.getTarget().isAlive() ||
+					tower.getTarget().hasReachedGoal() ||
+					!targetWithinRange(tower, tower.getTarget()))))){
 				findTarget(tower);
 			}
 			

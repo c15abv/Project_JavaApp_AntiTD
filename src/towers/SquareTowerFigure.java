@@ -9,6 +9,12 @@ import projectiles.SquareProjectileFigure;
 import start.Figures;
 import start.Position;
 
+/**
+ * SquareTowerFigure.
+ * 
+ * @author Alexander Beliaev
+ * @version 1.0
+ */
 public class SquareTowerFigure extends TowerFigure{
 
 	public static final Figures SHAPE = Figures.SQUARE;
@@ -26,7 +32,7 @@ public class SquareTowerFigure extends TowerFigure{
 	@Override
 	public void render(Graphics2D g2d){
 		g2d.setColor(this.getColor());
-		g2d.fillRect(this.getPosition().getX() - TowerFigure.TEMP_SIZE/2,
+		g2d.drawRect(this.getPosition().getX() - TowerFigure.TEMP_SIZE/2,
 				this.getPosition().getY() - TowerFigure.TEMP_SIZE/2,
 				TowerFigure.TEMP_SIZE,
 				TowerFigure.TEMP_SIZE);

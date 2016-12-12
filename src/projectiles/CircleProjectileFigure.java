@@ -6,6 +6,12 @@ import creatures.CreatureFigure;
 import start.Figures;
 import start.Position;
 
+/**
+ * CircleProjectileFigure.
+ * 
+ * @author Alexander Beliaev
+ * @version 1.0
+ */
 public class CircleProjectileFigure extends ProjectileFigure{
 
 	public static final Figures shape = Figures.CIRCLE;
@@ -31,7 +37,7 @@ public class CircleProjectileFigure extends ProjectileFigure{
 	@Override
 	public void render(Graphics2D g2d){
 		g2d.setColor(this.getColor());
-		g2d.fillOval(this.getPosition().getX() - ProjectileFigure.TEMP_SIZE/2,
+		g2d.drawOval(this.getPosition().getX() - ProjectileFigure.TEMP_SIZE/2,
 				this.getPosition().getY() - ProjectileFigure.TEMP_SIZE/2,
 				ProjectileFigure.TEMP_SIZE,
 				ProjectileFigure.TEMP_SIZE);

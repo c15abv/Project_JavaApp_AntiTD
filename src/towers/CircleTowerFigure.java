@@ -9,6 +9,12 @@ import projectiles.ProjectileFigure;
 import start.Figures;
 import start.Position;
 
+/**
+ * CircleTowerFigure.
+ * 
+ * @author Alexander Beliaev
+ * @version 1.0
+ */
 public class CircleTowerFigure extends TowerFigure{
 	
 	public static final Figures SHAPE = Figures.CIRCLE;
@@ -20,13 +26,13 @@ public class CircleTowerFigure extends TowerFigure{
 	
 	public CircleTowerFigure(int baseDamage, int hue, int range,
 			int cooldown, Position position){
-		super(baseDamage, hue, range, COOLDOWN, position);
+		super(baseDamage, hue, range, cooldown, position);
 	}
 
 	@Override
 	public void render(Graphics2D g2d){
 		g2d.setColor(getColor());
-		g2d.fillOval(getPosition().getX() - TowerFigure.TEMP_SIZE/2,
+		g2d.drawOval(getPosition().getX() - TowerFigure.TEMP_SIZE/2,
 				getPosition().getY() - TowerFigure.TEMP_SIZE/2,
 				TowerFigure.TEMP_SIZE,
 				TowerFigure.TEMP_SIZE);

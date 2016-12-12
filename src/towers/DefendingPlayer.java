@@ -3,15 +3,22 @@ package towers;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
+import start.GameLevel;
 import start.Player;
 
+/**
+ * DefendingPlayer.
+ * 
+ * @author Alexander Beliaev
+ * @version 1.0
+ */
 public class DefendingPlayer extends Player{
 	
 	private ArrayList<TowerFigure> currentDefence;
 	private AITowerFigures ai;
 	
-	public DefendingPlayer(int credits){
-		super(credits);
+	public DefendingPlayer(int credits, GameLevel level){
+		super(credits, level);
 		this.ai = null;
 		currentDefence = new ArrayList<TowerFigure>();
 	}

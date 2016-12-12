@@ -16,9 +16,15 @@ import utilities.ActionTimer;
 import utilities.ColorCreator;
 import utilities.TimerListener;
 
+/**
+ * TowerFigure.
+ * 
+ * @author Alexander Beliaev
+ * @version 1.0
+ */
 public abstract class TowerFigure implements TimerListener{
 	
-	public static final int TEMP_SIZE = 50;
+	public static final int TEMP_SIZE = 36;
 	public static final int COOLDOWN = 1000;
 	
 	private int baseDamage;

@@ -5,6 +5,12 @@ import java.awt.geom.Path2D;
 
 import start.Position;
 
+/**
+ * CustomShapes.
+ * 
+ * @author Alexander Beliaev
+ * @version 1.0
+ */
 public class CustomShapes {
 
 	private static final int STAR_RAYS = 5;
@@ -23,8 +29,8 @@ public class CustomShapes {
         	relY = Math.sin(rayAngleRadius);
             
             if((i & 1) == 0){
-            	relX *= size/2;
-                relY *= size/2;
+            	relX *= size / 2;
+                relY *= size / 2;
             }else{
                 relX *= size / (2.63 * 2);
                 relY *= size / (2.63 * 2);
