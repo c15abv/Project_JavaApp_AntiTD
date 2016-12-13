@@ -10,10 +10,15 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import creatures.CreatureFigure.Orientation;
-import start.Direction;
 import start.Figures;
 import utilities.ColorCreator;
 
+/**
+ * Class to represent different creature figures.
+ * 
+ * @author karro
+ *
+ */
 @SuppressWarnings("serial")
 public abstract class FigureRepresentation extends JPanel {
 	protected static final int TEMP_SIZE = 70;

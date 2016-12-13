@@ -1,5 +1,11 @@
 package gui;
 
+/**
+ * Class that holds level information.
+ * 
+ * @author karro
+ *
+ */
 public class LevelInfo {
 	private int nrOfTroops;
 	private int creatureCost;
