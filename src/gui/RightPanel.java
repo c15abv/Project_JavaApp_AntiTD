@@ -41,6 +41,13 @@ import javax.swing.event.ChangeListener;
 import creatures.CreatureFigure.Orientation;
 import start.Figures;
 
+/**
+ * Class that builds the rightpanel of the gui where the user can create and buy
+ * troops.
+ * 
+ * @author karro
+ *
+ */
 @SuppressWarnings("serial")
 public class RightPanel extends JPanel {
 	private List<FigureRepresentation> troop = new ArrayList<>();

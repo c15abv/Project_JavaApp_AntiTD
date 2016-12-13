@@ -11,6 +11,12 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 
+/**
+ * FigureRepresentation to represent a figure that has not yet been set.
+ * 
+ * @author karro
+ *
+ */
 @SuppressWarnings("serial")
 public class EmptyFigureRepresentation extends FigureRepresentation {
 

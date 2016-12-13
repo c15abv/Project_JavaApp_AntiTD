@@ -7,6 +7,12 @@ import start.Figures;
 
 import java.awt.Dimension;
 
+/**
+ * Radio button to represent circle creatures.
+ * 
+ * @author karro
+ *
+ */
 @SuppressWarnings("serial")
 class CircleRadioButton extends FigureRadioButton {
 
