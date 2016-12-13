@@ -34,7 +34,7 @@ public abstract class CreatureFigure implements TimerListener{
 	}
 	
 	public static final int BASE_HITPOINTS = 100;
-	public static final int BASE_SIZE = 30;
+	public static final int BASE_SIZE = 26;
 	public static final double BASE_SPEED = 1;
 
 	private Color creatureColor;
@@ -251,6 +251,7 @@ public abstract class CreatureFigure implements TimerListener{
 		hitPoints = startHitPoints = (int)(BASE_HITPOINTS * scale);
 		navigation = navigationFrom = PathTile.Direction.NA;
 		
+		speed = speed / scale;
 		tilesMoved = 1;
 	}
 	

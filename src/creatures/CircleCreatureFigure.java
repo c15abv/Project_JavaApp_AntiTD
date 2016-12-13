@@ -24,9 +24,9 @@ public class CircleCreatureFigure extends CreatureFigure{
 	public void render(Graphics2D g2d){
 		g2d.setColor(getColor());
 		g2d.fillOval((int)(getPosition().getX() -
-				(getScale() * CreatureFigure.BASE_SIZE / 2)),
+				(getScale() * CreatureFigure.BASE_SIZE) / 2),
 				(int)(getPosition().getY() - 
-						(getScale() * CreatureFigure.BASE_SIZE / 2)),
+						(getScale() * CreatureFigure.BASE_SIZE) / 2),
 				(int)(getScale() * CreatureFigure.BASE_SIZE),
 				(int)(getScale() * CreatureFigure.BASE_SIZE));
 	}
