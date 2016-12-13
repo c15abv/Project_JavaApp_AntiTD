@@ -13,12 +13,28 @@ import start.Position;
 public class PathTile extends Tile implements EnterTileEffect{
 	
 	public enum ValidPath{
-		HORIZONTAL, VERTICAL, HORIZONTAL_T_SOUTH,
+		HORIZONTAL("horizontal"), VERTICAL, HORIZONTAL_T_SOUTH,
 		HORIZONTAL_T_NORTH, VERTICAL_T_EAST,
 		VERTICAL_T_WEST, CROSSROAD,
 		L_TURN_HORIZONTAL_SOUTH_TO_EAST, L_TURN_HORIZONTAL_NORTH_TO_WEST,
 		L_TURN_HORIZONTAL_NORTH_TO_EAST, L_TURN_HORIZONTAL_SOUTH_TO_WEST,
 		NORTH, WEST, EAST, SOUTH;
+		
+		private String string;
+		
+		private ValidPath(String string){
+			this.string = string;
+		}
+		
+		public static ValidPath getEnumByString(final String string){
+			for(ValidPath path : ValidPath.values()){
+				if(path.string.equals(string)){
+					return path;
+				}
+			}
+			
+			return null;
+		}
 	}
 	
 	public enum Direction{
@@ -140,6 +156,10 @@ public class PathTile extends Tile implements EnterTileEffect{
 	
 	public boolean hasEffect(){
 		return false;
+	}
+	
+	public ValidPath getValidPath(){
+		return path;
 	}
 	
 	public PositionConnection getPosPair(Position position){
