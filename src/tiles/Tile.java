@@ -6,11 +6,14 @@ import start.Position;
 
 public abstract class Tile{
 
-	private Position position;
 	public static final int size = 50; 
+	
+	private Position position;
+	private long id;
 	
 	public Tile(Position position){
 		this.position = position;
+		id = 0;
 	}
 	
 	public abstract void update();
@@ -45,5 +48,13 @@ public abstract class Tile{
 
 	public Position getPosition(){
 		return position;
+	}
+	
+	public void setId(long id){
+		this.id = id;
+	}
+	
+	public long getId(){
+		return id;
 	}
 }

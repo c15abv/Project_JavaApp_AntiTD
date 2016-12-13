@@ -13,6 +13,15 @@ import start.Position;
 public class PathTile extends Tile implements EnterTileEffect{
 	
 	public enum ValidPath{
+		HORIZONTAL, VERTICAL, HORIZONTAL_T_SOUTH,
+		HORIZONTAL_T_NORTH, VERTICAL_T_EAST,
+		VERTICAL_T_WEST, CROSSROAD,
+		L_TURN_HORIZONTAL_SOUTH_TO_EAST, L_TURN_HORIZONTAL_NORTH_TO_WEST,
+		L_TURN_HORIZONTAL_NORTH_TO_EAST, L_TURN_HORIZONTAL_SOUTH_TO_WEST,
+		NORTH, WEST, EAST, SOUTH;
+	}
+	
+	/*public enum ValidPath{
 		HORIZONTAL("horizontal"), VERTICAL, HORIZONTAL_T_SOUTH,
 		HORIZONTAL_T_NORTH, VERTICAL_T_EAST,
 		VERTICAL_T_WEST, CROSSROAD,
@@ -35,10 +44,26 @@ public class PathTile extends Tile implements EnterTileEffect{
 			
 			return null;
 		}
-	}
+	}*/
 	
 	public enum Direction{
 		NORTH, EAST, WEST, SOUTH, NA;
+		
+		public static Direction getOpposite(Direction direction){
+			switch(direction){
+			case EAST:
+				return Direction.WEST;
+			case NORTH:
+				return Direction.SOUTH;
+			case SOUTH:
+				return Direction.NORTH;
+			case WEST:
+				return Direction.EAST;
+			default:
+			case NA:
+				return Direction.NA;
+			}
+		}
 	}
 	
 	public class PositionConnection{

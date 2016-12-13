@@ -65,5 +65,18 @@ public class StartTile extends PathTile{
 		return getPosition().equals(position);
 	}
 	
+	public Direction getStartingDirection(){
+		if(getValidPath() == ValidPath.EAST){
+			return Direction.EAST;
+		}else if(getValidPath() == ValidPath.WEST){
+			return Direction.WEST;
+		}else if(getValidPath() == ValidPath.SOUTH){
+			return Direction.SOUTH;
+		}else if(getValidPath() == ValidPath.NORTH){
+			return Direction.NORTH;
+		}else{
+			return Direction.NA;
+		}
+	}
 	
 }
