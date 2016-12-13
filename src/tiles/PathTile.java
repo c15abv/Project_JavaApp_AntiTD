@@ -171,18 +171,6 @@ public class PathTile extends Tile implements EnterTileEffect{
 		return false;
 	}
 	
-	public boolean isGoalPosition(Position position){
-		return false;
-	}
-	
-	public boolean isStartPosition(Position position){
-		return false;
-	}
-	
-	public boolean hasEffect(){
-		return false;
-	}
-	
 	public ValidPath getValidPath(){
 		return path;
 	}
@@ -200,6 +188,11 @@ public class PathTile extends Tile implements EnterTileEffect{
 	public void landOn(CreatureFigure creature){}
 	
 	@Override
+	public boolean selectable(){
+		return true;
+	}
+	
+	@Override
 	public void render(Graphics2D g2d) {
 		float[] dashingPattern1 = {2f, 2f};
 		Stroke stroke = new BasicStroke(2f, BasicStroke.CAP_BUTT,
@@ -207,11 +200,18 @@ public class PathTile extends Tile implements EnterTileEffect{
 		final Graphics2D g = (Graphics2D)g2d.create();
 		
 	    try{
-	    	g.setColor(Color.BLACK);
+	    	if(getSelected()){
+	    		g.setColor(new Color((float)225/255, (float)225/255, (float)150/255, 0.25f));
+				g.drawRect(this.getPosition().getX() - Tile.size/2 + 1,
+						this.getPosition().getY() - Tile.size/2 + 1,
+						Tile.size - 2,
+						Tile.size - 2);
+	    	}
+	    	/*g.setColor(Color.BLACK);
 			g.fillRect(this.getPosition().getX() - Tile.size/2,
 					this.getPosition().getY() - Tile.size/2,
 					Tile.size,
-					Tile.size);
+					Tile.size);*/
 			
 			g.setColor(Color.WHITE);
 			g.setStroke(stroke);

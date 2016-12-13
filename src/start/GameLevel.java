@@ -7,6 +7,7 @@ import java.util.Map;
 
 import tiles.Tile;
 import utilities.IdCounter;
+import utilities.Lock;
 
 public class GameLevel{
 
@@ -18,6 +19,7 @@ public class GameLevel{
 	private ArrayList<String> rules;
 	private ArrayList<String> landOnFiles;
 	private IdCounter idCounter;
+	private Lock lock;
 	
 	private int attackingPlayerScoreGoal = DEFAULT_PLAYER_SCORE_GOAL;
 	private int attackerCredit = DEFAULT_CREDIT;
@@ -32,8 +34,6 @@ public class GameLevel{
 			ArrayList<String> landOnFiles,
 			HashMap<AreaPosition, Tile> levelMap){
 		this.attackingPlayerScoreGoal = attackingPlayerScoreGoal;
-		
-		idCounter = new IdCounter();
 				
 		if((this.rules = rules) == null){
 			this.rules = new ArrayList<String>();
@@ -44,6 +44,9 @@ public class GameLevel{
 		if((this.levelMap = levelMap) == null){
 			this.levelMap = new HashMap<AreaPosition, Tile>();
 		}
+		
+		idCounter = new IdCounter();
+		lock = new Lock();
 	}
 	
 	
@@ -84,7 +87,7 @@ public class GameLevel{
 	}
 	
 	public HashMap<AreaPosition, Tile> getLevelMap() {
-		return levelMap;
+		return new HashMap<AreaPosition, Tile>(levelMap);
 	}
 
 	public void setLevelMap(HashMap<AreaPosition, Tile> levelMap) {
@@ -149,4 +152,24 @@ public class GameLevel{
 		return null;
 	}
 	
+	public AreaPosition selectTile(int x, int y){
+		AreaPosition clickedAreaPosition = new Position(x, y,
+				Tile.size).toArea();
+		Tile tile = levelMap.get(clickedAreaPosition);
+		
+		if(tile != null && tile.selectable()){
+			tile.setSelected(true);
+			return clickedAreaPosition;
+		}
+		
+		return null;
+	}
+	
+	public void deselectTile(AreaPosition clickedAreaPosition){
+		Tile tile = levelMap.get(clickedAreaPosition);
+		
+		if(tile != null && tile.selectable()){
+			tile.setSelected(false);
+		}
+	}
 }
