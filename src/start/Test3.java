@@ -224,7 +224,7 @@ public class Test3 {
 		player2.addTowerFigure(tFig4);
 		player2.addTowerFigure(tFig5);
 		
-		CircleCreatureFigure fig = new CircleCreatureFigure(100, 0.5f,
+		CircleCreatureFigure fig = new CircleCreatureFigure(100, 0.5,
 				new Position(start.getPosition().getX(), start.getPosition().getY(), Tile.size), Orientation.FORWARD, level);
 		
 		fig.setNavigation(Direction.EAST);
@@ -251,7 +251,7 @@ public class Test3 {
 		
 		game.startGame();
 		
-		CircleCreatureFigure fig2 = new CircleCreatureFigure(100, 0.5f,
+		CircleCreatureFigure fig2 = new CircleCreatureFigure(100, 1.5,
 				new Position(start.getPosition().getX(), start.getPosition().getY(), Tile.size), Orientation.FORWARD, level);
 		fig2.setActionTimer(timer);
 		fig2.setNavigation(Direction.EAST);
