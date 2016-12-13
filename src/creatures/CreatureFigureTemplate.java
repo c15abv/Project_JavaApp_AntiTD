@@ -17,6 +17,7 @@ public class CreatureFigureTemplate{
 	private Orientation orientation;
 	private GameLevel level;
 	private long time;
+	private double speed;
 	
 	public CreatureFigureTemplate(Figures creatureType, int hue, float scale,
 			int cost, Orientation orientation, GameLevel level){
@@ -28,6 +29,7 @@ public class CreatureFigureTemplate{
 		this.level = level;
 		
 		time = -1;
+		speed = CreatureFigure.BASE_SPEED;
 	}
 	
 	public int getCost(){
@@ -53,16 +55,20 @@ public class CreatureFigureTemplate{
 	public void enableTeleporter(long time){
 		this.time = time;
 	}
+	
+	public void setSpeed(double speed){
+		this.speed = speed;
+	}
 
 	public CreatureFigure createNewCreature(Position position,
 			Direction direction){
 		CreatureFigure creature = creatureType == Figures.CIRCLE ? 
-				createNewCircleCreature(position) : 
+				createNewCircleCreature(position, speed) : 
 			(creatureType == Figures.SQUARE ? 
-					createNewSquareCreature(position) :
+					createNewSquareCreature(position, speed) :
 				(creatureType == Figures.TRIANGLE ? 
-						createNewTriangleCreature(position) : 
-							createNewRandomCreature(position)));
+						createNewTriangleCreature(position, speed) : 
+							createNewRandomCreature(position, speed)));
 		if(time != -1){
 			creature.enableTeleport(time);
 		}
@@ -75,30 +81,30 @@ public class CreatureFigureTemplate{
 	}
 	
 	private CircleCreatureFigure createNewCircleCreature(
-			Position position){
+			Position position, double speed){
 		return new CircleCreatureFigure(hue, scale, position,
-				orientation, level);
+				orientation, level, speed);
 	}
 	
 	private SquareCreatureFigure createNewSquareCreature(
-			Position position){
+			Position position, double speed){
 		return new SquareCreatureFigure(hue, scale, position,
 				orientation, level);
 	}
 
 	private TriangleCreatureFigure createNewTriangleCreature(
-			Position position){
+			Position position, double speed){
 		return new TriangleCreatureFigure(hue, scale, position,
 				orientation, level);
 	}
 
 	private CreatureFigure createNewRandomCreature(
-			Position position){
+			Position position, double speed){
 		int randomInt = new Random().nextInt(3);
 		
-		return randomInt == 0 ? createNewCircleCreature(position) :
-			(randomInt == 1 ? createNewSquareCreature(position) :
-				createNewTriangleCreature(position));
+		return randomInt == 0 ? createNewCircleCreature(position, speed) :
+			(randomInt == 1 ? createNewSquareCreature(position, speed) :
+				createNewTriangleCreature(position, speed));
 	}
 
 }
