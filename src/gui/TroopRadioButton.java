@@ -22,7 +22,9 @@ class TroopRadioButton extends FigureRadioButton {
 		return index;
 	}
 
-
+	/**
+	 * Constructor that initiates the button.
+	 */
 	public TroopRadioButton(FigureRepresentation figure, int index)	{
 		this.figure = figure;
 		this.index = index;

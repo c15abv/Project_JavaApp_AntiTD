@@ -11,6 +11,12 @@ import start.Figures;
 import java.awt.Color;
 import java.awt.Dimension;
 
+/**
+ * Abstract radio button class to represent different creatures. 
+ * 
+ * @author karro
+ *
+ */
 @SuppressWarnings("serial")
 public abstract class FigureRadioButton extends JRadioButton {
 	protected static final int TEMP_SIZE = 50;

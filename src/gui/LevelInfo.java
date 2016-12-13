@@ -1,16 +1,31 @@
 package gui;
 
+import start.GameLevel;
+
+/**
+ * Class that holds level information.
+ * 
+ * @author karro
+ *
+ */
 public class LevelInfo {
 	private int nrOfTroops;
 	private int creatureCost;
 	private int teleporterCost;
 	private int startCredit;
-	
-	public LevelInfo(int nrOfTroops, int creatureCost, int teleporterCost, int startCredit)	{
+	private GameLevel level;
+
+	public LevelInfo(int nrOfTroops, int creatureCost, int teleporterCost,
+			int startCredit, GameLevel level) {
 		this.nrOfTroops = nrOfTroops;
 		this.creatureCost = creatureCost;
 		this.teleporterCost = teleporterCost;
 		this.startCredit = startCredit;
+		this.level = level;
+	}
+
+	public GameLevel getLevel() {
+		return level;
 	}
 
 	public int getNrOfTroops() {
@@ -36,7 +51,7 @@ public class LevelInfo {
 	public void setTeleporterCost(int teleporterCost) {
 		this.teleporterCost = teleporterCost;
 	}
-	
+
 	public int getStartCredit() {
 		return startCredit;
 	}

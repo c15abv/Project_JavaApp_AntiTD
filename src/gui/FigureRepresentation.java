@@ -5,15 +5,27 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.util.Random;
 
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
+import creatures.CircleCreatureFigure;
+import creatures.CreatureFigure;
+import creatures.SquareCreatureFigure;
+import creatures.TriangleCreatureFigure;
 import creatures.CreatureFigure.Orientation;
-import start.Direction;
 import start.Figures;
+import start.GameLevel;
+import start.Position;
 import utilities.ColorCreator;
 
+/**
+ * Class to represent different creature figures.
+ * 
+ * @author karro
+ *
+ */
 @SuppressWarnings("serial")
 public abstract class FigureRepresentation extends JPanel {
 	protected static final int TEMP_SIZE = 70;
@@ -25,6 +37,19 @@ public abstract class FigureRepresentation extends JPanel {
 	protected boolean isTeleportCreature = false;
 	protected Orientation orientation;
 	protected int index;
+	protected GameLevel level;
+	
+	public FigureRepresentation(int hue, float scale, boolean isTeleportCreature, Orientation orientation, int cost) {
+		super();
+		this.color = ColorCreator.generateColorFromHue(hue);
+		this.hue = hue;
+		this.scale = scale;
+		this.isTeleportCreature = isTeleportCreature;
+		this.orientation = orientation;
+		this.cost = cost;
+
+	}
+
 	
 	public int getIndex() {
 		return index;
@@ -65,16 +90,6 @@ public abstract class FigureRepresentation extends JPanel {
 		this.orientation = orientation;
 	}
 
-	public FigureRepresentation(int hue, float scale, boolean isTeleportCreature, Orientation orientation, int cost) {
-		super();
-		this.color = ColorCreator.generateColorFromHue(hue);
-		this.hue = hue;
-		this.scale = scale;
-		this.isTeleportCreature = isTeleportCreature;
-		this.orientation = orientation;
-		this.cost = cost;
-
-	}
 
 	public abstract Shape createShape();
 
@@ -126,6 +141,43 @@ public abstract class FigureRepresentation extends JPanel {
 
 	public Color getColor() {
 		return color;
+	}
+	
+	public CreatureFigure createNewCreature(Position position){
+		return creatureType == Figures.CIRCLE ? 
+				createNewCircleCreature(position) : 
+			(creatureType == Figures.SQUARE ? 
+					createNewSquareCreature(position) :
+				(creatureType == Figures.TRIANGLE ? 
+						createNewTriangleCreature(position) : 
+							createNewRandomCreature(position)));
+	}
+	
+	private CircleCreatureFigure createNewCircleCreature(
+			Position position){
+		return new CircleCreatureFigure(hue, scale, position,
+				orientation, level);
+	}
+	
+	private SquareCreatureFigure createNewSquareCreature(
+			Position position){
+		return new SquareCreatureFigure(hue, scale, position,
+				orientation, level);
+	}
+
+	private TriangleCreatureFigure createNewTriangleCreature(
+			Position position){
+		return new TriangleCreatureFigure(hue, scale, position,
+				orientation, level);
+	}
+
+	private CreatureFigure createNewRandomCreature(
+			Position position){
+		int randomInt = new Random().nextInt(3);
+		
+		return randomInt == 0 ? createNewCircleCreature(position) :
+			(randomInt == 1 ? createNewSquareCreature(position) :
+				createNewTriangleCreature(position));
 	}
 	
 	

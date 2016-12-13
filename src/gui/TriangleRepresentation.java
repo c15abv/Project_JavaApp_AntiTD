@@ -6,6 +6,10 @@ import java.awt.Shape;
 import creatures.CreatureFigure.Orientation;
 import start.Figures;
 
+/**
+ * @author karro
+ *
+ */
 @SuppressWarnings("serial")
 class TriangleRepresentation extends FigureRepresentation {
 

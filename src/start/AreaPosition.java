@@ -19,11 +19,12 @@ public class AreaPosition extends Position{
 		this.height = height;
 	}
 	
-	public boolean withinArea(Position position){
-		return position.getX() < this.getX() + length &&
-				this.getX() <= position.getX() && 
-				position.getY() < this.getY() + height && 
-				this.getY() <= position.getY();
+	public static boolean withinArea(Position inside, Position outside,
+			int length, int height){
+		return outside.getX() < inside.getX() + length / 2 &&
+				outside.getX() >= inside.getX() - length / 2 &&
+				outside.getY() < inside.getY() + length / 2 &&
+				outside.getY() >= inside.getY() - length / 2;
 	}
 	
 	@Override

@@ -41,6 +41,13 @@ import javax.swing.event.ChangeListener;
 import creatures.CreatureFigure.Orientation;
 import start.Figures;
 
+/**
+ * Class that builds the rightpanel of the gui where the user can create and buy
+ * troops.
+ * 
+ * @author karro
+ *
+ */
 @SuppressWarnings("serial")
 public class RightPanel extends JPanel {
 	private List<FigureRepresentation> troop = new ArrayList<>();
@@ -70,13 +77,13 @@ public class RightPanel extends JPanel {
 	private JTextField speedTextField;
 	private JTextField teleporterTextField;
 	private JTextField directionTextField;
-	private LevelInfo levelInfo;
+	private GameViewModel gameViewModel;
 
-	public RightPanel(LevelInfo levelInfo) {
+	public RightPanel(GameViewModel gameViewModel) {
 		super();
 		this.currentCreatureCost = 0;
-		this.levelInfo = levelInfo;
-		this.currentCredit = levelInfo.getStartCredit();
+		this.currentCredit = 0;
+		this.gameViewModel = gameViewModel;
 
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -91,7 +98,16 @@ public class RightPanel extends JPanel {
 
 		GridBagConstraints c = new GridBagConstraints();
 
-		troopPanel = new JPanel();
+		initCreatorModePanel();
+
+		
+		troopPanel = new JPanel() {
+
+			@Override
+			public Dimension getPreferredSize() {
+				return new Dimension(FigureRepresentation.TEMP_SIZE*2, modePanel.getHeight());
+			}
+		};
 		initTroopPanel();
 
 		c.gridx = 0;
@@ -125,7 +141,6 @@ public class RightPanel extends JPanel {
 
 		c.gridy = 2;
 
-		initCreatorModePanel();
 
 		modePanel = creatorModePanel;
 
@@ -156,24 +171,27 @@ public class RightPanel extends JPanel {
 
 		setStyle(troopPanel, "YOUR TROOP");
 
-		for (int i = 0; i < levelInfo.getNrOfTroops(); i++) {
-
-			JPanel emptyCreature = new EmptyFigureRepresentation();
-			Border border = BorderFactory.createDashedBorder(Color.DARK_GRAY);
-			JPanel container = new JPanel();
-			container.setBorder(border);
-
-			container.add(emptyCreature);
-
-			troopPanel.add(container);
-
-		}
+		/*
+		 * for (int i = 0; i < gameViewModel.getLevelInfo().getNrOfTroops();
+		 * i++) {
+		 * 
+		 * JPanel emptyCreature = new EmptyFigureRepresentation(); Border border
+		 * = BorderFactory.createDashedBorder(Color.DARK_GRAY); JPanel container
+		 * = new JPanel(); container.setBorder(border);
+		 * 
+		 * container.add(emptyCreature);
+		 * 
+		 * troopPanel.add(container);
+		 * 
+		 * }
+		 */
 
 		troopPanel.addContainerListener(new ContainerListener() {
 
 			@Override
 			public void componentAdded(ContainerEvent arg0) {
-				if (troop.size() == levelInfo.getNrOfTroops()) {
+				if (troop.size() == gameViewModel.getLevelInfo()
+						.getNrOfTroops()) {
 					createBtn.setEnabled(false);
 					startGameBtn.setEnabled(true);
 				}
@@ -189,6 +207,21 @@ public class RightPanel extends JPanel {
 
 		troopPanel.revalidate();
 		troopPanel.repaint();
+	}
+
+	protected void fillTroopPanel() {
+		for (int i = 0; i < gameViewModel.getLevelInfo().getNrOfTroops(); i++) {
+
+			JPanel emptyCreature = new EmptyFigureRepresentation();
+			Border border = BorderFactory.createDashedBorder(Color.DARK_GRAY);
+			JPanel container = new JPanel();
+			container.setBorder(border);
+
+			container.add(emptyCreature);
+
+			troopPanel.add(container);
+
+		}
 	}
 
 	private void initCreatorModePanel() {
@@ -308,7 +341,8 @@ public class RightPanel extends JPanel {
 
 		teleporter.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				int telePorterCost = levelInfo.getTeleporterCost();
+				int telePorterCost = gameViewModel.getLevelInfo()
+						.getTeleporterCost();
 				if (teleporter.isSelected()) {
 					updateCurrentCost(telePorterCost);
 					figure.setIsTeleportCreature(true);
@@ -512,6 +546,8 @@ public class RightPanel extends JPanel {
 				settingsPanel.add(modePanel);
 				settingsPanel.revalidate();
 				settingsPanel.repaint();
+
+				gameViewModel.startGame();
 			}
 
 		});
@@ -712,7 +748,8 @@ public class RightPanel extends JPanel {
 
 					updateCreaturePreview(figure);
 					if (!creatureSelected) {
-						updateCurrentCost(levelInfo.getCreatureCost());
+						updateCurrentCost(
+								gameViewModel.getLevelInfo().getCreatureCost());
 						updateCostTextField();
 						creatureSelected = true;
 

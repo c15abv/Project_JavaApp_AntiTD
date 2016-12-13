@@ -5,10 +5,11 @@ import java.util.HashMap;
 
 import javax.swing.JFrame;
 
-import creatures.AttackingPlayer;
 import creatures.CircleCreatureFigure;
 import creatures.SquareCreatureFigure;
 import creatures.TriangleCreatureFigure;
+import gui.GameView;
+import gui.LevelInfo;
 import tiles.GoalTile;
 import tiles.PathTile;
 import tiles.PathTile.Direction;
@@ -26,7 +27,7 @@ import towers.StarTowerFigure;
 import towers.TriangleTowerFigure;
 import utilities.ActionTimer;
 
-public class Test3 {
+public class Test5 {
 
 	public static void main(String[] args){
 		ActionTimer timer;
@@ -154,7 +155,8 @@ public class Test3 {
 		runner = new GameRunner(game);
 		timer = game.getTimer();
 		
-		CircleTowerFigure tFig = new CircleTowerFigure(2,180,300,
+		
+		CircleTowerFigure tFig = new CircleTowerFigure(1,180,300,
 				new Position(Tile.size, 2 * Tile.size));
 		
 		tFig.setActionTimer(timer);
@@ -168,7 +170,7 @@ public class Test3 {
 		});
 		
 		
-		SquareTowerFigure tFig2 = new SquareTowerFigure(2,46,300,
+		SquareTowerFigure tFig2 = new SquareTowerFigure(1,46,300,
 				new Position(Tile.size * 3, 2 * Tile.size));
 		
 		tFig2.setActionTimer(timer);
@@ -181,7 +183,7 @@ public class Test3 {
 			tFig2.setIsOnCooldown(false);
 		});
 		
-		StarTowerFigure tFig3 = new StarTowerFigure(2,120,300,
+		StarTowerFigure tFig3 = new StarTowerFigure(1,120,300,
 				new Position(Tile.size * 5, 2 * Tile.size));
 		
 		tFig3.setActionTimer(timer);
@@ -194,7 +196,7 @@ public class Test3 {
 			tFig3.setIsOnCooldown(false);
 		});
 		
-		TriangleTowerFigure tFig4 = new TriangleTowerFigure(2,1,300,
+		TriangleTowerFigure tFig4 = new TriangleTowerFigure(1,1,300,
 				new Position(Tile.size * 5, 4 * Tile.size));
 		
 		tFig4.setActionTimer(timer);
@@ -207,7 +209,7 @@ public class Test3 {
 			tFig4.setIsOnCooldown(false);
 		});
 		
-		TriangleTowerFigure tFig5 = new TriangleTowerFigure(2,300,300,
+		TriangleTowerFigure tFig5 = new TriangleTowerFigure(1,300,300,
 				new Position(Tile.size * 3, 4 * Tile.size));
 		
 		tFig5.setActionTimer(timer);
@@ -227,14 +229,17 @@ public class Test3 {
 		player2.addTowerFigure(tFig5);
 		
 		CircleCreatureFigure fig = new CircleCreatureFigure(100, 0.5f,
-				new Position(start.getPosition().getX(), start.getPosition().getY(), Tile.size), Orientation.FORWARD, level);
+				new Position(start.getPosition().getX(), start.getPosition().getY(), Tile.size), Orientation.FORWARD, null);
 		
 		fig.setNavigation(Direction.EAST);
-		fig.getMemory().rememberBackTrackDirection(fig.getPosition(), Direction.WEST);
-		fig.setActionTimer(timer);
-		fig.enableTeleport((long)1000);
+		fig.getMemory().rememberBackTrackDirection(Direction.WEST);
 		player1.addCreatureFigure(fig);
 		
+		
+		LevelInfo levelInfo = new LevelInfo(3, 50, 100, 500);
+		GameView gv = new GameView(levelInfo, game);
+		gv.show();
+		/*
 		frame.setSize(new Dimension(800, 600));
 	    frame.setMinimumSize(new Dimension(800, 600));
 	    frame.setMaximumSize(new Dimension(800, 600));
@@ -246,25 +251,11 @@ public class Test3 {
 		frame.add(game);
 		frame.pack();
 		
-		frame.setVisible(true);
+		frame.setVisible(true);*/
 		
 		thread = new Thread(runner);
 		thread.start();
 		
 		game.startGame();
-		
-		CircleCreatureFigure fig2 = new CircleCreatureFigure(100, 0.5f,
-				new Position(start.getPosition().getX(), start.getPosition().getY(), Tile.size), Orientation.FORWARD, level);
-		fig2.setActionTimer(timer);
-		fig2.setNavigation(Direction.EAST);
-		fig2.getMemory().rememberBackTrackDirection(fig.getPosition(), Direction.WEST);
-		
-		try {
-			Thread.sleep(7000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
-		player1.addCreatureFigure(fig2);
 	}
 }

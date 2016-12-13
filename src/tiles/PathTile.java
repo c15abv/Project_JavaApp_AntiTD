@@ -21,8 +21,49 @@ public class PathTile extends Tile implements EnterTileEffect{
 		NORTH, WEST, EAST, SOUTH;
 	}
 	
+	/*public enum ValidPath{
+		HORIZONTAL("horizontal"), VERTICAL, HORIZONTAL_T_SOUTH,
+		HORIZONTAL_T_NORTH, VERTICAL_T_EAST,
+		VERTICAL_T_WEST, CROSSROAD,
+		L_TURN_HORIZONTAL_SOUTH_TO_EAST, L_TURN_HORIZONTAL_NORTH_TO_WEST,
+		L_TURN_HORIZONTAL_NORTH_TO_EAST, L_TURN_HORIZONTAL_SOUTH_TO_WEST,
+		NORTH, WEST, EAST, SOUTH;
+		
+		private String string;
+		
+		private ValidPath(String string){
+			this.string = string;
+		}
+		
+		public static ValidPath getEnumByString(final String string){
+			for(ValidPath path : ValidPath.values()){
+				if(path.string.equals(string)){
+					return path;
+				}
+			}
+			
+			return null;
+		}
+	}*/
+	
 	public enum Direction{
 		NORTH, EAST, WEST, SOUTH, NA;
+		
+		public static Direction getOpposite(Direction direction){
+			switch(direction){
+			case EAST:
+				return Direction.WEST;
+			case NORTH:
+				return Direction.SOUTH;
+			case SOUTH:
+				return Direction.NORTH;
+			case WEST:
+				return Direction.EAST;
+			default:
+			case NA:
+				return Direction.NA;
+			}
+		}
 	}
 	
 	public class PositionConnection{
@@ -140,6 +181,10 @@ public class PathTile extends Tile implements EnterTileEffect{
 	
 	public boolean hasEffect(){
 		return false;
+	}
+	
+	public ValidPath getValidPath(){
+		return path;
 	}
 	
 	public PositionConnection getPosPair(Position position){

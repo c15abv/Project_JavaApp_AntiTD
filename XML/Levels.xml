@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Author: Jan Nylén -->
+
 
 <!-- <xs:enumeration value="HORIZONTAL_SOUTH" />
 <xs:enumeration value="HORIZONTAL_NORTH" />
@@ -36,7 +38,7 @@
 		<row Index="3">
 			<tile>W</tile>
 			<tile>W</tile>
-			<tile landOn="teleport" direction="VERTICAL">P</tile>
+			<tile landOn="TeleportTile" direction="VERTICAL">P</tile>
 			<tile direction="HORIZONTAL">P</tile>
 			<tile direction="HORIZONTAL_T_NORTH">P</tile>
 			<tile direction="VERTICAL">P</tile>
@@ -234,7 +236,7 @@
 		<row Index="3">
 			<tile>W</tile>
 			<tile>W</tile>
-			<tile landOn="teleport" direction="VERTICAL">P</tile>
+			<tile landOn="TeleportTile" direction="VERTICAL">P</tile>
 			<tile direction="HORIZONTAL">P</tile>
 			<tile direction="HORIZONTAL_T_NORTH">P</tile>
 			<tile direction="VERTICAL">P</tile>

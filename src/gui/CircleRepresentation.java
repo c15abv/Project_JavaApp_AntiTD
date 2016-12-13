@@ -6,6 +6,12 @@ import java.awt.geom.Ellipse2D;
 import creatures.CreatureFigure.Orientation;
 import start.Figures;
 
+/**
+ * FigureRepresentation to represent circles.
+ * 
+ * @author karro
+ *
+ */
 @SuppressWarnings("serial")
 class CircleRepresentation extends FigureRepresentation {
 	

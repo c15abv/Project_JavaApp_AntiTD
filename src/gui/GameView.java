@@ -1,16 +1,19 @@
 package gui;
 
 import java.awt.BorderLayout;
-import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Insets;
+import java.awt.ScrollPane;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
+import java.sql.SQLException;
+import java.sql.Time;
+import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
@@ -22,38 +25,54 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
-import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 
 import start.Game;
+import utilities.DatabaseHandler;
+import utilities.HighScoreInfo;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
+/**
+ * Class that builds the gui.
+ * 
+ * @author karro
+ *
+ */
 @SuppressWarnings("serial")
-public class GameView extends JFrame {
+public class GameView {
 	private JFrame frame;
 	private Color upperPanelColor = Color.DARK_GRAY;
 	private Color lowerPanelColor = Color.DARK_GRAY;
-	private LevelInfo levelInfo;
 	private JPanel centerPanel;
-	private Canvas gameCanvas;
+	private DatabaseHandler databaseHandler = new DatabaseHandler();
+	private JTable highScoreTable = new JTable();
+	private GameViewModel viewModel;
+	private RightPanel rightPanel;
 
 	public static void main(String[] args) {
-		/*LevelInfo levelInfo = new LevelInfo(3, 50, 100, 500);
-		
-		GameView gv = new GameView(levelInfo);
-		gv.show();*/
+		/*
+		 * LevelInfo levelInfo = new LevelInfo(3, 50, 100, 500);
+		 * 
+		 * GameView gv = new GameView(levelInfo, new Canvas()); gv.show();
+		 */
 	}
 
-	public GameView(LevelInfo levelInfo, Canvas game) {
-		this.levelInfo = levelInfo;
-		this.gameCanvas = game;
-		
+	public GameView(GameViewModel viewModel) {
+		this.viewModel = viewModel;
+
 		initUI();
+		// centerPanel.add(this.game);
 
 	}
 
@@ -62,10 +81,12 @@ public class GameView extends JFrame {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		centerFrame();
-		
+
 		JPanel upperPanel = buildUpperPanel();
 		centerPanel = buildCenterPanel();
-		JPanel rightPanel = new RightPanel(levelInfo);
+
+		
+		rightPanel = new RightPanel(viewModel);
 
 		JPanel lowerPanel = buildLowerPanel();
 
@@ -73,6 +94,8 @@ public class GameView extends JFrame {
 		frame.add(rightPanel, BorderLayout.EAST);
 		frame.add(centerPanel, BorderLayout.CENTER);
 		frame.add(lowerPanel, BorderLayout.SOUTH);
+
+		initHighScoreTable();
 
 		frame.pack();
 
@@ -119,7 +142,7 @@ public class GameView extends JFrame {
 		time.setBorder(b);
 
 		gridBag.setConstraints(time, c);
-		
+
 		c.insets = new Insets(0, 10, 10, 0);
 		c.gridy = 1;
 
@@ -142,7 +165,7 @@ public class GameView extends JFrame {
 
 	private JPanel buildCenterPanel() {
 		JPanel centerPanel = new JPanel();
-				
+
 		centerPanel.setBackground(Color.WHITE);
 		return centerPanel;
 	}
@@ -165,30 +188,21 @@ public class GameView extends JFrame {
 		menuBar = new JMenuBar();
 
 		menu = new JMenu("Info");
-		menu.setMnemonic(KeyEvent.VK_A);
-		menu.getAccessibleContext().setAccessibleDescription(
-				"The only menu in this program that has menu items");
+
 		menuBar.add(menu);
 
-		menuItem = new JMenuItem("About", KeyEvent.VK_T);
-		menuItem.setAccelerator(
-				KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menuItem.getAccessibleContext()
-				.setAccessibleDescription("This doesn't really do anything");
+		menuItem = new JMenuItem("About");
 
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				showInfoBox("About text", "About");
+
 			}
 		});
 
 		menu.add(menuItem);
 
-		menuItem = new JMenuItem("Help", KeyEvent.VK_T);
-		menuItem.setAccelerator(
-				KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menuItem.getAccessibleContext()
-				.setAccessibleDescription("This doesn't really do anything");
+		menuItem = new JMenuItem("Help");
 
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -204,7 +218,7 @@ public class GameView extends JFrame {
 	private void confirmDialog(String infoMessage, String title) {
 		Object[] options = { "Quit game", "Cancel" };
 		int n = JOptionPane.showOptionDialog(frame, infoMessage, title,
-				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, 
+				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
 				options, // the titles of buttons
 				options[0]); // default button title
 
@@ -221,41 +235,100 @@ public class GameView extends JFrame {
 		menuBar = new JMenuBar();
 
 		menu = new JMenu("Game Menu");
-		menu.setMnemonic(KeyEvent.VK_A);
-		menu.getAccessibleContext().setAccessibleDescription(
-				"The only menu in this program that has menu items");
+
 		menuBar.add(menu);
 
-		menuItem = new JMenuItem("New Game", KeyEvent.VK_T);
-		menuItem.setAccelerator(
-				KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menuItem.getAccessibleContext()
-				.setAccessibleDescription("This doesn't really do anything");
-		
-		menuItem.addActionListener(new ActionListener()	{
+		menuItem = new JMenuItem("New Game");
 
-			@Override
+		menuItem.addActionListener(new ActionListener() {
+
 			public void actionPerformed(ActionEvent arg0) {
-				centerPanel.add(gameCanvas);
-				centerPanel.revalidate();
-				centerPanel.repaint();
-				
+
+				viewModel.initGame(centerPanel);
+				rightPanel.fillTroopPanel();
+			//	centerPanel.revalidate();
+				//centerPanel.repaint();
+
 			}
-			
+
 		});
-		
+
 		menu.add(menuItem);
 
 		JToggleButton pauseAndResumeBtn = createPauseAndResumeButton();
 		// pauseAndResumeBtn.setSize(menuBar.getSize());
 		menu.add(pauseAndResumeBtn);
 
-		// a group of JMenuItems
-		menuItem = new JMenuItem("Quit", KeyEvent.VK_T);
-		menuItem.setAccelerator(
-				KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menuItem.getAccessibleContext()
-				.setAccessibleDescription("This doesn't really do anything");
+		pauseAndResumeBtn.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent actionEvent) {
+				AbstractButton abstractButton = (AbstractButton) actionEvent
+						.getSource();
+				String btnText = abstractButton.getText();
+				System.out.println(btnText);
+				if (btnText.equals("  Resume")) {
+					viewModel.resumeGame();
+
+				} else {
+					viewModel.pauseGame();
+				}
+			}
+
+		});
+
+		menuItem = new JMenuItem("Highscore");
+
+		menuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					ArrayList<HighScoreInfo> h = databaseHandler
+							.getFromDatabase();
+
+					// Test hemifrån
+					/*
+					 * ArrayList<HighScoreInfo> h = new ArrayList();
+					 * HighScoreInfo hi = new HighScoreInfo();
+					 * hi.setLevel("Level 1"); hi.setName("Karro");
+					 * hi.setScore(10); hi.setTime(new Time(123456)); h.add(hi);
+					 * 
+					 * hi = new HighScoreInfo(); hi.setLevel("Level 1");
+					 * hi.setName("Karro2"); hi.setScore(100); hi.setTime(new
+					 * Time(1234)); h.add(hi);
+					 */
+
+					DefaultTableModel model = (DefaultTableModel) highScoreTable
+							.getModel();
+
+					model.setRowCount(0);
+
+					highScoreTable.setCellSelectionEnabled(false);
+
+					HighScoreInfo hi;
+
+					for (int i = 0; i < h.size(); i++) {
+						hi = new HighScoreInfo();
+						hi = h.get(i);
+						model.addRow(new Object[] { hi.getName(), hi.getScore(),
+								hi.getLevel(), hi.getTime() });
+					}
+
+					highScoreTable.setModel(model);
+
+					JOptionPane.showMessageDialog(null,
+							new JScrollPane(highScoreTable),
+							"HIGHSCORE - Top 10", JOptionPane.PLAIN_MESSAGE);
+
+				} catch (SQLException e1) {
+
+					e1.printStackTrace();
+				}
+
+			}
+		});
+
+		menu.add(menuItem);
+
+		menuItem = new JMenuItem("Quit");
 
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -265,15 +338,54 @@ public class GameView extends JFrame {
 		});
 
 		menu.add(menuItem);
-		/*
-		 * menuItem = new JMenuItem("Both text and icon", new
-		 * ImageIcon("images/middle.gif")); menuItem.setMnemonic(KeyEvent.VK_B);
-		 * menu.add(menuItem);
-		 */
 
 		return menuBar;
 	}
-	
+
+	private void initHighScoreTable() {
+
+		String header[] = { "Name", "Score", "Level", "Time" };
+
+		// instance table model
+		DefaultTableModel model = new DefaultTableModel() {
+
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				// all cells false
+				return false;
+			}
+		};
+		model.setColumnCount(4);
+		highScoreTable.setModel(model);
+
+		TableColumn column1 = new TableColumn();
+		for (int i = 0; i < highScoreTable.getColumnCount(); i++) {
+			column1 = highScoreTable.getTableHeader().getColumnModel()
+					.getColumn(i);
+			column1.setHeaderValue(header[i]);
+		}
+
+		highScoreTable.setCellSelectionEnabled(false);
+		highScoreTable.getTableHeader().setReorderingAllowed(false);
+
+		DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
+			@Override
+			public Component getTableCellRendererComponent(JTable arg0,
+					Object arg1, boolean arg2, boolean arg3, int arg4,
+					int arg5) {
+				Component tableCellRendererComponent = super.getTableCellRendererComponent(
+						arg0, arg1, arg2, arg3, arg4, arg5);
+				int align = DefaultTableCellRenderer.CENTER;
+
+				((DefaultTableCellRenderer) tableCellRendererComponent)
+						.setHorizontalAlignment(align);
+				return tableCellRendererComponent;
+			}
+		};
+
+		highScoreTable.setDefaultRenderer(Object.class, renderer);
+	}
+
 	private JToggleButton createPauseAndResumeButton() {
 		@SuppressWarnings("serial")
 		Action toggleAction = new AbstractAction("  Pause") {

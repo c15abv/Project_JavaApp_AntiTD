@@ -5,6 +5,12 @@ import java.awt.Shape;
 import start.Figures;
 import java.awt.Dimension;
 
+/**
+ * Radio button to represent square creatures.
+ * 
+ * @author karro
+ *
+ */
 @SuppressWarnings("serial")
 class SquareRadioButton extends FigureRadioButton {
 
