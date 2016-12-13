@@ -6,6 +6,7 @@ import creatures.CreatureFigure.Orientation;
 import start.Figures;
 import start.GameLevel;
 import start.Position;
+import tiles.PathTile.Direction;
 
 public class CreatureFigureTemplate{
 	
@@ -15,6 +16,7 @@ public class CreatureFigureTemplate{
 	private int cost;
 	private Orientation orientation;
 	private GameLevel level;
+	private long time;
 	
 	public CreatureFigureTemplate(Figures creatureType, int hue, float scale,
 			int cost, Orientation orientation, GameLevel level){
@@ -24,6 +26,8 @@ public class CreatureFigureTemplate{
 		this.cost = cost;
 		this.orientation = orientation;
 		this.level = level;
+		
+		time = -1;
 	}
 	
 	public int getCost(){
@@ -45,15 +49,29 @@ public class CreatureFigureTemplate{
 	public Orientation getOrientation() {
 		return orientation;
 	}
+	
+	public void enableTeleporter(long time){
+		this.time = time;
+	}
 
-	public CreatureFigure createNewCreature(Position position){
-		return creatureType == Figures.CIRCLE ? 
+	public CreatureFigure createNewCreature(Position position,
+			Direction direction){
+		CreatureFigure creature = creatureType == Figures.CIRCLE ? 
 				createNewCircleCreature(position) : 
 			(creatureType == Figures.SQUARE ? 
 					createNewSquareCreature(position) :
 				(creatureType == Figures.TRIANGLE ? 
 						createNewTriangleCreature(position) : 
 							createNewRandomCreature(position)));
+		if(time != -1){
+			creature.enableTeleport(time);
+		}
+		if(direction != null){
+			creature.setNavigation(direction);
+			creature.getMemory().rememberBackTrackDirection(position,
+					Direction.getOpposite(direction));
+		}
+		return creature;
 	}
 	
 	private CircleCreatureFigure createNewCircleCreature(

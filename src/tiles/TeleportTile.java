@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 import creatures.CreatureFigure;
+import start.AreaPosition;
 import start.Position;
 
 public class TeleportTile extends PathTile{
@@ -16,18 +17,21 @@ public class TeleportTile extends PathTile{
 	private int renderAnimationCount, renderAnimationCount2;
 	private int sleepCount, sleepCount2;
 	private boolean sleepRender, sleepRender2;
+	private Position teleportPosition;
 	
 	public TeleportTile(Position position, ValidPath path){
 		super(position, path);
 		renderAnimationCount = renderAnimationCount2 =
 				sleepCount = sleepCount2 = 0;
 		sleepRender = sleepRender2 = false;
+		teleportPosition = position;
 	}
 
 	@Override
 	public void landOn(CreatureFigure creature){
-		if(connection != null && creature.getPosition().equals(getPosition())){
-			creature.setPosition(connection.getPosition());
+		if(connection != null && creature.getPosition()
+				.equals(getTeleportPosition())){
+			creature.setPosition(connection.getTeleportPosition());
 		}
 	}
 	
@@ -84,17 +88,27 @@ public class TeleportTile extends PathTile{
 		color = new Color((float)85/255, (float)175/255, (float)230/255, alpha);
 		
 		g2d.setColor(color);
-		g2d.drawOval(getPosition().getX() - size / 2,
-				getPosition().getY() - size / 2, size, size);
+		g2d.drawOval(teleportPosition.getX() - size / 2,
+				teleportPosition.getY() - size / 2, size, size);
 		
 		color = new Color((float)85/255, (float)175/255, (float)230/255, alpha2);
 		g2d.setColor(color);
-		g2d.drawOval(getPosition().getX() - size2 / 2,
-				getPosition().getY() - size2 / 2, size2, size2);
+		g2d.drawOval(teleportPosition.getX() - size2 / 2,
+				teleportPosition.getY() - size2 / 2, size2, size2);
 	}
 	
 	public void setConnection(TeleportTile connection){
 		this.connection = connection;
 	}
-
+	
+	public void setTeleporterAt(Position position){
+		if(position != null && AreaPosition.withinArea(getPosition(),
+				position, Tile.size, Tile.size)){
+			teleportPosition = position;
+		}
+	}
+	
+	public Position getTeleportPosition(){
+		return teleportPosition;
+	}
 }

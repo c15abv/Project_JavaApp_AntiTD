@@ -12,28 +12,6 @@ import java.util.Map.Entry;
  * @version 1.0
  */
 public class ActionTimer implements Runnable{
-
-	class IdCounter{
-		public static final int DEFAULT = 0;
-		
-		private long id;
-		
-		IdCounter(){
-			this(DEFAULT);
-		}
-		
-		IdCounter(long id){
-			this.id = id;
-		}
-		
-		void increment(){
-			id++;
-		}
-		
-		long getId(){
-			return id;
-		}
-	}
 	
 	class TimedObject<T extends TimerListener>{
 		private volatile T object;
