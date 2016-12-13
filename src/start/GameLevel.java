@@ -138,9 +138,9 @@ public class GameLevel{
 	}
 
 	public Position getAdjacentStartPosition(int x, int y){
-		AreaPosition clickedPosition = new Position(x, y,
+		AreaPosition clickedAreaPosition = new Position(x, y,
 				Tile.size).toArea();
-		Tile tile = levelMap.get(clickedPosition);
+		Tile tile = levelMap.get(clickedAreaPosition);
 		
 		if(tile != null && tile.isStart()){
 			return tile.getPosition();
