@@ -10,9 +10,14 @@ public class CircleCreatureFigure extends CreatureFigure{
 
 	public static final Figures shape = Figures.CIRCLE;
 	
-	public CircleCreatureFigure(int hue, float scale, Position position,
+	public CircleCreatureFigure(int hue, double scale, Position position,
 			Orientation orientation, GameLevel level){
-		super(hue, scale, position, orientation, level);
+		this(hue, scale, position, orientation, level, BASE_SPEED);
+	}
+	
+	public CircleCreatureFigure(int hue, double scale, Position position,
+			Orientation orientation, GameLevel level, double speed){
+		super(hue, scale, position, orientation, level, speed);
 	}
 
 	@Override

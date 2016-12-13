@@ -6,36 +6,31 @@ import start.Figures;
 import start.GameLevel;
 import start.Position;
 
-public class SquareCreatureFigure extends CreatureFigure {
+public class SquareCreatureFigure extends CreatureFigure{
 
 	public static final Figures shape = Figures.SQUARE;
 
-	public SquareCreatureFigure(int hue, float scale, Position position,
+	public SquareCreatureFigure(int hue, double scale, Position position,
 			Orientation orientation, GameLevel level){
-		super(hue, scale, position, orientation, level);
+		this(hue, scale, position, orientation, level, BASE_SPEED);
 	}
 	
-	public void render(Graphics2D g2d) {
-		g2d.setColor(this.getColor());
-		g2d.fillRect((int)(this.getPosition().getX()),
-				(int)(this.getPosition().getY()),
-				(int)(this.getScale() * CreatureFigure.BASE_SIZE),
-				(int)(this.getScale() * CreatureFigure.BASE_SIZE));
+	public SquareCreatureFigure(int hue, double scale, Position position,
+			Orientation orientation, GameLevel level, double speed){
+		super(hue, scale, position, orientation, level, speed);
+	}
+	
+	@Override
+	public void render(Graphics2D g2d){
+		g2d.setColor(getColor());
+		g2d.fillRect((int)(getPosition().getX()),
+				(int)(getPosition().getY()),
+				(int)(getScale() * CreatureFigure.BASE_SIZE),
+				(int)(getScale() * CreatureFigure.BASE_SIZE));
 	}
 
-	/*@Override
-	public void render(Graphics2D g2d) {
-		g2d.setColor(this.getColor());
-		g2d.fillRect((int)(this.getPosition().getX() -
-				(this.getScale() * CreatureFigure.BASE_SIZE / 2)),
-				(int)(this.getPosition().getY() - 
-						(this.getScale() * CreatureFigure.BASE_SIZE / 2)),
-				(int)(this.getScale() * CreatureFigure.BASE_SIZE),
-				(int)(this.getScale() * CreatureFigure.BASE_SIZE));
-	}*/
-
 	@Override
-	public Figures getShape() {
+	public Figures getShape(){
 		return shape;
 	}
 

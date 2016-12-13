@@ -11,16 +11,21 @@ public class TriangleCreatureFigure extends CreatureFigure{
 
 	public static final Figures shape = Figures.TRIANGLE;
 	
-	public TriangleCreatureFigure(int hue, float scale, Position position,
+	public TriangleCreatureFigure(int hue, double scale, Position position,
 			Orientation orientation, GameLevel level){
-		super(hue, scale, position, orientation, level);
+		this(hue, scale, position, orientation, level, BASE_SPEED);
+	}
+	
+	public TriangleCreatureFigure(int hue, double scale, Position position,
+			Orientation orientation, GameLevel level, double speed){
+		super(hue, scale, position, orientation, level, speed);
 	}
 
 	@Override
 	public void render(Graphics2D g2d){
-		g2d.setColor(this.getColor());
+		g2d.setColor(getColor());
 		g2d.fill(CustomShapes.createTriangle(this.getPosition(),
-				(int)(this.getScale() * CreatureFigure.BASE_SIZE)));
+				(int)(getScale() * CreatureFigure.BASE_SIZE)));
 	}
 
 	@Override

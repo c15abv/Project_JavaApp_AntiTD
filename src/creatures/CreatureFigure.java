@@ -61,11 +61,6 @@ public abstract class CreatureFigure implements TimerListener{
 	private boolean hasReachedGoal;
 	
 	public CreatureFigure(int hue, double scale, Position position,
-			Orientation orientation, GameLevel level){
-		this(hue, scale, position, orientation, level, BASE_SPEED);
-	}
-	
-	public CreatureFigure(int hue, double scale, Position position,
 			Orientation orientation, GameLevel level, double speed){
 		this.hue = hue;
 		this.scale = scale;
