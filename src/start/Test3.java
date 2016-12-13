@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import javax.swing.JFrame;
 
+import creatures.AttackingPlayer;
 import creatures.CircleCreatureFigure;
 import creatures.SquareCreatureFigure;
 import creatures.TriangleCreatureFigure;
@@ -229,7 +230,7 @@ public class Test3 {
 				new Position(start.getPosition().getX(), start.getPosition().getY(), Tile.size), Orientation.FORWARD, null);
 		
 		fig.setNavigation(Direction.EAST);
-		fig.getMemory().rememberBackTrackDirection(Direction.WEST);
+		fig.getMemory().rememberBackTrackDirection(fig.getPosition(), Direction.WEST);
 		player1.addCreatureFigure(fig);
 		
 		frame.setSize(new Dimension(800, 600));

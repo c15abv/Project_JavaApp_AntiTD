@@ -34,7 +34,6 @@ public class PathTile extends Tile implements EnterTileEffect{
 			for(Direction dir : directions){
 				conPos.add(dir);
 			}
-			
 		}
 		
 		public ConnectedPositions getConnectedPositions(){
@@ -160,8 +159,8 @@ public class PathTile extends Tile implements EnterTileEffect{
 		float[] dashingPattern1 = {2f, 2f};
 		Stroke stroke = new BasicStroke(2f, BasicStroke.CAP_BUTT,
 		        BasicStroke.JOIN_MITER, 1.0f, dashingPattern1, 2.0f);
-		 
 		final Graphics2D g = (Graphics2D)g2d.create();
+		
 	    try{
 	    	g.setColor(Color.BLACK);
 			g.fillRect(this.getPosition().getX() - Tile.size/2,
@@ -172,10 +171,12 @@ public class PathTile extends Tile implements EnterTileEffect{
 			g.setColor(Color.WHITE);
 			g.setStroke(stroke);
 			if(start1 != null){
-				g.drawLine(start1.getX(), start1.getY(), end1.getX(), end1.getY());
+				g.drawLine(start1.getX(), start1.getY(), end1.getX(),
+						end1.getY());
 			}
 			if(start2 != null){
-				g.drawLine(start2.getX(), start2.getY(), end2.getX(), end2.getY());
+				g.drawLine(start2.getX(), start2.getY(), end2.getX(),
+						end2.getY());
 			}
 	    }finally{
 	         g.dispose();

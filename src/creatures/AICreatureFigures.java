@@ -6,7 +6,6 @@ import java.util.Random;
 
 import creatures.CreatureFigure.Orientation;
 import start.AreaPosition;
-import start.AttackingPlayer;
 import start.GameLevel;
 import start.Position;
 import tiles.ConnectedPositions;
@@ -40,7 +39,7 @@ public class AICreatureFigures{
 					tile.walkable()){
 				pair = ((PathTile)tile).getPosPair(figure.getPosition());
 				connected = pair.getConnectedPositions();
-				if(!setNewPos(connected, figure)){
+				if(!findNewPos(connected, figure)){
 					figure.remove();
 				}else if(((PathTile)tile).isGoalPosition(figure.getPosition())){
 					figure.setHasReachedGoal(true);
@@ -54,37 +53,55 @@ public class AICreatureFigures{
 		}
 	}
 	
-	private boolean setNewPos(ConnectedPositions connected, CreatureFigure figure){
+	private boolean setNewPos(Direction direction,
+			HashMap<Direction, Position> posMap,
+			CreatureFigure figure){
+		Position newPos = null;
+		if(direction == null){
+			return false;
+		}
+		figure.setNavigation(direction);
+		if((newPos = posMap.get(direction)) != null){
+			figure.setPosition(newPos);
+			return true;
+		}
+		
+		return false;
+	}
+	
+	private Orientation randomOrientation(){
+		int randomInt = 0;
+		return (randomInt = new Random().nextInt(3)) == 0 ? 
+				Orientation.FORWARD : randomInt == 1 ?
+						Orientation.LEFT : Orientation.RIGHT;
+	}
+	
+	private boolean findNewPos(ConnectedPositions connected, CreatureFigure figure){
 		HashMap<Direction, Position> posMap = connected.getMap();
 		Position newPos = null;
 		Orientation orient = figure.getOrientation();
-		int randomInt = 0;
 		Direction translatedDir = null;
 		PathMemory memory = figure.getMemory();
+		
+		if(figure.getPosition().equals(memory.getMostRecentCrossing())){
+			return setNewPos(memory.getBackTrackDirection(figure.getPosition()),
+					posMap, figure);
+		}
 		
 		if(connected.changesDirection(figure.getNavigationFrom())){
 			memory.addPosition(figure.getPosition(), connected,
 					figure.getNavigationFrom());
+			memory.setMostRecentCrossing(connected);
 		}
 		
 		memory.removeDirection(figure.getPosition(), figure.getNavigationFrom());
 		
 		if(memory.positionExplored(figure.getPosition())){
-			translatedDir = memory.getBackTrackDirection();
-			if(translatedDir == null){
-				return false;
-			}
-			System.out.println("back");
-			figure.setNavigation(translatedDir);
-			newPos = posMap.get(translatedDir);
-			figure.setPosition(newPos);
-			return true;
+			return setNewPos(memory.getBackTrackDirection(), posMap, figure);
 		}
 		
 		if(orient == Orientation.RANDOM){
-			orient = (randomInt = new Random().nextInt(3)) == 0 ? 
-					Orientation.FORWARD : randomInt == 1 ?
-							Orientation.LEFT : Orientation.RIGHT;
+			orient = randomOrientation();
 		}
 		
 		for(int i = 0; i < 3; i++){
@@ -96,7 +113,8 @@ public class AICreatureFigures{
 				if(connected.changesDirection(figure.getNavigationFrom()) &&
 						memory.isValidDirection(figure.getPosition(), translatedDir)){
 					figure.setNavigation(translatedDir);
-					memory.rememberBackTrackDirection(figure.getNavigationFrom());
+					memory.rememberBackTrackDirection(figure.getPosition(),
+							figure.getNavigationFrom());
 					memory.removeDirection(figure.getPosition(),
 							figure.getNavigation());
 					figure.setPosition(newPos);
@@ -124,16 +142,7 @@ public class AICreatureFigures{
 			}
 		}
 		
-		translatedDir = memory.getBackTrackDirection();
-		if(translatedDir != null){
-			newPos = posMap.get(translatedDir);
-			figure.setNavigation(translatedDir);
-			figure.setPosition(newPos);
-			System.out.println("back");
-			return true;
-		}
-		
-		return false;
+		return setNewPos(memory.getBackTrackDirection(), posMap, figure);
 	}
 	
 	private Direction getTranslatedDirection(Direction dirFacing, Orientation orientTo){
