@@ -7,8 +7,6 @@ import javax.swing.JFrame;
 
 import creatures.AttackingPlayer;
 import creatures.CircleCreatureFigure;
-import creatures.SquareCreatureFigure;
-import creatures.TriangleCreatureFigure;
 import tiles.GoalTile;
 import tiles.PathTile;
 import tiles.PathTile.Direction;

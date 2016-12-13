@@ -45,7 +45,7 @@ public class GameLevel{
 			this.levelMap = new HashMap<AreaPosition, Tile>();
 		}
 		
-		idCounter = new IdCounter();
+		idCounter = new IdCounter(1);
 		lock = new Lock();
 	}
 	
