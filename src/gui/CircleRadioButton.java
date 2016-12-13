@@ -16,6 +16,9 @@ import java.awt.Dimension;
 @SuppressWarnings("serial")
 class CircleRadioButton extends FigureRadioButton {
 
+	/**
+	 * Constructor that initiates the button.
+	 */
 	public CircleRadioButton() {
 		initButton();
 	}

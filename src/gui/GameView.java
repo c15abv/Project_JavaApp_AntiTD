@@ -54,11 +54,11 @@ public class GameView {
 	private JFrame frame;
 	private Color upperPanelColor = Color.DARK_GRAY;
 	private Color lowerPanelColor = Color.DARK_GRAY;
-	private LevelInfo levelInfo;
 	private JPanel centerPanel;
-	private Game game;
 	private DatabaseHandler databaseHandler = new DatabaseHandler();
 	private JTable highScoreTable = new JTable();
+	private GameViewModel viewModel;
+	private RightPanel rightPanel;
 
 	public static void main(String[] args) {
 		/*
@@ -68,12 +68,11 @@ public class GameView {
 		 */
 	}
 
-	public GameView(LevelInfo levelInfo, Game game) {
-		this.levelInfo = levelInfo;
-		this.game = game;
+	public GameView(GameViewModel viewModel) {
+		this.viewModel = viewModel;
 
 		initUI();
-		centerPanel.add(this.game);
+		// centerPanel.add(this.game);
 
 	}
 
@@ -83,10 +82,11 @@ public class GameView {
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		centerFrame();
 
-		JPanel upperPanel = buildUpperPanel(game);
+		JPanel upperPanel = buildUpperPanel();
 		centerPanel = buildCenterPanel();
 
-		JPanel rightPanel = new RightPanel(levelInfo);
+		
+		rightPanel = new RightPanel(viewModel);
 
 		JPanel lowerPanel = buildLowerPanel();
 
@@ -170,7 +170,7 @@ public class GameView {
 		return centerPanel;
 	}
 
-	private JPanel buildUpperPanel(Game game) {
+	private JPanel buildUpperPanel() {
 		JPanel upperPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		upperPanel.setBackground(upperPanelColor);
 
@@ -243,10 +243,11 @@ public class GameView {
 		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent arg0) {
-				/*
-				 * System.out.println("HEJ"); centerPanel.add(game);
-				 * centerPanel.revalidate(); centerPanel.repaint();
-				 */
+
+				viewModel.initGame(centerPanel);
+				rightPanel.fillTroopPanel();
+			//	centerPanel.revalidate();
+				//centerPanel.repaint();
 
 			}
 
@@ -263,16 +264,13 @@ public class GameView {
 			public void actionPerformed(ActionEvent actionEvent) {
 				AbstractButton abstractButton = (AbstractButton) actionEvent
 						.getSource();
-				boolean selected = abstractButton.getModel().isSelected();
 				String btnText = abstractButton.getText();
 				System.out.println(btnText);
 				if (btnText.equals("  Resume")) {
-					game.resumeGame();
-					System.out.println("GAME RESUMED");
+					viewModel.resumeGame();
 
 				} else {
-					game.pauseGame();
-					System.out.println("GAME PAUSED");
+					viewModel.pauseGame();
 				}
 			}
 
@@ -304,7 +302,7 @@ public class GameView {
 					model.setRowCount(0);
 
 					highScoreTable.setCellSelectionEnabled(false);
-					
+
 					HighScoreInfo hi;
 
 					for (int i = 0; i < h.size(); i++) {
