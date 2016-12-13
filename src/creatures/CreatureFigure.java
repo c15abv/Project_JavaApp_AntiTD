@@ -5,11 +5,22 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+
+
+
+
+import java.util.Map;
+
+import start.AreaPosition;
 import start.Figures;
 import start.GameLevel;
 import start.Position;
 import tiles.PathTile;
 import tiles.PathTile.Direction;
+import tiles.PathTile.ValidPath;
+import tiles.TeleportTile;
+import tiles.Tile;
+import utilities.Action;
 import utilities.ActionTimer;
 import utilities.ColorCreator;
 import utilities.Lock;
@@ -157,11 +168,27 @@ public abstract class CreatureFigure implements TimerListener{
 		return true;
 	}
 
+	public void enableTeleport(Long time){
+		final long id = level.getNewUniqueId();
+		
+		addOnSpawnTimedAction(time, () -> {
+			performTeleportCreationAction(id, null);
+		});
+		
+		addOnDeathAction(() -> {
+			TeleportTile tile = (TeleportTile)level.getTileById(id);
+			if(tile != null){
+				performTeleportCreationAction(0, tile);
+			}
+		});
+		
+	}
+	
 	public void addOnSpawnAction(Action action){
 		onSpawnActionList.add(action);
 	}
 	
-	public void addOnSpawnTimedAction(int time, Action action){
+	public void addOnSpawnTimedAction(Long time, Action action){
 		long id;
 		if(hasActionTimer()){
 			id = actionTimer.getNewUniqueId();
@@ -292,4 +319,31 @@ public abstract class CreatureFigure implements TimerListener{
 		}
 	}
 	
+	private void performTeleportCreationAction(final long id,
+			final TeleportTile otherTeleportTile){
+		Position figPos = new Position(getPosition().getX()
+				+ Tile.size / 2, getPosition().getY()
+				+ Tile.size / 2, Tile.size);
+		Tile tile = level.getLevelMap()
+				.get(figPos.toArea());
+		Position tilePosition = tile.getPosition();
+		ValidPath path;
+		TeleportTile teleportTile;
+		
+		if(tile.walkable()){
+			path = ((PathTile)tile).getValidPath();
+			teleportTile = new TeleportTile(tilePosition, path);
+			teleportTile.setTeleporterAt(getPosition());
+			if(id != 0){
+				teleportTile.setId(id);
+			}
+			if(otherTeleportTile != null){
+				otherTeleportTile.setConnection(teleportTile);
+				teleportTile.setConnection(otherTeleportTile);
+			}
+			level.changeTile(figPos.toArea(), 
+					teleportTile);
+			
+		}
+	}
 }
