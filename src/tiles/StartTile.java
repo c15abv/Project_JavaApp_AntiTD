@@ -79,4 +79,9 @@ public class StartTile extends PathTile{
 		}
 	}
 	
+	@Override
+	public boolean isStart(){
+		return true;
+	}
+	
 }

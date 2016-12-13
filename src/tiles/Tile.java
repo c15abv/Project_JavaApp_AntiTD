@@ -57,4 +57,12 @@ public abstract class Tile{
 	public long getId(){
 		return id;
 	}
+	
+	public boolean isGoal(){
+		return false;
+	}
+	
+	public boolean isStart(){
+		return false;
+	}
 }

@@ -64,5 +64,10 @@ public class GoalTile extends PathTile{
 	public boolean isGoalPosition(Position position){
 		return getPosition().equals(position);
 	}
+	
+	@Override
+	public boolean isGoal(){
+		return true;
+	}
 
 }
