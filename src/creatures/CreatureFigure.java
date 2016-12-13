@@ -300,23 +300,7 @@ public abstract class CreatureFigure implements TimerListener{
 	
 	public void setNavigation(PathTile.Direction navigation){
 		this.navigation = navigation;
-		switch(navigation){
-		case EAST:
-			navigationFrom = PathTile.Direction.WEST;
-			break;
-		case NORTH:
-			navigationFrom = PathTile.Direction.SOUTH;
-			break;
-		case SOUTH:
-			navigationFrom = PathTile.Direction.NORTH;
-			break;
-		case WEST:
-			navigationFrom = PathTile.Direction.EAST;
-			break;
-		default:
-			break;
-		
-		}
+		navigationFrom = Direction.getOpposite(navigation);
 	}
 	
 	private void performTeleportCreationAction(final long id,

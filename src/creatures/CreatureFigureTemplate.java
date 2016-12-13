@@ -6,6 +6,7 @@ import creatures.CreatureFigure.Orientation;
 import start.Figures;
 import start.GameLevel;
 import start.Position;
+import tiles.PathTile.Direction;
 
 public class CreatureFigureTemplate{
 	
@@ -53,7 +54,8 @@ public class CreatureFigureTemplate{
 		this.time = time;
 	}
 
-	public CreatureFigure createNewCreature(Position position){
+	public CreatureFigure createNewCreature(Position position,
+			Direction direction){
 		CreatureFigure creature = creatureType == Figures.CIRCLE ? 
 				createNewCircleCreature(position) : 
 			(creatureType == Figures.SQUARE ? 
@@ -63,6 +65,11 @@ public class CreatureFigureTemplate{
 							createNewRandomCreature(position)));
 		if(time != -1){
 			creature.enableTeleport(time);
+		}
+		if(direction != null){
+			creature.setNavigation(direction);
+			creature.getMemory().rememberBackTrackDirection(position,
+					Direction.getOpposite(direction));
 		}
 		return creature;
 	}
