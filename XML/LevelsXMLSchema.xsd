@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<!-- Author: Jan Nylén -->
+
 	<!--This schema validates maps for an Anti TD game. A levels xml file has 
 		to hold a complextype element "levels" that in turn can hold an unlimited 
 		number of "level" elements representing actual maps. Each map is built up 
