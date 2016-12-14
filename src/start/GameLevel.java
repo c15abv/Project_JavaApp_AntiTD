@@ -7,7 +7,6 @@ import java.util.Map;
 
 import tiles.Tile;
 import utilities.IdCounter;
-import utilities.Lock;
 
 public class GameLevel{
 
@@ -19,7 +18,6 @@ public class GameLevel{
 	private ArrayList<String> rules;
 	private ArrayList<String> landOnFiles;
 	private IdCounter idCounter;
-	private Lock lock;
 	
 	private int attackingPlayerScoreGoal = DEFAULT_PLAYER_SCORE_GOAL;
 	private int attackerCredit = DEFAULT_CREDIT;
@@ -46,7 +44,6 @@ public class GameLevel{
 		}
 		
 		idCounter = new IdCounter(1);
-		lock = new Lock();
 	}
 	
 	

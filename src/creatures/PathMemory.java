@@ -5,7 +5,6 @@ import java.util.Stack;
 
 import start.Position;
 import tiles.ConnectedPositions;
-import tiles.PathTile;
 import tiles.PathTile.Direction;
 
 public class PathMemory{
