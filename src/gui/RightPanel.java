@@ -13,6 +13,8 @@ import java.awt.event.ContainerEvent;
 import java.awt.event.ContainerListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,6 +94,11 @@ public class RightPanel extends JPanel {
 		});
 	}
 
+	public void setStartCreditTextField(int credit) {
+		currentCredit = credit;
+		creditTextField.setText(String.valueOf(currentCredit));
+	}
+
 	private void initUI() {
 
 		GridBagLayout gb = new GridBagLayout();
@@ -100,14 +107,8 @@ public class RightPanel extends JPanel {
 
 		initCreatorModePanel();
 
-		
-		troopPanel = new JPanel() {
+		troopPanel = new JPanel();
 
-			@Override
-			public Dimension getPreferredSize() {
-				return new Dimension(FigureRepresentation.TEMP_SIZE*2, modePanel.getHeight());
-			}
-		};
 		initTroopPanel();
 
 		c.gridx = 0;
@@ -141,7 +142,6 @@ public class RightPanel extends JPanel {
 
 		c.gridy = 2;
 
-
 		modePanel = creatorModePanel;
 
 		gb.setConstraints(modePanel, c);
@@ -162,6 +162,7 @@ public class RightPanel extends JPanel {
 		c.fill = GridBagConstraints.VERTICAL;
 
 		gb.setConstraints(settingsPanel, c);
+
 		this.add(settingsPanel);
 
 	}
@@ -222,6 +223,9 @@ public class RightPanel extends JPanel {
 			troopPanel.add(container);
 
 		}
+
+		// this.revalidate();
+		// this.repaint();
 	}
 
 	private void initCreatorModePanel() {
@@ -346,9 +350,12 @@ public class RightPanel extends JPanel {
 				if (teleporter.isSelected()) {
 					updateCurrentCost(telePorterCost);
 					figure.setIsTeleportCreature(true);
+					currentCreatureCost = telePorterCost;
 				} else {
 					updateCurrentCost(-telePorterCost);
 					figure.setIsTeleportCreature(false);
+					currentCreatureCost = gameViewModel.getLevelInfo()
+							.getCreatureCost();
 				}
 				updateCostTextField();
 				figure.setCost(currentCreatureCost);
@@ -393,7 +400,7 @@ public class RightPanel extends JPanel {
 									FigureRepresentation figure = troop
 											.get(index);
 									updateCreaturePreview(figure);
-
+									gameViewModel.addTroop(figure);
 									hitPointsTextField.setText("HP: " + "?");
 									speedTextField.setText("Speed" + "?");
 									directionTextField.setText("Orientation: "
@@ -407,11 +414,11 @@ public class RightPanel extends JPanel {
 												.setText("Teleporter: " + "No");
 
 									}
-
 									currentCreatureCost = figure.cost;
 									updateCostTextField();
 
 								}
+
 							}
 						}
 					};
@@ -426,9 +433,11 @@ public class RightPanel extends JPanel {
 					if (figure.getOrientation() != null) {
 						troop.add(figure);
 
-						message = "Type: " + figure.creatureType
-								+ "\nOrientation: " + figure.orientation
-								+ "\nIsTeleport: " + figure.isTeleportCreature;
+						/*
+						 * message = "Type: " + figure.creatureType +
+						 * "\nOrientation: " + figure.orientation +
+						 * "\nIsTeleport: " + figure.isTeleportCreature;
+						 */
 
 						createNewCreature(figure.getCreatureType().name());
 
@@ -437,17 +446,19 @@ public class RightPanel extends JPanel {
 						troopPanel.revalidate();
 						troopPanel.repaint();
 
-						calculateCreatureCost();
 					} else {
 						message = "Select orientation of creature.";
+						JOptionPane.showMessageDialog(container, message);
+
 					}
 
 				} catch (NullPointerException e) {
 					message = "Select troop first.";
-					e.printStackTrace();
+					JOptionPane.showMessageDialog(container, message);
+
+					// e.printStackTrace();
 				}
 
-				JOptionPane.showMessageDialog(container, message);
 			}
 
 		});
@@ -491,23 +502,35 @@ public class RightPanel extends JPanel {
 				String message;
 
 				try {
-					String creature = shapeBtnGroup.getSelection()
-							.getActionCommand();
+					ButtonModel btn = troopsBtnGroup.getSelection();
+					int index = Integer.parseInt(btn.getActionCommand());
 
-					message = "Creature chosen: " + creature;
-
-					calculateCreatureCost();
+					if (currentCreatureCost <= currentCredit) {
+						gameViewModel.buyCreature(index);
+						updateCreditTextField();
+					} else {
+						JOptionPane.showMessageDialog(null,
+								"FÖR LITE KREDITER!!!!!!!!");
+					}
 
 				} catch (NullPointerException e) {
 					message = "Select troop first.";
+					JOptionPane.showMessageDialog(container, message);
 				}
 
-				JOptionPane.showMessageDialog(container, message);
 			}
 
 		});
 
 		return buyBtn;
+	}
+
+	private void updateCreditTextField() {
+		int oldCredit = Integer.parseInt(creditTextField.getText());
+		int newCredit = oldCredit - currentCreatureCost;
+		currentCredit = newCredit;
+
+		creditTextField.setText(String.valueOf(currentCredit));
 	}
 
 	private void createStartGameButton() {

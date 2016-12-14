@@ -37,7 +37,6 @@ public abstract class FigureRepresentation extends JPanel {
 	protected boolean isTeleportCreature = false;
 	protected Orientation orientation;
 	protected int index;
-	protected GameLevel level;
 	
 	public FigureRepresentation(int hue, float scale, boolean isTeleportCreature, Orientation orientation, int cost) {
 		super();
@@ -142,43 +141,4 @@ public abstract class FigureRepresentation extends JPanel {
 	public Color getColor() {
 		return color;
 	}
-	
-	public CreatureFigure createNewCreature(Position position){
-		return creatureType == Figures.CIRCLE ? 
-				createNewCircleCreature(position) : 
-			(creatureType == Figures.SQUARE ? 
-					createNewSquareCreature(position) :
-				(creatureType == Figures.TRIANGLE ? 
-						createNewTriangleCreature(position) : 
-							createNewRandomCreature(position)));
-	}
-	
-	private CircleCreatureFigure createNewCircleCreature(
-			Position position){
-		return new CircleCreatureFigure(hue, scale, position,
-				orientation, level);
-	}
-	
-	private SquareCreatureFigure createNewSquareCreature(
-			Position position){
-		return new SquareCreatureFigure(hue, scale, position,
-				orientation, level);
-	}
-
-	private TriangleCreatureFigure createNewTriangleCreature(
-			Position position){
-		return new TriangleCreatureFigure(hue, scale, position,
-				orientation, level);
-	}
-
-	private CreatureFigure createNewRandomCreature(
-			Position position){
-		int randomInt = new Random().nextInt(3);
-		
-		return randomInt == 0 ? createNewCircleCreature(position) :
-			(randomInt == 1 ? createNewSquareCreature(position) :
-				createNewTriangleCreature(position));
-	}
-	
-	
 }

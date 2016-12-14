@@ -1,14 +1,18 @@
 package gui;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.JPanel;
 
 import creatures.AttackingPlayer;
 import creatures.CircleCreatureFigure;
+import creatures.CreatureFigure;
 import creatures.CreatureFigure.Orientation;
+import creatures.CreatureFigureTemplate;
 import start.AreaPosition;
+import start.Figures;
 import start.Game;
 import start.GameLevel;
 import start.GameRunner;
@@ -40,6 +44,7 @@ public class GameViewAdapter implements GameViewModel {
 	private ActionTimer timer;
 	private GameLevel level = new GameLevel();
 	private LevelInfo levelInfo;
+	private ArrayList<CreatureFigureTemplate> troops = new ArrayList<>();
 	
 	public LevelInfo getLevelInfo() {
 		return levelInfo;
@@ -84,8 +89,20 @@ public class GameViewAdapter implements GameViewModel {
 	}
 
 	@Override
-	public void addCreature(FigureRepresentation figure) {
-		// TODO Auto-generated method stub
+	public void addTroop(FigureRepresentation figure) {
+		CreatureFigureTemplate creature = new CreatureFigureTemplate(figure.creatureType, figure.hue, figure.scale,
+				figure.cost, figure.orientation, level);
+		troops.add(creature);
+		
+	}
+	
+	@Override
+	public void buyCreature(int index) {
+		
+		StartTile start = new StartTile(new Position(Tile.size, Tile.size), ValidPath.EAST);
+
+		CreatureFigureTemplate troop = troops.get(index);
+		player1.addCreatureFigure(troop.createNewCreature(start.getPosition(), Direction.EAST));
 		
 	}
 	
@@ -210,7 +227,7 @@ public class GameViewAdapter implements GameViewModel {
 		
 		StartTile start = new StartTile(new Position(Tile.size, Tile.size), ValidPath.EAST);
 
-		CircleTowerFigure tFig = new CircleTowerFigure(1,180,300,
+		/*CircleTowerFigure tFig = new CircleTowerFigure(1,180,300,
 				new Position(Tile.size, 2 * Tile.size));
 		
 		tFig.setActionTimer(timer);
@@ -281,13 +298,14 @@ public class GameViewAdapter implements GameViewModel {
 		player2.addTowerFigure(tFig3);
 		player2.addTowerFigure(tFig4);
 		player2.addTowerFigure(tFig5);
-		
+		*/
+		/*
 		CircleCreatureFigure fig = new CircleCreatureFigure(100, 0.5f,
 				new Position(start.getPosition().getX(), start.getPosition().getY(), Tile.size), Orientation.FORWARD, null);
 		
 		fig.setNavigation(Direction.EAST);
 		fig.getMemory().rememberBackTrackDirection(fig.getPosition(), Direction.WEST);
-		player1.addCreatureFigure(fig);
+		player1.addCreatureFigure(fig);*/
 		
 		
 	}
