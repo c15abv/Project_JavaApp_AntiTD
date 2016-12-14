@@ -246,9 +246,7 @@ public class GameView {
 
 				viewModel.initGame(centerPanel);
 				rightPanel.fillTroopPanel();
-			//	centerPanel.revalidate();
-				//centerPanel.repaint();
-
+				rightPanel.setStartCreditTextField(viewModel.getLevelInfo().getStartCredit());
 			}
 
 		});
@@ -256,7 +254,7 @@ public class GameView {
 		menu.add(menuItem);
 
 		JToggleButton pauseAndResumeBtn = createPauseAndResumeButton();
-		// pauseAndResumeBtn.setSize(menuBar.getSize());
+
 		menu.add(pauseAndResumeBtn);
 
 		pauseAndResumeBtn.addActionListener(new ActionListener() {
@@ -265,7 +263,7 @@ public class GameView {
 				AbstractButton abstractButton = (AbstractButton) actionEvent
 						.getSource();
 				String btnText = abstractButton.getText();
-				System.out.println(btnText);
+
 				if (btnText.equals("  Resume")) {
 					viewModel.resumeGame();
 
