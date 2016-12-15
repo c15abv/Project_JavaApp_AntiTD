@@ -15,6 +15,15 @@ public class LevelInfo {
 	private int startCredit;
 	private GameLevel level;
 
+	/**
+	 * Constructor that initiates the object with the given parameters.
+	 * 
+	 * @param nrOfTroops
+	 * @param creatureCost
+	 * @param teleporterCost
+	 * @param startCredit
+	 * @param level
+	 */
 	public LevelInfo(int nrOfTroops, int creatureCost, int teleporterCost,
 			int startCredit, GameLevel level) {
 		this.nrOfTroops = nrOfTroops;

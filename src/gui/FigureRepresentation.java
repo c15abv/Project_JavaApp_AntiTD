@@ -5,23 +5,17 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
-import java.util.Random;
 
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
-import creatures.CircleCreatureFigure;
-import creatures.CreatureFigure;
-import creatures.SquareCreatureFigure;
-import creatures.TriangleCreatureFigure;
 import creatures.CreatureFigure.Orientation;
 import start.Figures;
-import start.GameLevel;
-import start.Position;
+
 import utilities.ColorCreator;
 
 /**
- * Class to represent different creature figures.
+ * Abstract class that represents different creature figures.
  * 
  * @author karro
  *
@@ -37,8 +31,19 @@ public abstract class FigureRepresentation extends JPanel {
 	protected boolean isTeleportCreature = false;
 	protected Orientation orientation;
 	protected int index;
-	
-	public FigureRepresentation(int hue, float scale, boolean isTeleportCreature, Orientation orientation, int cost) {
+	protected long time;
+
+	/**
+	 * Constructor that initiates the representation with the given parameters.
+	 * 
+	 * @param hue
+	 * @param scale
+	 * @param isTeleportCreature
+	 * @param orientation
+	 * @param cost
+	 */
+	public FigureRepresentation(int hue, float scale,
+			boolean isTeleportCreature, Orientation orientation, int cost) {
 		super();
 		this.color = ColorCreator.generateColorFromHue(hue);
 		this.hue = hue;
@@ -48,8 +53,14 @@ public abstract class FigureRepresentation extends JPanel {
 		this.cost = cost;
 
 	}
-
 	
+	/**
+	 * Creates the shape of the figure.
+	 * 
+	 * @return
+	 */
+	public abstract Shape createShape();
+
 	public int getIndex() {
 		return index;
 	}
@@ -83,36 +94,12 @@ public abstract class FigureRepresentation extends JPanel {
 	public Orientation getOrientation() {
 		return orientation;
 	}
-	
 
 	public void setOrientation(Orientation orientation) {
 		this.orientation = orientation;
 	}
 
-
-	public abstract Shape createShape();
-
-	@Override
-	public void paintComponent(Graphics g) {
-		// super.paintComponent(g);
-
-		g.setColor(color);
-		this.shape = createShape();
-		((Graphics2D) g).fill(shape);
-	}
-
-	@Override
-	public void repaint() {
-		super.repaint();
-
-	}
-
-	@Override
-	public Dimension getPreferredSize() {
-		return new Dimension((int) (TEMP_SIZE * scale),
-				(int) (TEMP_SIZE * scale));
-	}
-
+	
 	public Figures getCreatureType() {
 		return creatureType;
 	}
@@ -140,5 +127,32 @@ public abstract class FigureRepresentation extends JPanel {
 
 	public Color getColor() {
 		return color;
+	}
+	
+	public long getTime() {
+		return time;
+	}
+
+	public void setTime(long time) {
+		this.time = time;
+	}
+	
+	@Override
+	public void paintComponent(Graphics g) {
+		g.setColor(color);
+		this.shape = createShape();
+		((Graphics2D) g).fill(shape);
+	}
+
+	@Override
+	public void repaint() {
+		super.repaint();
+
+	}
+
+	@Override
+	public Dimension getPreferredSize() {
+		return new Dimension((int) (TEMP_SIZE * scale),
+				(int) (TEMP_SIZE * scale));
 	}
 }

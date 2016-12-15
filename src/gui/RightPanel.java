@@ -13,8 +13,6 @@ import java.awt.event.ContainerEvent;
 import java.awt.event.ContainerListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,8 +42,8 @@ import creatures.CreatureFigure.Orientation;
 import start.Figures;
 
 /**
- * Class that builds the rightpanel of the gui where the user can create and buy
- * troops.
+ * Class that builds the right panel of the gui where the user can create and
+ * buy troops.
  * 
  * @author karro
  *
@@ -66,6 +64,7 @@ public class RightPanel extends JPanel {
 	private FigureRepresentation figure;
 	private JSlider colorSlider;
 	private JSlider sizeSlider;
+	private JSlider teleporterTimeSlider;
 	private int currentCreatureCost = 0;
 	private JPanel troopPanel;
 	private JPanel creatorModePanel;
@@ -81,25 +80,66 @@ public class RightPanel extends JPanel {
 	private JTextField directionTextField;
 	private GameViewModel gameViewModel;
 
+	/**
+	 * Constructor that sets the game view model to the given parameter and
+	 * initiates the gui.
+	 * 
+	 * @param gameViewModel
+	 */
 	public RightPanel(GameViewModel gameViewModel) {
 		super();
 		this.currentCreatureCost = 0;
 		this.currentCredit = 0;
 		this.gameViewModel = gameViewModel;
 
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				initUI();
-			}
-		});
+		/*
+		 * SwingUtilities.invokeLater(new Runnable() { public void run() {
+		 * initUI(); } });
+		 */
 	}
 
-	public void setStartCreditTextField(int credit) {
-		currentCredit = credit;
+	/**
+	 * Sets the credit text field to its start value.
+	 * 
+	 * @param credit
+	 */
+	public void initCreditTextFieldValue() {
+		currentCredit = gameViewModel.getLevelInfo().getStartCredit();
 		creditTextField.setText(String.valueOf(currentCredit));
 	}
 
-	private void initUI() {
+	/**
+	 * Resets the gui for a new game.
+	 */
+	public void resetGui() {
+		this.removeAll();
+		currentCreatureCost = 0;
+	}
+
+	public void createTeleporterTimeSlider() {
+		teleporterTimeSlider = new JSlider(JSlider.HORIZONTAL, 1000, 5000,
+				1000);
+		teleporterTimeSlider.setMinorTickSpacing(1000);
+		// teleporterTimeSlider.setMajorTickSpacing(100);
+		teleporterTimeSlider.setPaintTicks(true);
+		teleporterTimeSlider.setPaintLabels(true);
+
+		java.util.Hashtable<Integer, JLabel> labelTable = new java.util.Hashtable<Integer, JLabel>();
+
+		labelTable.put(new Integer(5000), new JLabel("5 s"));
+		labelTable.put(new Integer(3000), new JLabel("3 s"));
+		labelTable.put(new Integer(1000), new JLabel("1 s"));
+
+		teleporterTimeSlider.setLabelTable(labelTable);
+
+		setStyle(teleporterTimeSlider, "CHOOSE TELEPORTER\n DROP TIME");
+	}
+
+	/**
+	 * Initiates the gui by building the different components and setting the
+	 * layout.
+	 */
+	public void initUI() {
 
 		GridBagLayout gb = new GridBagLayout();
 
@@ -165,27 +205,33 @@ public class RightPanel extends JPanel {
 
 		this.add(settingsPanel);
 
+		initCreditTextFieldValue();
+
+		this.revalidate();
+		this.repaint();
+
 	}
 
+	/**
+	 * Initiates the troop panel.
+	 */
 	private void initTroopPanel() {
 		troopPanel.setLayout(new BoxLayout(troopPanel, BoxLayout.PAGE_AXIS));
 
 		setStyle(troopPanel, "YOUR TROOP");
 
-		/*
-		 * for (int i = 0; i < gameViewModel.getLevelInfo().getNrOfTroops();
-		 * i++) {
-		 * 
-		 * JPanel emptyCreature = new EmptyFigureRepresentation(); Border border
-		 * = BorderFactory.createDashedBorder(Color.DARK_GRAY); JPanel container
-		 * = new JPanel(); container.setBorder(border);
-		 * 
-		 * container.add(emptyCreature);
-		 * 
-		 * troopPanel.add(container);
-		 * 
-		 * }
-		 */
+		for (int i = 0; i < gameViewModel.getLevelInfo().getNrOfTroops(); i++) {
+
+			JPanel emptyCreature = new EmptyFigureRepresentation();
+			Border border = BorderFactory.createDashedBorder(Color.DARK_GRAY);
+			JPanel container = new JPanel();
+			container.setBorder(border);
+
+			container.add(emptyCreature);
+
+			troopPanel.add(container);
+
+		}
 
 		troopPanel.addContainerListener(new ContainerListener() {
 
@@ -210,6 +256,10 @@ public class RightPanel extends JPanel {
 		troopPanel.repaint();
 	}
 
+	/**
+	 * Fills the troop panel by making containers for the number of troops
+	 * according to the current level.
+	 */
 	protected void fillTroopPanel() {
 		for (int i = 0; i < gameViewModel.getLevelInfo().getNrOfTroops(); i++) {
 
@@ -223,11 +273,11 @@ public class RightPanel extends JPanel {
 			troopPanel.add(container);
 
 		}
-
-		// this.revalidate();
-		// this.repaint();
 	}
 
+	/**
+	 * Initiates the creator mode panel.
+	 */
 	private void initCreatorModePanel() {
 
 		creatorModePanel = new JPanel();
@@ -294,6 +344,11 @@ public class RightPanel extends JPanel {
 
 	}
 
+	/**
+	 * Creates and returns the orientation panel of the creator mode panel.
+	 * 
+	 * @return
+	 */
 	private JPanel createOrientationPanel() {
 		JPanel directionPanel = new JPanel();
 
@@ -335,11 +390,19 @@ public class RightPanel extends JPanel {
 		return directionPanel;
 	}
 
+	/**
+	 * Updates the cost text field to the current creature cost.
+	 */
 	private void updateCostTextField() {
 		costTextField.setText(String.valueOf(currentCreatureCost));
 		figure.setCost(currentCreatureCost);
 	}
 
+	/**
+	 * Creates and return the teleporter checkbox of the creator mode panel.
+	 * 
+	 * @return
+	 */
 	private JCheckBox createTeleporterCheckBox() {
 		JCheckBox teleporter = new JCheckBox("Teleporter");
 
@@ -366,6 +429,9 @@ public class RightPanel extends JPanel {
 		return teleporter;
 	}
 
+	/**
+	 * Creates the create button of the creator mode panel.
+	 */
 	private void createCreateButton() {
 		createBtn = new JButton("Create");
 		Container container = this.getTopLevelAncestor();
@@ -409,9 +475,15 @@ public class RightPanel extends JPanel {
 									if (figure.isTeleportCreature) {
 										teleporterTextField.setText(
 												"Teleporter: " + "Yes");
+										System.out.println(teleporterTimeSlider
+												.getValue());
+
+										teleporterTimeSlider.setEnabled(true);
+										;
 									} else {
 										teleporterTextField
 												.setText("Teleporter: " + "No");
+										teleporterTimeSlider.setEnabled(false);
 
 									}
 									currentCreatureCost = figure.cost;
@@ -464,6 +536,12 @@ public class RightPanel extends JPanel {
 		});
 	}
 
+	/**
+	 * Sets the current figure shown in the creature preview to the creature
+	 * type given as parameter.
+	 * 
+	 * @param creatureType
+	 */
 	private void createNewCreature(String creatureType) {
 		switch (Figures.valueOf(creatureType)) {
 		case TRIANGLE:
@@ -492,6 +570,11 @@ public class RightPanel extends JPanel {
 		}
 	}
 
+	/**
+	 * Creates and returns the buy button of the play mode panel.
+	 * 
+	 * @return
+	 */
 	private JButton createBuyButton() {
 		JButton buyBtn = new JButton("Buy");
 		Container container = this.getTopLevelAncestor();
@@ -506,7 +589,12 @@ public class RightPanel extends JPanel {
 					int index = Integer.parseInt(btn.getActionCommand());
 
 					if (currentCreatureCost <= currentCredit) {
-						gameViewModel.buyCreature(index);
+						if (troop.get(index).isTeleportCreature) {
+							gameViewModel.buyCreature(index,
+									(long) teleporterTimeSlider.getValue());
+						} else {
+							gameViewModel.buyCreature(index);
+						}
 						updateCreditTextField();
 					} else {
 						JOptionPane.showMessageDialog(null,
@@ -525,6 +613,9 @@ public class RightPanel extends JPanel {
 		return buyBtn;
 	}
 
+	/**
+	 * Updates the credit text field based on the chosen creature's cost.
+	 */
 	private void updateCreditTextField() {
 		int oldCredit = Integer.parseInt(creditTextField.getText());
 		int newCredit = oldCredit - currentCreatureCost;
@@ -533,6 +624,9 @@ public class RightPanel extends JPanel {
 		creditTextField.setText(String.valueOf(currentCredit));
 	}
 
+	/**
+	 * Creates the start game button of the creator mode panel.
+	 */
 	private void createStartGameButton() {
 		startGameBtn = new JButton("Start game");
 		startGameBtn.setEnabled(false);
@@ -577,6 +671,9 @@ public class RightPanel extends JPanel {
 
 	}
 
+	/**
+	 * Initiates the play mode panel.
+	 */
 	private void initPlayModePanel() {
 		playModePanel = new JPanel() {
 			@Override
@@ -600,22 +697,33 @@ public class RightPanel extends JPanel {
 		gb.setConstraints(creatureInfoPanel, c);
 		playModePanel.add(creatureInfoPanel);
 
-		c.gridy = 1;
+		c.gridy = 2;
 
 		gb.setConstraints(costTextField, c);
 		playModePanel.add(costTextField);
 
-		c.gridy = 2;
+		c.gridy = 3;
 		c.fill = GridBagConstraints.NONE;
 
 		JButton buyBtn = createBuyButton();
 		gb.setConstraints(buyBtn, c);
 		playModePanel.add(buyBtn);
 
+		c.gridy = 1;
+		c.fill = GridBagConstraints.HORIZONTAL;
+
+		createTeleporterTimeSlider();
+		gb.setConstraints(teleporterTimeSlider, c);
+		playModePanel.add(teleporterTimeSlider);
+
 		playModePanel.setLayout(gb);
 
 	}
 
+	/**
+	 * Creates the panel showing creature property information in the play mode
+	 * panel.
+	 */
 	private void createCreatureInfoPanel() {
 		GridBagLayout gb = new GridBagLayout();
 		GridBagConstraints c = new GridBagConstraints();
@@ -655,6 +763,13 @@ public class RightPanel extends JPanel {
 
 	}
 
+	/**
+	 * Creates and returns a new property text field based on the given
+	 * parameter.
+	 * 
+	 * @param propertyName
+	 * @return
+	 */
 	private JTextField createNewPropertyTextField(String propertyName) {
 		JTextField propertyTextField = new JTextField() {
 
@@ -671,6 +786,9 @@ public class RightPanel extends JPanel {
 		return propertyTextField;
 	}
 
+	/**
+	 * Creates the cost text field.
+	 */
 	private void createCostTextField() {
 		costTextField = new JTextField(String.valueOf(currentCreatureCost));
 		costTextField.setFont(textFont);
@@ -678,6 +796,10 @@ public class RightPanel extends JPanel {
 		setStyle(costTextField, "CREATURE COST");
 	}
 
+	/**
+	 * Creates the color slider where the user chooses the creature's color,
+	 * which is being updated in the creature preview.
+	 */
 	private void createColorSlider() {
 		colorSlider = new JSlider(JSlider.HORIZONTAL, 0, 369, 0);
 		colorSlider.setMinorTickSpacing(10);
@@ -700,13 +822,16 @@ public class RightPanel extends JPanel {
 
 	}
 
+	/**
+	 * Creates the size slider panel where the user chooses the creature's size,
+	 * which is being updated in the creature preview.
+	 */
 	private void createSizeSlider() {
 		sizeSlider = new JSlider(JSlider.HORIZONTAL, 50, 150, 100);
 		sizeSlider.setMinorTickSpacing(50);
 		sizeSlider.setMajorTickSpacing(100);
 		sizeSlider.setPaintTicks(true);
 		sizeSlider.setPaintLabels(true);
-		// sizeSlider.setSnapToTicks(true);
 
 		java.util.Hashtable<Integer, JLabel> labelTable = new java.util.Hashtable<Integer, JLabel>();
 
@@ -729,6 +854,9 @@ public class RightPanel extends JPanel {
 		setStyle(sizeSlider, "CHOOSE SIZE");
 	}
 
+	/**
+	 * Creates the creature preview where current creature figure is shown.
+	 */
 	private void createCreaturePreview() {
 
 		creaturePreview = new JPanel();
@@ -741,6 +869,9 @@ public class RightPanel extends JPanel {
 
 	}
 
+	/**
+	 * Creates the credit text field.
+	 */
 	private void createCreditTextField() {
 		creditTextField = new JTextField(String.valueOf(currentCredit));
 		creditTextField.setHorizontalAlignment(JTextField.CENTER);
@@ -751,6 +882,12 @@ public class RightPanel extends JPanel {
 		setStyle(creditTextField, "CURRENT CREDIT");
 	}
 
+	/**
+	 * Creates the shape panel where the user chooses the creatue's shape, which
+	 * is being updated in the creature preview.
+	 * 
+	 * @return
+	 */
 	private JPanel createShapesPanel() {
 
 		JPanel shapesPanel = new JPanel();
@@ -820,11 +957,22 @@ public class RightPanel extends JPanel {
 		return shapesPanel;
 	}
 
+	/**
+	 * Updates the current cost based on the given parameter.
+	 * 
+	 * @param costChange
+	 */
 	private void updateCurrentCost(int costChange) {
 		currentCreatureCost += costChange;
 		figure.setCost(currentCreatureCost);
 	}
 
+	/**
+	 * Updates the figure shown in the creature preview to the figure given as
+	 * parameter.
+	 * 
+	 * @param figure
+	 */
 	private void updateCreaturePreview(FigureRepresentation figure) {
 		creaturePreview.removeAll();
 		creaturePreview.add(figure);
@@ -832,6 +980,12 @@ public class RightPanel extends JPanel {
 		creaturePreview.repaint();
 	}
 
+	/**
+	 * Sets the style of a component based on the given parameters.
+	 * 
+	 * @param comp
+	 * @param borderTitle
+	 */
 	private void setStyle(JComponent comp, String borderTitle) {
 		comp.setBackground(backgroundColor);
 
@@ -842,10 +996,6 @@ public class RightPanel extends JPanel {
 				.createTitledBorder(raisedetched, borderTitle);
 		titledBorder.setTitleJustification(TitledBorder.CENTER);
 		comp.setBorder(titledBorder);
-
-	}
-
-	private void calculateCreatureCost() {
 
 	}
 
