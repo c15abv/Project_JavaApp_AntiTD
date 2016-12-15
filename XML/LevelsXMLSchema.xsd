@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-<!-- Author: Jan Nylén -->
+	<!-- Author: Jan Nylén -->
 
 	<!--This schema validates maps for an Anti TD game. A levels xml file has 
 		to hold a complextype element "levels" that in turn can hold an unlimited 
@@ -12,7 +12,8 @@
 		to a cell its attribute should be set to "haste". Furthermore the class file 
 		representing this effect has to be stated in the landOnClassFiles-element 
 		at the end of each level element. Finally, there is a rule element. that 
-		holds the set of rules that a map has to define. -->
+		holds the set of rules that a map has to define.	
+		-->
 
 	<xs:simpleType name="tileContent">
 		<xs:restriction base="xs:string">
@@ -20,20 +21,41 @@
 			<xs:enumeration value="P" />
 			<xs:enumeration value="S" />
 			<xs:enumeration value="G" />
-			<xs:enumeration value="T" />
+			<xs:enumeration value="V" />
 		</xs:restriction>
 	</xs:simpleType>
+	
+	<!--HORIZONTAL("HORIZONTAL"),		
+		HORIZONTAL_T_SOUTH("HORIZONTAL_T_SOUTH"),
+		HORIZONTAL_T_NORTH("HORIZONTAL_T_NORTH"),
+		VERTICAL("VERTICAL"),
+		VERTICAL_T_EAST("VERTICAL_T_EAST"),
+		VERTICAL_T_WEST("VERTICAL_T_WEST"),
+		CROSSROAD("CROSSROAD"),
+		L_TURN_HORIZONTAL_SOUTH_TO_EAST("L_TURN_HORIZONTAL_SOUTH_TO_EAST"),
+		L_TURN_HORIZONTAL_NORTH_TO_WEST("L_TURN_HORIZONTAL_NORTH_TO_WEST"),
+		L_TURN_HORIZONTAL_NORTH_TO_EAST("L_TURN_HORIZONTAL_NORTH_TO_EAST"),
+		L_TURN_HORIZONTAL_SOUTH_TO_WEST("L_TURN_HORIZONTAL_SOUTH_TO_WEST"),
+		NORTH("NORTH"),
+		WEST("WEST"),
+		EAST("EAST"),
+		SOUTH("SOUTH"); -->
 
 	<xs:simpleType name="direction">
 		<xs:restriction base="xs:string">
-			<xs:enumeration value="HORIZONTAL"/>
+			<xs:enumeration value="HORIZONTAL" />
 			<xs:enumeration value="HORIZONTAL_T_SOUTH" />
 			<xs:enumeration value="HORIZONTAL_T_NORTH" />
-			<xs:enumeration value="VERTICAL"/>
+			
+			<xs:enumeration value="VERTICAL" />
 			<xs:enumeration value="VERTICAL_T_EAST" />
 			<xs:enumeration value="VERTICAL_T_WEST" />
-			<xs:enumeration value="WEST_T" />
-			<xs:enumeration value="EAST_T" />
+			
+			<xs:enumeration value="L_TURN_HORIZONTAL_SOUTH_TO_EAST" />
+			<xs:enumeration value="L_TURN_HORIZONTAL_NORTH_TO_WEST" />
+			<xs:enumeration value="L_TURN_HORIZONTAL_NORTH_TO_EAST" />
+			<xs:enumeration value="L_TURN_HORIZONTAL_SOUTH_TO_WEST" />
+			
 			<xs:enumeration value="EAST" />
 			<xs:enumeration value="NORTH" />
 			<xs:enumeration value="WEST" />
@@ -47,7 +69,7 @@
 		<xs:complexType>
 			<xs:sequence>
 
-				<xs:element name="level" maxOccurs="10" minOccurs="1">
+				<xs:element name="level" maxOccurs="5" minOccurs="1">
 					<xs:complexType>
 						<xs:sequence>
 
@@ -56,7 +78,7 @@
 								<xs:complexType>
 									<xs:sequence>
 
-										<xs:element name="tile" maxOccurs="8" minOccurs="4">
+										<xs:element name="tile" maxOccurs="16" minOccurs="4">
 											<!--restrict what values there can be in cell elements -->
 											<xs:complexType>
 												<xs:simpleContent>
@@ -86,21 +108,8 @@
 								</xs:complexType>
 							</xs:element>
 
-							<!-- Describes what what special area class files that the game should 
-								load. The class files are specified by entering the file name into a landOn 
-								element -->
-							<xs:element name="landOnClassFiles">
-								<xs:complexType>
-									<xs:sequence>
-										<xs:element name="landOn" maxOccurs="4">
-										</xs:element>
-									</xs:sequence>
-								</xs:complexType>
-							</xs:element>
-
 						</xs:sequence>
-						<xs:attribute name="Index" type="xs:int"></xs:attribute>
-						<xs:attribute name="name" type="xs:string"></xs:attribute>
+						<xs:attribute name="name" type="xs:ID"></xs:attribute>
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>
