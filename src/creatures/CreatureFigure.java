@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import start.Figures;
 import start.GameLevel;
+import start.GameRunner;
 import start.Position;
 import tiles.PathTile;
 import tiles.PathTile.Direction;
@@ -36,6 +37,7 @@ public abstract class CreatureFigure implements TimerListener{
 	private PathTile.Direction navigationFrom;
 	private PathMemory memory;
 	private GameLevel level;
+
 	private int hue, creditOnGoal, creditOnKill;
 	private double scale, speed, tilesMoved;
 	private Position position;
@@ -259,7 +261,9 @@ public abstract class CreatureFigure implements TimerListener{
 		
 		hitPoints = startHitPoints = (int)(BASE_HITPOINTS * scale);
 		navigation = navigationFrom = PathTile.Direction.NA;
+
 		creditOnGoal = creditOnKill = DEFAULT_CREDIT;
+
 		
 		speed = speed / scale;
 		tilesMoved = 1;
