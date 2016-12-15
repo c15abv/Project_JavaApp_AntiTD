@@ -7,7 +7,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Insets;
-import java.awt.ScrollPane;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,6 +19,7 @@ import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -29,15 +29,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-import start.Game;
-import utilities.DatabaseHandler;
+import start.Game.GameResult;
 import utilities.HighScoreInfo;
 
 import java.awt.GridBagConstraints;
@@ -47,35 +46,35 @@ import java.awt.GridBagLayout;
  * Class that builds the gui.
  * 
  * @author karro
- *
  */
-@SuppressWarnings("serial")
-public class GameView {
+public class GameView implements View {
 	private JFrame frame;
 	private Color upperPanelColor = Color.DARK_GRAY;
 	private Color lowerPanelColor = Color.DARK_GRAY;
 	private JPanel centerPanel;
-	private DatabaseHandler databaseHandler = new DatabaseHandler();
+	private JPanel lowerPanel;
 	private JTable highScoreTable = new JTable();
 	private GameViewModel viewModel;
 	private RightPanel rightPanel;
+	private JTextField timeTextField;
+	private JTextField pointsTextField;
 
-	public static void main(String[] args) {
-		/*
-		 * LevelInfo levelInfo = new LevelInfo(3, 50, 100, 500);
-		 * 
-		 * GameView gv = new GameView(levelInfo, new Canvas()); gv.show();
-		 */
-	}
-
+	/**
+	 * Constructor that sets the view model to the given parameter and initiates
+	 * the gui.
+	 * 
+	 * @param viewModel
+	 */
 	public GameView(GameViewModel viewModel) {
 		this.viewModel = viewModel;
 
 		initUI();
-		// centerPanel.add(this.game);
-
 	}
 
+	/**
+	 * Initiates the gui by building and adding the different panels to the
+	 * frame.
+	 */
 	private void initUI() {
 		frame = new JFrame("Anit-TD Game");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -84,10 +83,7 @@ public class GameView {
 
 		JPanel upperPanel = buildUpperPanel();
 		centerPanel = buildCenterPanel();
-
-		
 		rightPanel = new RightPanel(viewModel);
-
 		JPanel lowerPanel = buildLowerPanel();
 
 		frame.add(upperPanel, BorderLayout.NORTH);
@@ -101,6 +97,9 @@ public class GameView {
 
 	}
 
+	/**
+	 * Centers the frame on the screen.
+	 */
 	private void centerFrame() {
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		frame.setLocation(dim.width / 2 - frame.getSize().width / 2,
@@ -108,22 +107,55 @@ public class GameView {
 
 	}
 
+	/**
+	 * Creates and shows a message dialog based on the given parameters.
+	 * 
+	 * @param infoMessage
+	 * @param titleBar
+	 */
 	private void showInfoBox(String infoMessage, String titleBar) {
 		JOptionPane.showMessageDialog(null, infoMessage, titleBar,
 				JOptionPane.INFORMATION_MESSAGE);
 
 	}
 
+	/**
+	 * Builds and returns the lower panel of the gui.
+	 * 
+	 * @return
+	 */
 	private JPanel buildLowerPanel() {
-		JPanel lowerPanel = new JPanel();
+		lowerPanel = new JPanel();
 
 		lowerPanel.setBackground(lowerPanelColor);
-		Border b = BorderFactory.createEmptyBorder();
+		JPanel timeContainer = new JPanel(new FlowLayout());
+		timeContainer.setBackground(lowerPanelColor);
 
+		JLabel timeLabel = new JLabel("Time: ");
+		setStyle(timeLabel);
+		timeTextField = new JTextField();
+		setStyle(timeTextField);
+
+		timeLabel.setLabelFor(timeTextField);
+		
+		timeContainer.add(timeLabel);
+		timeContainer.add(timeTextField);
+		
+		JPanel pointsContainer = new JPanel(new FlowLayout());
+		pointsContainer.setBackground(lowerPanelColor);
+
+		JLabel pointsLabel = new JLabel("Points: ");
+		setStyle(pointsLabel);
+		pointsTextField = new JTextField("0");
+		setStyle(pointsTextField);
+
+		pointsLabel.setLabelFor(pointsTextField);
+		
+		pointsContainer.add(pointsLabel);
+		pointsContainer.add(pointsTextField);
+		
 		GridBagLayout gridBag = new GridBagLayout();
 		GridBagConstraints c = new GridBagConstraints();
-		c.ipadx = 10;
-		c.ipady = 10;
 		c.insets = new Insets(10, 10, 0, 0);
 		c.gridx = 0;
 		c.gridy = 0;
@@ -132,37 +164,58 @@ public class GameView {
 		c.weightx = 1;
 		c.weighty = 1;
 		c.anchor = GridBagConstraints.WEST;
-
-		JTextField time = new JTextField("Time:");
-		time.setBackground(lowerPanelColor);
-		Font f = new Font("Arial", Font.BOLD, 20);
-		time.setForeground(Color.WHITE);
-		time.setFont(f);
-		time.setEditable(false);
-		time.setBorder(b);
-
-		gridBag.setConstraints(time, c);
-
-		c.insets = new Insets(0, 10, 10, 0);
+		c.fill = GridBagConstraints.NONE;
+		
+		gridBag.setConstraints(timeContainer, c);
+		
 		c.gridy = 1;
-
-		JTextField reachedGoal = new JTextField("Reached goal:");
-		reachedGoal.setBackground(lowerPanelColor);
-		reachedGoal.setFont(f);
-		reachedGoal.setBorder(b);
-		reachedGoal.setForeground(Color.WHITE);
-		reachedGoal.setEditable(false);
-
-		gridBag.setConstraints(reachedGoal, c);
-
+		
+		gridBag.setConstraints(pointsContainer, c);
+		
 		lowerPanel.setLayout(gridBag);
-
-		lowerPanel.add(time);
-		lowerPanel.add(reachedGoal);
+		lowerPanel.add(timeContainer);
+		lowerPanel.add(pointsContainer);
 
 		return lowerPanel;
 	}
 
+	/**
+	 * Sets the style of a text field.
+	 * 
+	 * @param comp
+	 */
+	private void setStyle(JTextField comp) {
+		Font f = new Font("Arial", Font.BOLD, 20);
+		Border b = BorderFactory.createEmptyBorder();
+
+		comp.setBackground(lowerPanelColor);
+		comp.setFont(f);
+		comp.setBorder(b);
+		comp.setForeground(Color.WHITE);
+		comp.setEditable(false);
+
+	}
+
+	/**
+	 * Sets the style of a JLabel.
+	 * 
+	 * @param comp
+	 */
+	private void setStyle(JLabel comp) {
+		Font f = new Font("Arial", Font.BOLD, 20);
+		Border b = BorderFactory.createEmptyBorder();
+
+		comp.setBackground(lowerPanelColor);
+		comp.setFont(f);
+		comp.setBorder(b);
+		comp.setForeground(Color.WHITE);
+	}
+
+	/**
+	 * Builds and returns the center panel of the gui.
+	 * 
+	 * @return
+	 */
 	private JPanel buildCenterPanel() {
 		JPanel centerPanel = new JPanel();
 
@@ -170,6 +223,11 @@ public class GameView {
 		return centerPanel;
 	}
 
+	/**
+	 * Builds and returns the upper panel of the gui.
+	 * 
+	 * @return
+	 */
 	private JPanel buildUpperPanel() {
 		JPanel upperPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		upperPanel.setBackground(upperPanelColor);
@@ -180,6 +238,11 @@ public class GameView {
 		return upperPanel;
 	}
 
+	/**
+	 * Build the information menu of the upper panel.
+	 * 
+	 * @return
+	 */
 	private JMenuBar buildInfoMenu() {
 		JMenuBar menuBar;
 		JMenu menu;
@@ -215,18 +278,11 @@ public class GameView {
 		return menuBar;
 	}
 
-	private void confirmDialog(String infoMessage, String title) {
-		Object[] options = { "Quit game", "Cancel" };
-		int n = JOptionPane.showOptionDialog(frame, infoMessage, title,
-				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
-				options, // the titles of buttons
-				options[0]); // default button title
-
-		if (n == JOptionPane.YES_OPTION) {
-			frame.dispose();
-		}
-	}
-
+	/**
+	 * Builds and returns the game menu of the upper panel.
+	 * 
+	 * @return
+	 */
 	private JMenuBar buildGameMenu() {
 		JMenuBar menuBar;
 		JMenu menu;
@@ -240,13 +296,20 @@ public class GameView {
 
 		menuItem = new JMenuItem("New Game");
 
+		GameView view = this;
 		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent arg0) {
 
-				viewModel.initGame(centerPanel);
-				rightPanel.fillTroopPanel();
-				rightPanel.setStartCreditTextField(viewModel.getLevelInfo().getStartCredit());
+				viewModel.initGame(view);
+
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						rightPanel.resetGui();
+						rightPanel.initUI();
+					}
+				});
+
 			}
 
 		});
@@ -278,49 +341,7 @@ public class GameView {
 
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try {
-					ArrayList<HighScoreInfo> h = databaseHandler
-							.getFromDatabase();
-
-					// Test hemifrån
-					/*
-					 * ArrayList<HighScoreInfo> h = new ArrayList();
-					 * HighScoreInfo hi = new HighScoreInfo();
-					 * hi.setLevel("Level 1"); hi.setName("Karro");
-					 * hi.setScore(10); hi.setTime(new Time(123456)); h.add(hi);
-					 * 
-					 * hi = new HighScoreInfo(); hi.setLevel("Level 1");
-					 * hi.setName("Karro2"); hi.setScore(100); hi.setTime(new
-					 * Time(1234)); h.add(hi);
-					 */
-
-					DefaultTableModel model = (DefaultTableModel) highScoreTable
-							.getModel();
-
-					model.setRowCount(0);
-
-					highScoreTable.setCellSelectionEnabled(false);
-
-					HighScoreInfo hi;
-
-					for (int i = 0; i < h.size(); i++) {
-						hi = new HighScoreInfo();
-						hi = h.get(i);
-						model.addRow(new Object[] { hi.getName(), hi.getScore(),
-								hi.getLevel(), hi.getTime() });
-					}
-
-					highScoreTable.setModel(model);
-
-					JOptionPane.showMessageDialog(null,
-							new JScrollPane(highScoreTable),
-							"HIGHSCORE - Top 10", JOptionPane.PLAIN_MESSAGE);
-
-				} catch (SQLException e1) {
-
-					e1.printStackTrace();
-				}
-
+				showHighScoreTable();
 			}
 		});
 
@@ -330,8 +351,9 @@ public class GameView {
 
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				confirmDialog("Are you sure you want to quit the current game?",
-						"Are you sure?");
+				showQuitGameDialog(
+						"Are you sure you want to quit the current game?",
+						"Quit game");
 			}
 		});
 
@@ -340,11 +362,148 @@ public class GameView {
 		return menuBar;
 	}
 
+	/**
+	 * Shows the high score table.
+	 */
+	private void showHighScoreTable() {
+		try {
+			ArrayList<HighScoreInfo> h = viewModel.getFromDataBase();
+
+			DefaultTableModel model = (DefaultTableModel) highScoreTable
+					.getModel();
+
+			model.setRowCount(0);
+
+			highScoreTable.setCellSelectionEnabled(false);
+
+			HighScoreInfo hi;
+
+			for (int i = 0; i < h.size(); i++) {
+				hi = new HighScoreInfo();
+				hi = h.get(i);
+				model.addRow(new Object[] { hi.getName(), hi.getScore(),
+						hi.getLevel(), hi.getTime() });
+			}
+
+			highScoreTable.setModel(model);
+
+			JOptionPane.showMessageDialog(null, new JScrollPane(highScoreTable),
+					"HIGHSCORE - Top 10", JOptionPane.PLAIN_MESSAGE);
+		} catch (SQLException e1) {
+			JOptionPane.showMessageDialog(null,
+					"Could not get data from database.");
+		}
+	}
+
+	/**
+	 * Builds and shows a confirm dialog based on the given parameters.
+	 * 
+	 * @param infoMessage
+	 * @param title
+	 */
+	private void showQuitGameDialog(String infoMessage, String title) {
+		Object[] options = { "Quit game", "Cancel" };
+		int n = JOptionPane.showOptionDialog(frame, infoMessage, title,
+				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+				options, // the titles of buttons
+				options[0]); // default button title
+
+		if (n == JOptionPane.YES_OPTION) {
+			frame.dispose();
+		}
+	}
+
+	/**
+	 * Builds and shows a confirm dialog based on the given parameters.
+	 * 
+	 * @param infoMessage
+	 * @param title
+	 */
+	@Override
+	public void showResult(GameResult result, int score, Time time) {
+		rightPanel.disableComponents();
+		String infoMessage = "";
+		String title = "";
+		switch (result) {
+		case ATTACKER_WINNER:
+			Object[] options = { "Save score", "Quit game" };
+			infoMessage = "YOU WON!";
+			title = "Game ended";
+			int n;
+
+			n = JOptionPane.showOptionDialog(frame, infoMessage, title,
+					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+					null, options, // the titles of buttons
+					options[0]); // default button title
+
+			if (n == JOptionPane.YES_OPTION) {
+				// prompt the user to enter their name
+				String name = JOptionPane.showInputDialog(frame,
+						"Enter your name: ");
+				try {
+					viewModel.insertIntoDataBase(name, score, time,
+							viewModel.getLevelInfo().getLevel().getLevelName());
+
+					Object[] options2 = { "View high score table",
+							"Quit game" };
+					infoMessage = "Your result was saved.";
+					title = "Result saved";
+
+					n = JOptionPane.showOptionDialog(frame, infoMessage, title,
+							JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE, null, options2, // the
+																			// titles
+																			// of
+																			// buttons
+							options2[0]); // default button title
+
+					if (n == JOptionPane.YES_OPTION) {
+						showHighScoreTable();
+					} else {
+						frame.dispose();
+					}
+
+				} catch (SQLException e) {
+					JOptionPane.showMessageDialog(frame,
+							"Could not insert data into database. Your result will not be saved.");
+				}
+			} else {
+				frame.dispose();
+			}
+			break;
+
+		case DEFENDER_WINNER:
+			Object[] options3 = { "Try again", "Quit game" };
+			infoMessage = "YOU LOST!";
+			title = "Game ended";
+
+			n = JOptionPane.showOptionDialog(frame, infoMessage, title,
+					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+					null, options3, // the titles of buttons
+					options3[0]); // default button title
+
+			if (n == JOptionPane.YES_NO_OPTION) {
+				// restart level
+			} else {
+				frame.dispose();
+			}
+			break;
+		case NA:
+			// what does this mean?
+			break;
+
+		}
+	}
+
+	/**
+	 * Initiates the high score table by setting its header and style.
+	 */
 	private void initHighScoreTable() {
 
 		String header[] = { "Name", "Score", "Level", "Time" };
 
 		// instance table model
+		@SuppressWarnings("serial")
 		DefaultTableModel model = new DefaultTableModel() {
 
 			@Override
@@ -366,6 +525,7 @@ public class GameView {
 		highScoreTable.setCellSelectionEnabled(false);
 		highScoreTable.getTableHeader().setReorderingAllowed(false);
 
+		@SuppressWarnings("serial")
 		DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
 			@Override
 			public Component getTableCellRendererComponent(JTable arg0,
@@ -384,6 +544,11 @@ public class GameView {
 		highScoreTable.setDefaultRenderer(Object.class, renderer);
 	}
 
+	/**
+	 * Creates and returns the pause and resume button in the game menu.
+	 * 
+	 * @return
+	 */
 	private JToggleButton createPauseAndResumeButton() {
 		@SuppressWarnings("serial")
 		Action toggleAction = new AbstractAction("  Pause") {
@@ -394,10 +559,8 @@ public class GameView {
 
 				if (button.isSelected()) {
 					button.setText("  Resume");
-					// Start the action here
 				} else {
 					button.setText("  Pause");
-					// Stop the action here
 				}
 			}
 		};
@@ -405,8 +568,6 @@ public class GameView {
 		Border emptyBorder = BorderFactory.createEmptyBorder();
 		JToggleButton toggleButton = new JToggleButton(toggleAction);
 		toggleButton.setBorder(emptyBorder);
-		// toggleButton.setBorderPainted(false);
-		// toggleButton.setFocusPainted(false);
 		toggleButton.setContentAreaFilled(false);
 
 		toggleButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -425,8 +586,28 @@ public class GameView {
 		return toggleButton;
 	}
 
+	/**
+	 * Makes the gui visible.
+	 */
 	public void show() {
 		this.frame.setVisible(true);
+	}
+
+	@Override
+	public void setPoints(int points) {
+		pointsTextField.setText(String.valueOf(points) + "/"+viewModel.getScoreGoal());
+		lowerPanel.revalidate();
+		lowerPanel.repaint();
+	}
+
+	@Override
+	public JPanel getLevelMapPanel() {
+		return centerPanel;
+	}
+
+	@Override
+	public void setCredits(int credit) {
+		rightPanel.setCreditTextField(credit);
 	}
 
 }
