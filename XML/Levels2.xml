@@ -26,7 +26,7 @@
 		<row Index="3">
 			<tile>W</tile>
 			<tile>W</tile>
-			<tile landOn="teleport" direction="VERTICAL">P</tile>
+			<tile landOn="TeleportTile" direction="VERTICAL">P</tile>
 			<tile direction="HORIZONTAL">P</tile>
 			<tile direction="HORIZONTAL_T_NORTH">P</tile>
 			<tile direction="VERTICAL">P</tile>
@@ -88,7 +88,7 @@
 			<defenderCredit>101</defenderCredit>
 			<timeToFinish>11</timeToFinish>
 			<nrOfTemplates>7</nrOfTemplates>
-			<attackingPlayerScoreGoal>7</attackingPlayerScoreGoal>
+			<attackingPlayerScoreGoal>7</attackingPlayerScoreGoal>			
 		</rules>
 		<!-- vet inte hur jag man ska identifiera klasserna.. Om dom ska ha ett 
 			eget element och sen en text med filens namn. Eller om det direkt bara ska 
