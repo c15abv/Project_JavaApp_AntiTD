@@ -25,11 +25,16 @@ public class CircleProjectileFigure extends ProjectileFigure{
 
 	@Override
 	public void update(CreatureFigure figure){
+		boolean tempAlive;
 		super.update(figure);
 		if(figure.isCollision(this.getPosition())){
+			tempAlive = figure.isAlive();
 			figure.setDamageTaken((int)(ProjectileFigure.calculateDamageMultiplier(
 					this.getShape(), figure.getShape(),
 					this.getHue(), figure.getHue()) * this.damage));
+			if(tempAlive && !figure.isAlive()){
+				killedTarget = true;
+			}
 			this.setIsDead();
 		}
 	}

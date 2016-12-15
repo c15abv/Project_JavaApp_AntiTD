@@ -4,20 +4,27 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import creatures.AttackingPlayer;
 import creatures.CircleCreatureFigure;
 import creatures.SquareCreatureFigure;
 import creatures.TriangleCreatureFigure;
 import creatures.CreatureFigure.Orientation;
-import start.AttackingPlayer;
 import start.Figures;
 import start.Position;
 import utilities.ActionTimer;
-public class JUnitStarTower {
+
+/**
+ * JUnitStarTower.
+ * 
+ * @author Alexander Beliaev
+ * @version 1.0
+ */
+public class JUnitStarTower{
 
 	@Test
 	public void testTemplate(){
 		TowerFigureTemplate template = new TowerFigureTemplate(
-				Figures.STAR, 100, 200, 20, 50);
+				Figures.STAR, 100, 200, 1000, 20, 50);
 		StarTowerFigure fig = (StarTowerFigure)template.createNewTower(
 				new Position(250,250));
 		
@@ -78,8 +85,8 @@ public class JUnitStarTower {
 	
 	@Test
 	public void testFindsTargetWithinRange(){
-		AttackingPlayer player1 = new AttackingPlayer(100);
-		DefendingPlayer player2 = new DefendingPlayer(100);
+		AttackingPlayer player1 = new AttackingPlayer(100, null);
+		DefendingPlayer player2 = new DefendingPlayer(100, null);
 		AITowerFigures ai = new AITowerFigures(player1, player2);
 		player2.setTowersAI(ai);
 		
@@ -100,8 +107,8 @@ public class JUnitStarTower {
 	
 	@Test
 	public void testDoNotFindTarget(){
-		AttackingPlayer player1 = new AttackingPlayer(100);
-		DefendingPlayer player2 = new DefendingPlayer(100);
+		AttackingPlayer player1 = new AttackingPlayer(100, null);
+		DefendingPlayer player2 = new DefendingPlayer(100, null);
 		AITowerFigures ai = new AITowerFigures(player1, player2);
 		player2.setTowersAI(ai);
 		
@@ -122,8 +129,8 @@ public class JUnitStarTower {
 	
 	@Test
 	public void testFindsBestTarget(){
-		AttackingPlayer player1 = new AttackingPlayer(100);
-		DefendingPlayer player2 = new DefendingPlayer(100);
+		AttackingPlayer player1 = new AttackingPlayer(100, null);
+		DefendingPlayer player2 = new DefendingPlayer(100, null);
 		AITowerFigures ai = new AITowerFigures(player1, player2);
 		player2.setTowersAI(ai);
 		
@@ -148,8 +155,8 @@ public class JUnitStarTower {
 	
 	@Test
 	public void testFindsBestTargetBasedOnLife(){
-		AttackingPlayer player1 = new AttackingPlayer(100);
-		DefendingPlayer player2 = new DefendingPlayer(100);
+		AttackingPlayer player1 = new AttackingPlayer(100, null);
+		DefendingPlayer player2 = new DefendingPlayer(100, null);
 		AITowerFigures ai = new AITowerFigures(player1, player2);
 		player2.setTowersAI(ai);
 		
@@ -177,8 +184,8 @@ public class JUnitStarTower {
 	
 	@Test
 	public void testTargetDies(){
-		AttackingPlayer player1 = new AttackingPlayer(100);
-		DefendingPlayer player2 = new DefendingPlayer(100);
+		AttackingPlayer player1 = new AttackingPlayer(100, null);
+		DefendingPlayer player2 = new DefendingPlayer(100, null);
 		AITowerFigures ai = new AITowerFigures(player1, player2);
 		player2.setTowersAI(ai);
 		
@@ -206,8 +213,8 @@ public class JUnitStarTower {
 	public void testDoesNotAttackOnCooldown(){
 		ActionTimer timer = new ActionTimer();
 		Thread thread = new Thread(timer);
-		AttackingPlayer player1 = new AttackingPlayer(100);
-		DefendingPlayer player2 = new DefendingPlayer(100);
+		AttackingPlayer player1 = new AttackingPlayer(100, null);
+		DefendingPlayer player2 = new DefendingPlayer(100, null);
 		AITowerFigures ai = new AITowerFigures(player1, player2);
 		player2.setTowersAI(ai);
 		
@@ -247,8 +254,8 @@ public class JUnitStarTower {
 	@Test
 	public void testDamageIsEqualOnSimilarTargets(){
 		int hitP1, hitP2, hitP3;
-		AttackingPlayer player1 = new AttackingPlayer(100);
-		DefendingPlayer player2 = new DefendingPlayer(100);
+		AttackingPlayer player1 = new AttackingPlayer(100, null);
+		DefendingPlayer player2 = new DefendingPlayer(100, null);
 		AITowerFigures ai = new AITowerFigures(player1, player2);
 		player2.setTowersAI(ai);
 		
@@ -296,8 +303,8 @@ public class JUnitStarTower {
 	public void testDefaultAction(){
 		ActionTimer timer = new ActionTimer();
 		Thread thread = new Thread(timer);
-		AttackingPlayer player1 = new AttackingPlayer(100);
-		DefendingPlayer player2 = new DefendingPlayer(100);
+		AttackingPlayer player1 = new AttackingPlayer(100, null);
+		DefendingPlayer player2 = new DefendingPlayer(100, null);
 		AITowerFigures ai = new AITowerFigures(player1, player2);
 		player2.setTowersAI(ai);
 		

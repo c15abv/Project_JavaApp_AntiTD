@@ -15,19 +15,24 @@ public class ActionTimer implements Runnable{
 	
 	class TimedObject<T extends TimerListener>{
 		private volatile T object;
-		private volatile long time;
+		private volatile long time, timeC;
 		
 		TimedObject(T object, long time){
 			this.object = object;
 			this.time = time;
+			timeC = System.nanoTime();
 		}
 		
 		T getTimedObject(){
 			return object;
 		}
 		
-		double getTime(){
+		long getTime(){
 			return time;
+		}
+		
+		long getTimeC(){
+			return timeC;
 		}
 	}
 	
@@ -35,6 +40,7 @@ public class ActionTimer implements Runnable{
 	private volatile HashMap<Long, TimedObject<?>> activeTimers;
 	private volatile boolean isRunning;
 	private volatile boolean paused;
+	private volatile long timeCreated, timeAtPaused, timeLost;
 	private Lock lock;
 	
 	public ActionTimer(){
@@ -43,10 +49,13 @@ public class ActionTimer implements Runnable{
 		isRunning = true;
 		paused = false;
 		lock = new Lock();
+		timeCreated = timeAtPaused = timeLost = 0;
 	}
 	
 	@Override
 	public void run(){
+		timeCreated = System.nanoTime();
+		
 		while(isRunning){
 			if(!paused){
 				try{
@@ -57,7 +66,7 @@ public class ActionTimer implements Runnable{
 					Map.Entry<Long, TimedObject<?>> pair;
 				    while(it.hasNext()){
 				        pair = (Map.Entry<Long, TimedObject<?>>)it.next();
-				        if(pair.getValue().time <= System.nanoTime()){
+				        if(pair.getValue().time <= getCurrentTime()){
 				        	pair.getValue().object.receiveNotification(pair.getKey());
 				        	it.remove();
 				        }
@@ -66,6 +75,8 @@ public class ActionTimer implements Runnable{
 				}finally{
 					lock.unlock();
 				}
+			}else{
+
 			}
 		}
 	}
@@ -75,7 +86,7 @@ public class ActionTimer implements Runnable{
 		try{
 			lock.lock();
 			activeTimers.put(id, new TimedObject<T>(object, (long)(delta * 10e5) 
-					+ System.nanoTime()));
+					+ getCurrentTime()));
 		}catch(InterruptedException e){
 		}finally{
 			lock.unlock();
@@ -100,10 +111,10 @@ public class ActionTimer implements Runnable{
 			lock.lock();
 			obj = activeTimers.get(id);
 			if(obj != null){
-				if(obj.getTime() - System.nanoTime() < 0){
+				if(obj.getTime() - getCurrentTime() < 0){
 					timeLeft = 0;
 				}else{
-					timeLeft = (long) (obj.getTime() - System.nanoTime());
+					timeLeft = (long) (obj.getTime() - getCurrentTime());
 				}
 			}
 		}catch(InterruptedException e){
@@ -112,6 +123,33 @@ public class ActionTimer implements Runnable{
 		}
 		
 		return timeLeft;
+	}
+	
+	public synchronized long timeElapsed(){
+		return paused ? timeAtPaused - timeCreated : 
+			getCurrentTime() - timeCreated;
+	}
+	
+	public synchronized long timeElapsed(Long id){
+		long timeElapsed = -1;
+		TimedObject<?> obj;
+		
+		try{
+			lock.lock();
+			obj = activeTimers.get(id);
+			if(obj != null){
+				if(obj.getTime() - getCurrentTime() < 0){
+					timeElapsed = getCurrentTime() - obj.getTimeC();
+				}else{
+					timeElapsed = (long) (obj.getTime() - obj.getTimeC());
+				}
+			}
+		}catch(InterruptedException e){
+		}finally{
+			lock.unlock();
+		}
+		
+		return timeElapsed;
 	}
 	
 	public synchronized long getNewUniqueId(){
@@ -125,11 +163,16 @@ public class ActionTimer implements Runnable{
 	}
 	
 	public synchronized void pause(){
+		timeAtPaused = System.nanoTime();
 		paused = true;
 	}
 	
 	public synchronized void resume(){
+		timeLost += (System.nanoTime() - timeAtPaused);
 		paused = false;
 	}
 	
+	private long getCurrentTime(){
+		return System.nanoTime() - timeLost;
+	}
 }

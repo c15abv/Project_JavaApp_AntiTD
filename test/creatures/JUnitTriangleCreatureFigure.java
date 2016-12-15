@@ -10,6 +10,12 @@ import start.Figures;
 import start.Position;
 import utilities.ActionTimer;
 
+/**
+ * JUnitTriangleCreatureFigure.
+ * 
+ * @author Alexander Beliaev
+ * @version 1.0
+ */
 public class JUnitTriangleCreatureFigure{
 
 	@Test
@@ -17,7 +23,7 @@ public class JUnitTriangleCreatureFigure{
 		CreatureFigureTemplate template = new CreatureFigureTemplate(Figures.TRIANGLE, 100,
 				1, 100, CreatureFigure.Orientation.RANDOM, null);
 		TriangleCreatureFigure fig = (TriangleCreatureFigure)template.createNewCreature(
-				new Position(250,250));
+				new Position(250,250), null);
 		
 		assertTrue(fig.getHue() == 100);
 		assertTrue(fig.isAlive() == true);
@@ -62,7 +68,7 @@ public class JUnitTriangleCreatureFigure{
 		
 		fig.setActionTimer(timer);
 		
-		fig.addOnSpawnTimedAction(1000, () -> {
+		fig.addOnSpawnTimedAction((long)1000, () -> {
 			fig.setDamageTaken(25);
 		});
 		

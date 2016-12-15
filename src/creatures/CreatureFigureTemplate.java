@@ -30,7 +30,8 @@ public class CreatureFigureTemplate{
 		
 		creditOnGoal = creditOnKill = cost / 4;
 		
-		time = -1;		speed = CreatureFigure.BASE_SPEED;
+		time = -1;
+		speed = CreatureFigure.BASE_SPEED;
 	}
 	
 	public int getCost(){
@@ -60,7 +61,6 @@ public class CreatureFigureTemplate{
 	public void setSpeed(double speed){
 		this.speed = speed;
 	}
-
 	
 	public void setCreditOnGoal(int creditOnGoal){
 		this.creditOnGoal = creditOnGoal;
@@ -69,7 +69,6 @@ public class CreatureFigureTemplate{
 	public void setCreditOnKill(int creditOnKill){
 		this.creditOnKill = creditOnKill;
 	}
-
 
 	public CreatureFigure createNewCreature(Position position,
 			Direction direction){

@@ -77,6 +77,8 @@ public class TeleportTile extends PathTile{
 		
 		super.render(g2d);
 		
+		color = Color.GRAY;
+		
 		alpha = 1.0f - (float)renderAnimationCount / 
 				(float)RENDER_COUNT_LIMIT;
 		alpha2 = 1.0f - (float)renderAnimationCount2 / 
@@ -85,13 +87,15 @@ public class TeleportTile extends PathTile{
 				(double)renderAnimationCount / (double)RENDER_COUNT_LIMIT);
 		size2 = Tile.size / 4 + (int)((Tile.size / 4) *
 				(double)renderAnimationCount2 / (double)RENDER_COUNT_LIMIT2);
-		color = new Color((float)85/255, (float)175/255, (float)230/255, alpha);
+		if(connection != null)
+			color = new Color((float)85/255, (float)175/255, (float)230/255, alpha);
 		
 		g2d.setColor(color);
 		g2d.drawOval(teleportPosition.getX() - size / 2,
 				teleportPosition.getY() - size / 2, size, size);
 		
-		color = new Color((float)85/255, (float)175/255, (float)230/255, alpha2);
+		if(connection != null)
+			color = new Color((float)85/255, (float)175/255, (float)230/255, alpha2);
 		g2d.setColor(color);
 		g2d.drawOval(teleportPosition.getX() - size2 / 2,
 				teleportPosition.getY() - size2 / 2, size2, size2);

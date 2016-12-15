@@ -25,6 +25,7 @@ public abstract class ProjectileFigure{
 	private int updates;
 	private boolean isAlive;
 	private Color color;
+	protected boolean killedTarget;
 	
 	public ProjectileFigure(int hue, Position position){
 		this.hue = hue;
@@ -32,6 +33,7 @@ public abstract class ProjectileFigure{
 		updates = 0;
 		isAlive = true;
 		color = ColorCreator.generateColorFromHue(hue);
+		killedTarget = false;
 	}
 	
 	public void update(CreatureFigure figure){
@@ -100,6 +102,10 @@ public abstract class ProjectileFigure{
 	
 	public Color getColor(){
 		return color;
+	}
+	
+	public boolean killedTarget(){
+		return killedTarget;
 	}
 
 	@Override

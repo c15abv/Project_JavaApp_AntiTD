@@ -21,27 +21,19 @@ public class PlanDetails{
 		}
 	}
 		
-	private int hue, figureValue;
+	private int numFigures;
 	private double positionValue;
 	
-	public PlanDetails(int hue, int figureValue,
-			double positionValue){
-		this.hue = hue;
-		this.figureValue = figureValue;
+	public PlanDetails(int numFigures, double positionValue){
+		this.numFigures = numFigures;
 		this.positionValue = positionValue;
 	}
 	
-	public int getHue(){
-		return hue;
+	public int getNumFigures(){
+		return numFigures;
 	}
-	
-	public int getFigureValue(){
-		return figureValue;
-	}
-	
+
 	public double getPositionValue(){
 		return positionValue;
 	}
-		
-	
 }
