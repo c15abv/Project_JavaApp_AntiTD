@@ -11,12 +11,14 @@ public class AttackingPlayer extends Player{
 	private ArrayList<CreatureFigure> currentHorde;
 	private AICreatureFigures ai;
 	private int points;
+	private int creaturesBought;
 	
 	public AttackingPlayer(int credits, GameLevel level){
 		super(credits, level);
 		currentHorde = new ArrayList<CreatureFigure>();
 		points = 0;
 		ai = new AICreatureFigures(this);
+		creaturesBought = 0;
 	}
 
 	@Override
@@ -47,6 +49,7 @@ public class AttackingPlayer extends Player{
 	
 	public void addCreatureFigure(CreatureFigure figure){
 		currentHorde.add(figure);
+		creaturesBought++;
 	}
 	
 	public ArrayList<CreatureFigure> getHorde(){
@@ -55,6 +58,14 @@ public class AttackingPlayer extends Player{
 	
 	public int getPoints(){
 		return points;
+	}
+	
+	public int getHordeSize(){
+		return currentHorde.size();
+	}
+	
+	public int getCreaturesBought(){
+		return creaturesBought;
 	}
 
 }

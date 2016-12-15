@@ -114,8 +114,7 @@ public class AIMemory{
 				try{
 					details = new PlanDetails(
 							Integer.parseInt(mapMemorySingleTower[1]),
-							Integer.parseInt(mapMemorySingleTower[2]),
-							Double.parseDouble(mapMemorySingleTower[3]));
+							Double.parseDouble(mapMemorySingleTower[2]));
 					towerPlan.add(details.new TowerBuildPlan(
 							Integer.parseInt(mapMemorySingleTower[0]),
 							details));

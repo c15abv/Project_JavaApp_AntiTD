@@ -190,10 +190,7 @@ public class Game extends Canvas implements TimerListener{
 		return lock;
 	}
 	
-
 	public synchronized long getGameTimeTimerId(){
 		return gameTimeTimerId;
 	}
-
-
 }
