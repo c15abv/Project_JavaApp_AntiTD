@@ -14,36 +14,49 @@ public class GameLevel{
 	public static final int DEFAULT_PLAYER_SCORE_GOAL = 100;
 	public static final int DEFAULT_CREDIT = 100;
 	public static final int DEFAULT_TIME = 120;
-	
+	public static final int DEFAULT_TEMPLATES = 3;
+	public static final String DEFAULT_MAP_NAME = "Unknown";
+
 	private HashMap<AreaPosition, Tile> levelMap;
-	private ArrayList<String> rules;
-	private ArrayList<String> landOnFiles;
 	private IdCounter idCounter;
 	private Lock lock;
 	
+	private String levelName = DEFAULT_MAP_NAME;
 	private int attackingPlayerScoreGoal = DEFAULT_PLAYER_SCORE_GOAL;
 	private int attackerCredit = DEFAULT_CREDIT;
 	private int defenderCredit = DEFAULT_CREDIT;
-	private int timeToFinish = DEFAULT_TIME; 
+	private int timeToFinish = DEFAULT_TIME;
+	private int nrOfTemplates = DEFAULT_TEMPLATES; 
 	
 	public GameLevel(){
-		this(DEFAULT_PLAYER_SCORE_GOAL, null, null, null);
-	}
+        this(DEFAULT_PLAYER_SCORE_GOAL, null, DEFAULT_MAP_NAME,
+                DEFAULT_CREDIT, DEFAULT_CREDIT, DEFAULT_TIME, DEFAULT_TEMPLATES);
+    }
 	
-	public GameLevel(int attackingPlayerScoreGoal, ArrayList<String> rules,
-			ArrayList<String> landOnFiles,
-			HashMap<AreaPosition, Tile> levelMap){
-		this.attackingPlayerScoreGoal = attackingPlayerScoreGoal;
+	/**
+     * @param attackingPlayerScoreGoal
+     * @param levelMap
+     * @param levelName
+     * @param attackerCredit
+     * @param defenderCredit
+     * @param timeToFinish
+     * @param nrOfTemplates
+     */
+	public GameLevel(int attackingPlayerScoreGoal,
+            HashMap<AreaPosition, Tile> levelMap, String levelName,
+            int attackerCredit, int defenderCredit, int timeToFinish,
+            int nrOfTemplates){
 				
-		if((this.rules = rules) == null){
-			this.rules = new ArrayList<String>();
-		}
-		if((this.landOnFiles = landOnFiles) == null){
-			this.landOnFiles = new ArrayList<String>();
-		}
-		if((this.levelMap = levelMap) == null){
-			this.levelMap = new HashMap<AreaPosition, Tile>();
-		}
+		this.levelName  = levelName; 
+        this.attackingPlayerScoreGoal = attackingPlayerScoreGoal;		
+        this.attackerCredit = attackerCredit;
+        this.defenderCredit = defenderCredit;
+        this.timeToFinish = timeToFinish;
+        this.nrOfTemplates = nrOfTemplates;
+
+        if((this.levelMap = levelMap) == null){
+            this.levelMap = new HashMap<AreaPosition, Tile>();
+        }
 		
 		idCounter = new IdCounter();
 		lock = new Lock();
@@ -60,6 +73,22 @@ public class GameLevel{
 		for(Map.Entry<AreaPosition, Tile> entry : levelMap.entrySet()){
 		    entry.getValue().render(g2d);
 		}
+	}
+	
+	public String getLevelName() {
+        return levelName;
+    }
+
+    public void setLevelName(String levelName) {
+        this.levelName = levelName;
+    }
+
+    public void setNrOfTemplates(int nrOfTemplates) {
+        this.nrOfTemplates = nrOfTemplates;
+    }
+
+    public int getNrOfTemplates() {
+        return nrOfTemplates;
 	}
 	
 	public int getAttackerCredit() {
@@ -94,22 +123,6 @@ public class GameLevel{
 		this.levelMap = levelMap;
 	}
 	
-	public ArrayList<String> getRules() {
-		return rules;
-	}
-
-	public void setRules(ArrayList<String> rules) {
-		this.rules = rules;
-	}
-
-	public ArrayList<String> getLandOnFiles() {
-		return landOnFiles;
-	}
-
-	public void setLandOnFiles(ArrayList<String> landOnFiles) {
-		this.landOnFiles = landOnFiles;
-	}
-
 	public void setAttackingPlayerScoreGoal(int attackingPlayerScoreGoal) {
 		this.attackingPlayerScoreGoal = attackingPlayerScoreGoal;
 	}
