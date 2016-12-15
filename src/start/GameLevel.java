@@ -11,7 +11,7 @@ import utilities.Lock;
 
 public class GameLevel{
 
-<<<<<<< HEAD
+
     public static final int DEFAULT_PLAYER_SCORE_GOAL = 100;
     public static final int DEFAULT_CREDIT = 100;
     public static final int DEFAULT_TIME = 120;
@@ -54,7 +54,7 @@ public class GameLevel{
         this.defenderCredit = defenderCredit;
         this.timeToFinish = timeToFinish;
         this.nrOfTemplates = nrOfTemplates;
-=======
+
 	public static final int DEFAULT_PLAYER_SCORE_GOAL = 100;
 	public static final int DEFAULT_CREDIT = 100;
 	public static final int DEFAULT_TIME = 120;
@@ -148,7 +148,7 @@ public class GameLevel{
 	public ArrayList<String> getRules() {
 		return rules;
 	}
->>>>>>> origin/KArros
+
 
         if((this.levelMap = levelMap) == null){
             this.levelMap = new HashMap<AreaPosition, Tile>();
@@ -183,7 +183,6 @@ public class GameLevel{
         this.nrOfTemplates = nrOfTemplates;
     }
 
-<<<<<<< HEAD
     public int getNrOfTemplates() {
         return nrOfTemplates;
     }
@@ -215,7 +214,7 @@ public class GameLevel{
     public HashMap<AreaPosition, Tile> getLevelMap() {
         return new HashMap<AreaPosition, Tile>(levelMap);
     }
-=======
+
 	public void setAttackingPlayerScoreGoal(int attackingPlayerScoreGoal) {
 		this.attackingPlayerScoreGoal = attackingPlayerScoreGoal;
 	}
@@ -249,7 +248,7 @@ public class GameLevel{
 		
 		return null;
 	}
->>>>>>> origin/KArros
+
 
     public void setLevelMap(HashMap<AreaPosition, Tile> levelMap) {
         this.levelMap = levelMap;
