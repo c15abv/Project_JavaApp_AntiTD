@@ -32,10 +32,10 @@ public class CircleTowerFigure extends TowerFigure{
 	@Override
 	public void render(Graphics2D g2d){
 		g2d.setColor(getColor());
-		g2d.drawOval(getPosition().getX() - TowerFigure.TEMP_SIZE/2,
-				getPosition().getY() - TowerFigure.TEMP_SIZE/2,
-				TowerFigure.TEMP_SIZE,
-				TowerFigure.TEMP_SIZE);
+		g2d.drawOval(getPosition().getX() - TowerFigure.SIZE/2,
+				getPosition().getY() - TowerFigure.SIZE/2,
+				TowerFigure.SIZE,
+				TowerFigure.SIZE);
 		
 		for(Map.Entry<ProjectileFigure, CreatureFigure> entry : 
 				projectiles.entrySet()){

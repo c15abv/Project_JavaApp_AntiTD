@@ -34,7 +34,7 @@ public class StarTowerFigure extends TowerFigure{
 	public void render(Graphics2D g2d){
 		g2d.setColor(this.getColor());
 		g2d.draw(CustomShapes.createStar(this.getPosition(),
-				TowerFigure.TEMP_SIZE));
+				TowerFigure.SIZE));
 		
 		for(Map.Entry<ProjectileFigure, CreatureFigure> entry : 
 				projectiles.entrySet()){

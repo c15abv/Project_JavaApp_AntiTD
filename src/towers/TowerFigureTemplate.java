@@ -12,17 +12,15 @@ import start.Position;
 public class TowerFigureTemplate{
 	
 	private Figures towerType;
-	private int hue;
-	private int range;
-	private int baseDamage;
-	private int cost;
+	private int hue, range, baseDamage, cooldown, cost;
 	
 	public TowerFigureTemplate(Figures towerType, int hue, int range,
-			int baseDamage, int cost){
+			int cooldown, int baseDamage, int cost){
 		this.towerType = towerType;
 		this.hue = hue;
 		this.range = range;
 		this.baseDamage = baseDamage;
+		this.cooldown = cooldown;
 		this.cost = cost;
 	}
 	
@@ -42,21 +40,25 @@ public class TowerFigureTemplate{
 	
 	private CircleTowerFigure createNewCircleTower(
 			Position position){
-		return new CircleTowerFigure(baseDamage, hue, range, position);
+		return new CircleTowerFigure(baseDamage, hue, range, cooldown,
+				position);
 	}
 	
 	private SquareTowerFigure createNewSquareTower(
 			Position position){
-		return new SquareTowerFigure(baseDamage, hue, range, position);
+		return new SquareTowerFigure(baseDamage, hue, range, cooldown,
+				position);
 	}
 
 	private TriangleTowerFigure createNewTriangleTower(
 			Position position){
-		return new TriangleTowerFigure(baseDamage, hue, range, position);
+		return new TriangleTowerFigure(baseDamage, hue, range, cooldown,
+				position);
 	}
 
 	private StarTowerFigure createNewStarTower(
 			Position position){
-		return new StarTowerFigure(baseDamage, hue, range, position);
+		return new StarTowerFigure(baseDamage, hue, range, cooldown,
+				position);
 	}
 }
