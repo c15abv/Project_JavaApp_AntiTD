@@ -1,23 +1,26 @@
-package start;
+package gui;
 
-import java.awt.Dimension;
+import java.awt.Color;
 import java.util.HashMap;
 
-import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import creatures.AttackingPlayer;
 import creatures.CircleCreatureFigure;
-import creatures.SquareCreatureFigure;
-import creatures.TriangleCreatureFigure;
+import creatures.CreatureFigure.Orientation;
+import start.AreaPosition;
+import start.Game;
+import start.GameLevel;
+import start.GameRunner;
+import start.Position;
 import tiles.GoalTile;
 import tiles.PathTile;
-import tiles.PathTile.Direction;
-import tiles.PathTile.ValidPath;
 import tiles.StartTile;
 import tiles.TeleportTile;
 import tiles.Tile;
 import tiles.VoidTile;
-import creatures.CreatureFigure.Orientation;
+import tiles.PathTile.Direction;
+import tiles.PathTile.ValidPath;
 import towers.AITowerFigures;
 import towers.CircleTowerFigure;
 import towers.DefendingPlayer;
@@ -25,21 +28,75 @@ import towers.SquareTowerFigure;
 import towers.StarTowerFigure;
 import towers.TriangleTowerFigure;
 import utilities.ActionTimer;
+import utilities.LevelXMLReader;
 
-public class Test3 {
+public class GameViewAdapter implements GameViewModel {
 
-	public static void main(String[] args){
-		ActionTimer timer;
-		JFrame frame = new JFrame();
-		Game game;
-		GameRunner runner;
-		Thread thread;
-		AttackingPlayer player1;
-		DefendingPlayer player2;
-		AITowerFigures ai;
-		GameLevel level = new GameLevel();
+	private AttackingPlayer player1;
+	private DefendingPlayer player2;
+	private AITowerFigures ai;
+	private Game game;
+	private GameRunner runner;
+	private ActionTimer timer;
+	private GameLevel level = new GameLevel();
+	private LevelInfo levelInfo;
+	
+	public LevelInfo getLevelInfo() {
+		return levelInfo;
+	}
+
+	private Thread thread;
+
+	@Override
+	public void pauseGame() {
+		game.pauseGame();
+		
+	}
+
+	@Override
+	public void resumeGame() {
+		game.resumeGame();
+		
+	}
+
+	@Override
+	public void initGame(JPanel panel) {
+		readLevelMap();
+		levelInfo = new LevelInfo(3, 50, 100, 500, level);
+
+		player1 = new AttackingPlayer(100, level);
+		player2 = new DefendingPlayer(100, level);
+		ai = new AITowerFigures(player1, player2);
+		game = new Game(level, player1, player2);
+		runner = new GameRunner(game);
+		timer = game.getTimer();
+		
+		
+		panel.removeAll();
+		panel.setBackground(Color.black);
+		panel.add(game);
+		panel.revalidate();
+		panel.repaint();
+		
+		thread = new Thread(runner);
+		thread.start();
+	
+	}
+
+	@Override
+	public void addCreature(FigureRepresentation figure) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void readLevelMap()	{
+		/*LevelXMLReader reader = new LevelXMLReader();
+		if(reader.validateXmlAgainstXsds("XML/Levels.xml", "XML/LevelsXMLSchema.xsd")){
+			
+			level = reader.toLevel("XML/Levels.xml");
+		}*/
+		
 		HashMap<AreaPosition, Tile> levelMap = new HashMap<AreaPosition, Tile>();
-		StartTile start = new StartTile(new Position(Tile.size, Tile.size), ValidPath.EAST);
 		TeleportTile tele1;
 		TeleportTile tele2;
 		
@@ -142,19 +199,18 @@ public class Test3 {
 		levelMap.put(new AreaPosition(6 * Tile.size, Tile.size, Tile.size, Tile.size), 
 				new PathTile(new Position(6 * Tile.size, Tile.size), ValidPath.L_TURN_HORIZONTAL_SOUTH_TO_WEST));
 		
-		//new GoalTile(new Position(2 * Tile.size, 3 * Tile.size), ValidPath.NORTH)
-		
-		
 		level.setLevelMap(levelMap);
+
 		
-		player1 = new AttackingPlayer(100, level);
-		player2 = new DefendingPlayer(100, level);
-		ai = new AITowerFigures(player1, player2);
-		game = new Game(level, player1, player2);
-		runner = new GameRunner(game);
-		timer = game.getTimer();
+	}
+
+	@Override
+	public void startGame() {
+		game.startGame();
 		
-		CircleTowerFigure tFig = new CircleTowerFigure(2,180,300,
+		StartTile start = new StartTile(new Position(Tile.size, Tile.size), ValidPath.EAST);
+
+		CircleTowerFigure tFig = new CircleTowerFigure(1,180,300,
 				new Position(Tile.size, 2 * Tile.size));
 		
 		tFig.setActionTimer(timer);
@@ -168,7 +224,7 @@ public class Test3 {
 		});
 		
 		
-		SquareTowerFigure tFig2 = new SquareTowerFigure(2,46,300,
+		SquareTowerFigure tFig2 = new SquareTowerFigure(1,46,300,
 				new Position(Tile.size * 3, 2 * Tile.size));
 		
 		tFig2.setActionTimer(timer);
@@ -181,7 +237,7 @@ public class Test3 {
 			tFig2.setIsOnCooldown(false);
 		});
 		
-		StarTowerFigure tFig3 = new StarTowerFigure(2,120,300,
+		StarTowerFigure tFig3 = new StarTowerFigure(1,120,300,
 				new Position(Tile.size * 5, 2 * Tile.size));
 		
 		tFig3.setActionTimer(timer);
@@ -194,7 +250,7 @@ public class Test3 {
 			tFig3.setIsOnCooldown(false);
 		});
 		
-		TriangleTowerFigure tFig4 = new TriangleTowerFigure(2,1,300,
+		TriangleTowerFigure tFig4 = new TriangleTowerFigure(1,1,300,
 				new Position(Tile.size * 5, 4 * Tile.size));
 		
 		tFig4.setActionTimer(timer);
@@ -207,7 +263,7 @@ public class Test3 {
 			tFig4.setIsOnCooldown(false);
 		});
 		
-		TriangleTowerFigure tFig5 = new TriangleTowerFigure(2,300,300,
+		TriangleTowerFigure tFig5 = new TriangleTowerFigure(1,300,300,
 				new Position(Tile.size * 3, 4 * Tile.size));
 		
 		tFig5.setActionTimer(timer);
@@ -227,44 +283,15 @@ public class Test3 {
 		player2.addTowerFigure(tFig5);
 		
 		CircleCreatureFigure fig = new CircleCreatureFigure(100, 0.5f,
-				new Position(start.getPosition().getX(), start.getPosition().getY(), Tile.size), Orientation.FORWARD, level);
+				new Position(start.getPosition().getX(), start.getPosition().getY(), Tile.size), Orientation.FORWARD, null);
 		
 		fig.setNavigation(Direction.EAST);
 		fig.getMemory().rememberBackTrackDirection(fig.getPosition(), Direction.WEST);
-		fig.setActionTimer(timer);
-		fig.enableTeleport((long)1000);
 		player1.addCreatureFigure(fig);
 		
-		frame.setSize(new Dimension(800, 600));
-	    frame.setMinimumSize(new Dimension(800, 600));
-	    frame.setMaximumSize(new Dimension(800, 600));
-	    frame.setResizable(false);
-	    frame.setLocationRelativeTo(null);
-	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	    frame.pack();
-	    frame.setVisible(true);
-		frame.add(game);
-		frame.pack();
 		
-		frame.setVisible(true);
-		
-		thread = new Thread(runner);
-		thread.start();
-		
-		game.startGame();
-		
-		CircleCreatureFigure fig2 = new CircleCreatureFigure(100, 0.5f,
-				new Position(start.getPosition().getX(), start.getPosition().getY(), Tile.size), Orientation.FORWARD, level);
-		fig2.setActionTimer(timer);
-		fig2.setNavigation(Direction.EAST);
-		fig2.getMemory().rememberBackTrackDirection(fig.getPosition(), Direction.WEST);
-		
-		try {
-			Thread.sleep(7000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
-		player1.addCreatureFigure(fig2);
 	}
+
+
+
 }

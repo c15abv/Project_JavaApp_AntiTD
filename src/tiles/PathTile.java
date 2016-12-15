@@ -13,6 +13,15 @@ import start.Position;
 public class PathTile extends Tile implements EnterTileEffect{
 	
 	public enum ValidPath{
+		HORIZONTAL, VERTICAL, HORIZONTAL_T_SOUTH,
+		HORIZONTAL_T_NORTH, VERTICAL_T_EAST,
+		VERTICAL_T_WEST, CROSSROAD,
+		L_TURN_HORIZONTAL_SOUTH_TO_EAST, L_TURN_HORIZONTAL_NORTH_TO_WEST,
+		L_TURN_HORIZONTAL_NORTH_TO_EAST, L_TURN_HORIZONTAL_SOUTH_TO_WEST,
+		NORTH, WEST, EAST, SOUTH;
+	}
+	
+	/*public enum ValidPath{
 		HORIZONTAL("horizontal"), VERTICAL, HORIZONTAL_T_SOUTH,
 		HORIZONTAL_T_NORTH, VERTICAL_T_EAST,
 		VERTICAL_T_WEST, CROSSROAD,
@@ -35,10 +44,26 @@ public class PathTile extends Tile implements EnterTileEffect{
 			
 			return null;
 		}
-	}
+	}*/
 	
 	public enum Direction{
 		NORTH, EAST, WEST, SOUTH, NA;
+		
+		public static Direction getOpposite(Direction direction){
+			switch(direction){
+			case EAST:
+				return Direction.WEST;
+			case NORTH:
+				return Direction.SOUTH;
+			case SOUTH:
+				return Direction.NORTH;
+			case WEST:
+				return Direction.EAST;
+			default:
+			case NA:
+				return Direction.NA;
+			}
+		}
 	}
 	
 	public class PositionConnection{
@@ -146,18 +171,6 @@ public class PathTile extends Tile implements EnterTileEffect{
 		return false;
 	}
 	
-	public boolean isGoalPosition(Position position){
-		return false;
-	}
-	
-	public boolean isStartPosition(Position position){
-		return false;
-	}
-	
-	public boolean hasEffect(){
-		return false;
-	}
-	
 	public ValidPath getValidPath(){
 		return path;
 	}
@@ -175,6 +188,11 @@ public class PathTile extends Tile implements EnterTileEffect{
 	public void landOn(CreatureFigure creature){}
 	
 	@Override
+	public boolean selectable(){
+		return true;
+	}
+	
+	@Override
 	public void render(Graphics2D g2d) {
 		float[] dashingPattern1 = {2f, 2f};
 		Stroke stroke = new BasicStroke(2f, BasicStroke.CAP_BUTT,
@@ -182,11 +200,18 @@ public class PathTile extends Tile implements EnterTileEffect{
 		final Graphics2D g = (Graphics2D)g2d.create();
 		
 	    try{
-	    	g.setColor(Color.BLACK);
+	    	if(getSelected()){
+	    		g.setColor(new Color((float)225/255, (float)225/255, (float)150/255, 0.25f));
+				g.drawRect(this.getPosition().getX() - Tile.size/2 + 1,
+						this.getPosition().getY() - Tile.size/2 + 1,
+						Tile.size - 2,
+						Tile.size - 2);
+	    	}
+	    	/*g.setColor(Color.BLACK);
 			g.fillRect(this.getPosition().getX() - Tile.size/2,
 					this.getPosition().getY() - Tile.size/2,
 					Tile.size,
-					Tile.size);
+					Tile.size);*/
 			
 			g.setColor(Color.WHITE);
 			g.setStroke(stroke);

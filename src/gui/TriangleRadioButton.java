@@ -14,6 +14,9 @@ import java.awt.Dimension;
 @SuppressWarnings("serial")
 class TriangleRadioButton extends FigureRadioButton {
 	
+	/**
+	 * Constructor that initiates the button.
+	 */
 	public TriangleRadioButton() {
 		initButton();
 	}
