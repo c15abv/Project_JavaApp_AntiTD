@@ -37,6 +37,7 @@ public class Game extends Canvas implements TimerListener{
 	private GameResult gameResult = GameResult.NA;
 	private volatile ActionTimer timer;
 	private Thread timerThread;
+	private volatile long gameTimeTimerId;
 	
 	private AttackingPlayer attacker;
 	private DefendingPlayer defender;
@@ -68,6 +69,7 @@ public class Game extends Canvas implements TimerListener{
 		
 		timer = new ActionTimer();
 		timerThread = new Thread(timer);
+		gameTimeTimerId = timer.getNewUniqueId();
 		
 		this.setIgnoreRepaint(true);
 		this.setSize(SIZE_X, SIZE_Y);
@@ -146,6 +148,8 @@ public class Game extends Canvas implements TimerListener{
 	
 	public void startGame(){
 		timerThread.start();
+		timer.setTimer(gameTimeTimerId, this, 
+				level.getTimeToFinish() * 1000);
 		gameState = GameState.RUNNING;
 	}
 	
@@ -186,4 +190,10 @@ public class Game extends Canvas implements TimerListener{
 		return lock;
 	}
 	
+
+	public synchronized long getGameTimeTimerId(){
+		return gameTimeTimerId;
+	}
+
+
 }

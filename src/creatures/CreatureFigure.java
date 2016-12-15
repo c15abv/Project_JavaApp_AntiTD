@@ -5,13 +5,6 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
-
-
-
-import java.util.Map;
-
-import start.AreaPosition;
 import start.Figures;
 import start.GameLevel;
 import start.GameRunner;
@@ -33,6 +26,7 @@ public abstract class CreatureFigure implements TimerListener{
 		RIGHT, LEFT, RANDOM, FORWARD;
 	}
 	
+	public static final int DEFAULT_CREDIT = 10;
 	public static final int BASE_HITPOINTS = 100;
 	public static final int BASE_SIZE = 26;
 	public static final double BASE_SPEED = 1;
@@ -43,7 +37,8 @@ public abstract class CreatureFigure implements TimerListener{
 	private PathTile.Direction navigationFrom;
 	private PathMemory memory;
 	private GameLevel level;
-	private int hue;
+
+	private int hue, creditOnGoal, creditOnKill;
 	private double scale, speed, tilesMoved;
 	private Position position;
 	private int hitPoints;
@@ -144,6 +139,22 @@ public abstract class CreatureFigure implements TimerListener{
 	
 	public int percentLife(){
 		return Math.round((int)((double)hitPoints * 100 / (double)startHitPoints));
+	}
+	
+	protected void setCreditOnGoal(int creditOnGoal){
+		this.creditOnGoal = creditOnGoal;
+	}
+	
+	public int getCreditOnGoal(){
+		return creditOnGoal;
+	}
+	
+	protected void setCreditOnKill(int creditOnKill){
+		this.creditOnKill = creditOnKill;
+	}
+	
+	public int getCreditOnKill(){
+		return creditOnKill;
 	}
 	
 	@Override
@@ -250,6 +261,9 @@ public abstract class CreatureFigure implements TimerListener{
 		
 		hitPoints = startHitPoints = (int)(BASE_HITPOINTS * scale);
 		navigation = navigationFrom = PathTile.Direction.NA;
+
+		creditOnGoal = creditOnKill = DEFAULT_CREDIT;
+
 		
 		speed = speed / scale;
 		tilesMoved = 1;

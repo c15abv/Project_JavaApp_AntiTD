@@ -7,11 +7,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import creatures.Action;
 import creatures.CreatureFigure;
 import projectiles.ProjectileFigure;
 import start.Figures;
 import start.Position;
+import utilities.Action;
 import utilities.ActionTimer;
 import utilities.ColorCreator;
 import utilities.TimerListener;
@@ -24,7 +24,7 @@ import utilities.TimerListener;
  */
 public abstract class TowerFigure implements TimerListener{
 	
-	public static final int TEMP_SIZE = 36;
+	public static final int SIZE = 40;
 	public static final int COOLDOWN = 1000;
 	
 	private int baseDamage;

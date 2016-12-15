@@ -11,6 +11,7 @@ import utilities.Lock;
 
 public class GameLevel{
 
+<<<<<<< HEAD
     public static final int DEFAULT_PLAYER_SCORE_GOAL = 100;
     public static final int DEFAULT_CREDIT = 100;
     public static final int DEFAULT_TIME = 120;
@@ -53,6 +54,101 @@ public class GameLevel{
         this.defenderCredit = defenderCredit;
         this.timeToFinish = timeToFinish;
         this.nrOfTemplates = nrOfTemplates;
+=======
+	public static final int DEFAULT_PLAYER_SCORE_GOAL = 100;
+	public static final int DEFAULT_CREDIT = 100;
+	public static final int DEFAULT_TIME = 120;
+	
+	private HashMap<AreaPosition, Tile> levelMap;
+	private ArrayList<String> rules;
+	private ArrayList<String> landOnFiles;
+	private IdCounter idCounter;
+	private Lock lock;
+	
+	private int attackingPlayerScoreGoal = DEFAULT_PLAYER_SCORE_GOAL;
+	private int attackerCredit = DEFAULT_CREDIT;
+	private int defenderCredit = DEFAULT_CREDIT;
+	private int timeToFinish = DEFAULT_TIME; 
+	private int levelMapHash;
+	
+	public GameLevel(){
+		this(DEFAULT_PLAYER_SCORE_GOAL, null, null, null);
+	}
+	
+	public GameLevel(int attackingPlayerScoreGoal, ArrayList<String> rules,
+			ArrayList<String> landOnFiles,
+			HashMap<AreaPosition, Tile> levelMap){
+		this.attackingPlayerScoreGoal = attackingPlayerScoreGoal;
+				
+		if((this.rules = rules) == null){
+			this.rules = new ArrayList<String>();
+		}
+		if((this.landOnFiles = landOnFiles) == null){
+			this.landOnFiles = new ArrayList<String>();
+		}
+		if((this.levelMap = levelMap) == null){
+			this.levelMap = new HashMap<AreaPosition, Tile>();
+			levelMapHash = 0;
+		}else{
+			levelMapHash = this.levelMap.hashCode();
+		}
+		
+		idCounter = new IdCounter(1);
+
+		lock = new Lock();
+
+	}
+	
+	
+	public void update(){
+		for(Map.Entry<AreaPosition, Tile> entry : levelMap.entrySet()){
+			entry.getValue().update();
+		}
+	}
+	
+	public void render(Graphics2D g2d){
+		for(Map.Entry<AreaPosition, Tile> entry : levelMap.entrySet()){
+		    entry.getValue().render(g2d);
+		}
+	}
+	
+	public int getAttackerCredit() {
+		return attackerCredit;
+	}
+	
+	public void setAttackerCredit(int attackerCredit) {
+		this.attackerCredit = attackerCredit;
+	}
+	
+	public int getDefenderCredit() {
+		return defenderCredit;
+	}
+	
+	public void setDefenderCredit(int defenderCredit) {
+		this.defenderCredit = defenderCredit;
+	}
+	
+	public int getTimeToFinish() {
+		return timeToFinish;
+	}
+	
+	public void setTimeToFinish(int timeToFinish) {
+		this.timeToFinish = timeToFinish;
+	}
+	
+	public HashMap<AreaPosition, Tile> getLevelMap() {
+		return new HashMap<AreaPosition, Tile>(levelMap);
+	}
+
+	public void setLevelMap(HashMap<AreaPosition, Tile> levelMap) {
+		this.levelMap = levelMap;
+		levelMapHash = this.levelMap.hashCode();
+	}
+	
+	public ArrayList<String> getRules() {
+		return rules;
+	}
+>>>>>>> origin/KArros
 
         if((this.levelMap = levelMap) == null){
             this.levelMap = new HashMap<AreaPosition, Tile>();
@@ -87,6 +183,7 @@ public class GameLevel{
         this.nrOfTemplates = nrOfTemplates;
     }
 
+<<<<<<< HEAD
     public int getNrOfTemplates() {
         return nrOfTemplates;
     }
@@ -118,6 +215,41 @@ public class GameLevel{
     public HashMap<AreaPosition, Tile> getLevelMap() {
         return new HashMap<AreaPosition, Tile>(levelMap);
     }
+=======
+	public void setAttackingPlayerScoreGoal(int attackingPlayerScoreGoal) {
+		this.attackingPlayerScoreGoal = attackingPlayerScoreGoal;
+	}
+	
+	public int getAttackingPlayerScoreGoal() {
+		return attackingPlayerScoreGoal;
+	}
+	
+	public int getInitialLevelMapHash(){
+		return levelMapHash;
+	}
+	
+	public void changeTile(AreaPosition areaPosition, Tile newTile){
+		if(levelMap.containsKey(areaPosition) && newTile != null){
+			levelMap.put(areaPosition, newTile);
+		}
+	}
+	
+	public long getNewUniqueId(){
+		long id = idCounter.getId();
+		idCounter.increment();
+		return id;
+	}
+	
+	public Tile getTileById(long id){
+		for(Map.Entry<AreaPosition, Tile> entry : levelMap.entrySet()){
+			if(entry.getValue().getId() == id){
+				return entry.getValue();
+			}
+		}
+		
+		return null;
+	}
+>>>>>>> origin/KArros
 
     public void setLevelMap(HashMap<AreaPosition, Tile> levelMap) {
         this.levelMap = levelMap;
