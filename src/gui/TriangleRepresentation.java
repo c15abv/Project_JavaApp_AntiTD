@@ -7,16 +7,31 @@ import creatures.CreatureFigure.Orientation;
 import start.Figures;
 
 /**
+ * FigureRepresentation that represents triangle figures.
+ * 
  * @author karro
  *
  */
 @SuppressWarnings("serial")
 class TriangleRepresentation extends FigureRepresentation {
 
+	/**
+	 * Constructor that sets the creature type of the representation.
+	 */
 	public TriangleRepresentation() {
 		this.creatureType = Figures.TRIANGLE;
 	}
 
+	/**
+	 * Constructor that initiates the representation with the given parameters
+	 * and sets the creature type.
+	 * 
+	 * @param hue
+	 * @param scale
+	 * @param isTeleportCreature
+	 * @param orientation
+	 * @param cost
+	 */
 	public TriangleRepresentation(int hue, float scale, boolean isTeleporterCreature, Orientation orientation, int cost) {
 		super(hue, scale, isTeleporterCreature, orientation, cost);
 		this.creatureType = Figures.TRIANGLE;

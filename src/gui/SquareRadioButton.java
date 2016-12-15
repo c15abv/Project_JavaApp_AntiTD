@@ -14,6 +14,9 @@ import java.awt.Dimension;
 @SuppressWarnings("serial")
 class SquareRadioButton extends FigureRadioButton {
 
+	/**
+	 * Constructor that initiates the button.
+	 */
 	public SquareRadioButton() {
 		initButton();
 	}

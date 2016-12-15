@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Shape;
 
 import javax.swing.JTextField;
@@ -12,7 +11,7 @@ import javax.swing.UIManager;
 import javax.swing.border.Border;
 
 /**
- * FigureRepresentation to represent a figure that has not yet been set.
+ * FigureRepresentation that represent figures that has not yet been set.
  * 
  * @author karro
  *

@@ -12,7 +12,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 
 /**
- * Abstract radio button class to represent different creatures. 
+ * Abstract radio button class to represent different creatures the user can
+ * choose from.
  * 
  * @author karro
  *
@@ -23,15 +24,25 @@ public abstract class FigureRadioButton extends JRadioButton {
 	protected Shape shape;
 	protected Figures figureType;
 
-	/*public FigureRadioButton() {
-		super();
-		initButton();
-	}*/
+	/**
+	 * Initiates the radio button.
+	 */
+	public void initButton() {
+		setFigureType();
 
+		this.setText(figureType.toString());
+		this.setContentAreaFilled(false);
+		this.setActionCommand(this.getText());
+		this.shape = createShape();
+
+	}
+
+	@Override
 	public void paintBorder(Graphics g) {
 		((Graphics2D) g).draw(shape);
 	}
 
+	@Override
 	public void paintComponent(Graphics g) {
 		if (getModel().isSelected()) {
 			g.setColor(Color.DARK_GRAY.darker().darker());
@@ -44,24 +55,24 @@ public abstract class FigureRadioButton extends JRadioButton {
 		((Graphics2D) g).fill(shape);
 	}
 
+	@Override
 	public boolean contains(int x, int y) {
 		return shape.contains(x, y);
 	}
 
-	public void initButton() {
-		setFigureType();
-
-		this.setText(figureType.toString());
-		this.setContentAreaFilled(false);
-		this.setActionCommand(this.getText());
-		this.shape = createShape();
-
-	}
-
+	@Override
 	public abstract Dimension getPreferredSize();
 
+	/**
+	 * Creates and returns the shape of the radio button.
+	 * 
+	 * @return
+	 */
 	public abstract Shape createShape();
 
+	/**
+	 * Sets the figure type of the radio button.
+	 */
 	public abstract void setFigureType();
 
 }

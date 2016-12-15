@@ -8,7 +8,7 @@ import start.Figures;
 import java.awt.Dimension;
 
 /**
- * Radio button to represent circle creatures.
+ * Radio button that represents circle creatures.
  * 
  * @author karro
  *
