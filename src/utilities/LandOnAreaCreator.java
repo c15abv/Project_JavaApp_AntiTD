@@ -3,11 +3,13 @@ package utilities;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import creatures.CreatureFigure;
+import start.AreaPosition;
 import start.Position;
 import tiles.EnterTileEffect;
 import tiles.PathTile;
+import tiles.TeleportTile;
 import tiles.Tile;
-import tiles.PathTile.ValidPath;
 
 /**
  * @author Jan
@@ -27,13 +29,23 @@ public class LandOnAreaCreator {
     public static void main(String[] args){
 
         LandOnAreaCreator landOnCreator = new LandOnAreaCreator();
-        Position position = new Position(0, 0);
-        
-        Class<?> classFromInput;
-        PathTile pathTile = (PathTile) landOnCreator.
-                CreatePathTileDynamically("PathTile", position, ValidPath.getEnumByString("HORIZONTAL"));
+        AreaPosition areaPosition = new AreaPosition(0, 0, 50, 50);
 
-        if(pathTile instanceof PathTile ){
+
+        Class<?> classFromInput;
+        try {
+            classFromInput = Class.forName("tiles.TeleportTile");
+
+            TeleportTile teleportTile = (TeleportTile) landOnCreator.
+                    CreateTileDynamically(classFromInput, areaPosition);
+
+            if(teleportTile instanceof TeleportTile ){
+                System.out.println("it is an instance!");
+            }
+
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 
@@ -42,30 +54,23 @@ public class LandOnAreaCreator {
      * @param position
      * @return null if the tile couldnt be created, else it returns an object
      * of the tile that was specified in the parameter aClassName
-     * 
-     * 
      */
-    public Object CreatePathTileDynamically(String aClassName,
-            Position position, ValidPath validPath){
+    public Object CreateTileDynamically(Class<?> aClassName, AreaPosition areaPosition){
         //take in the name of the class
-        //Instantiate the class
+        //Instantiate the class 
         try {
-            //the tiles. is where the class has to be
-            //change to taking in full filepath instead??
-            Class<?> aClass = Class.forName("tiles." + aClassName);
             // Get the constructor, create an instance of it.                       
-            Constructor<?> constructor = aClass.getConstructor
-                    (Position.class, ValidPath.class);
-            System.out.println("passed 1!");
+            Constructor<?> constructor = aClassName.getConstructor
+                    (Position.class);
 
             //check so that it implements interface
-            if(checkIfclassImplEnterTileEffectandTile
-                    (constructor.newInstance(position, validPath))){
+            if(checkIfclassImplementsEnterTileEffectandTile
+                    (constructor.newInstance(areaPosition))){
                 //return a tile casted to the class that
                 //was specified in the aClassName param
                 //return as an object and do the cast in xml reader instead.
                 Object object = new Object();
-                object = constructor.newInstance(position, validPath);
+                object = constructor.newInstance(areaPosition);
                 
                 return  object;
             }                
@@ -88,68 +93,7 @@ public class LandOnAreaCreator {
         } catch (InvocationTargetException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
-        // if null cancel read
-        //and msg that something is wrong with the levels file
-        return null;
-    }
-    
-    /**
-     * @param aClassName
-     * @param position
-     * @return
-     */
-    public Object CreateTileDynamically(String aClassName,
-            Position position){
-        //take in the name of the class
-        //Instantiate the class
-        try {
-            Class<?> aClass = Class.forName("tiles." + aClassName);
-            
-            // Get the constructor, create an instance of it.                       
-            Constructor<?> constructor = aClass.getConstructor
-                    (Position.class, ValidPath.class);
-
-            //check so that it implements interface
-            if(checkIfclassImplEnterTileEffectandTile
-                    (constructor.newInstance(position))){
-                
-                //return a tile casted to the class that
-                //was specified in the aClassName param
-                //return as an object and do the cast in xml reader instead.
-                Object object = new Object();
-                object = constructor.newInstance(position);
-                
-                return  object;
-            }                
-        } catch (SecurityException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            //If constructor cant be found
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        // if null cancel read
-        //and msg that something is wrong with the levels file
         return null;
     }
 
@@ -158,7 +102,7 @@ public class LandOnAreaCreator {
      * @param myClassObject
      * @return
      */
-    public boolean checkIfclassImplEnterTileEffectandTile(Object myClassObject){
+    public boolean checkIfclassImplementsEnterTileEffectandTile(Object myClassObject){
 
         if(myClassObject instanceof EnterTileEffect && myClassObject instanceof Tile){
             return true;

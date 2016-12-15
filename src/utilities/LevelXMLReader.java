@@ -2,8 +2,8 @@ package utilities;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -23,55 +23,62 @@ import org.xml.sax.SAXException;
 import start.AreaPosition;
 import start.GameLevel;
 import start.Position;
+import tiles.EnterTileEffect;
+import tiles.GoalTile;
 import tiles.PathTile;
 import tiles.PathTile.ValidPath;
+import tiles.StartTile;
+import tiles.TeleportTile;
 import tiles.Tile;
+import tiles.TowerTile;
 import tiles.VoidTile;
 import tiles.WallTile;
 
-/**
- * @author Jan Nylén, Alexander Ekström
- *
- */
-public class LevelXMLReader{
-    //elements 
-    public static final String LEVEL = "level";
-    public static final String ROW = "row";
-    public static final String TILE = "tile";
 
-    //attributes
-    public static final String LANDON = "landOn";
-    public static final String DIRECTION = "direction";
-    public static final String LVLNAME = "name";
+public class LevelXMLReader{
 
     private String XMLFile;
 
     public LevelXMLReader(/*some xml file*/){
+
     }
 
     public LevelXMLReader(String XMLFile){
         this.XMLFile = XMLFile;
     }
 
+
     public static void main(String[] args){
-        
         LevelXMLReader reader = new LevelXMLReader();
         if(reader.validateXmlAgainstXsds("XML/Levels.xml",
                 "XML/LevelsXMLSchema.xsd")){
             reader.toLevel("XML/Levels.xml");
         }
-        
-        
     }
+    /** The toLevel method takes in a a string referring to an xmlMapFile and 
+     * @param xmlMapFile - A string representing an XML in the XML directory
+     * @return gameLevel - A representation of a game level with its rules, landons and map
+     */
+    public GameLevel toLevel(String xmlMapFile){
 
-    /**
-     * Author: Jan Nylén
-     * @param xmlMapFile
-     * @return
-     */    
-    public Document createDocument(String xmlMapFile){
+        Position position = null;
+        int nrOfLevels = 0;
+        int nrOfRows = 0;
+        int nrOfTiles = 0;
+        String tileType = null;
 
-        File xmlInputFile = new File(xmlMapFile);
+        Element eElementRow = null;
+        Element eElementLevel = null;
+        NodeList eElementsTiles = null;
+        Element aTileElement = null;
+        Node nNodeLevel = null;
+
+        LandOnAreaCreator landOnAreaCreator = new LandOnAreaCreator(); 
+
+        ArrayList gameLevelArrayList = new ArrayList<GameLevel>();
+        GameLevel gameLevel = new GameLevel();
+
+        File inputFile = new File(xmlMapFile);
         DocumentBuilderFactory dbFactory
         = DocumentBuilderFactory.newInstance();
 
@@ -83,8 +90,10 @@ public class LevelXMLReader{
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
+        Document doc = null;
         try {
-            return dBuilder.parse(xmlInputFile);
+            doc = dBuilder.parse(inputFile);
         } catch (SAXException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -92,181 +101,132 @@ public class LevelXMLReader{
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        return null;
-    }
 
-    /** The toLevel method takes in a a string referring
-     *  to an xmlMapFile and 
-     * @param xmlMapFile - A string representing an XML
-     *  in the XML directory
-     * @return gameLevel - A representation of a game
-     *  level with its rules, landons and map
-     */
-    public GameLevel toLevel(String xmlMapFile){
+        doc.getDocumentElement().normalize();
 
-        Position position = null;
-        int nrOfLevels = 0;
-        int nrOfRows = 0;
-        int nrOfTiles = 0;
-        String tileType = null;
+        System.out.println("Root element :"
+                + doc.getDocumentElement().getNodeName());
 
-        Document levelsDoc = null;
-        Element eElementRow = null;
-        Element eElementLevel = null;
-        NodeList eElementsTiles = null;
-        Element aTileElement = null;
-        Node nNodeLevel = null;
-
-        int attackerCredit = 0;
-        int defenderCredit = 0;
-        int scoreGoal = 0;
-        int timeToFinish = 0;
-        int nrOfTemplates = 0;
-        String levelName = new String("default");
-
-        HashMap<AreaPosition, Tile> levelMap = 
-                new HashMap<AreaPosition, Tile>();
-
-        LandOnAreaCreator landOnAreaCreator = new LandOnAreaCreator();
-
+        NodeList levelList = doc.getElementsByTagName("level");
         System.out.println("----------------------------");
-        levelsDoc = createDocument(xmlMapFile);
-        NodeList levelList = levelsDoc.getElementsByTagName(LEVEL);
-        nrOfLevels = levelsDoc.getElementsByTagName(LEVEL).getLength();
+
+        nrOfLevels = doc.getElementsByTagName("level").getLength();
 
         //For every level
         for (int levelIndex = 0; levelIndex < nrOfLevels; levelIndex++) {
 
-            nNodeLevel = levelList.item(levelIndex); 
+            nNodeLevel = levelList.item(levelIndex);      
+
             System.out.println("\nCurrent Element :"
-                    + nNodeLevel.getNodeName());
+                    + nNodeLevel.getNodeName());				
 
-            if (nNodeLevel.getNodeType() == Node.ELEMENT_NODE){
+            if (nNodeLevel.getNodeType() == Node.ELEMENT_NODE) {
 
-                eElementLevel = (Element) nNodeLevel; 
+                eElementLevel = (Element) nNodeLevel;      
 
-                nrOfRows = eElementLevel.getElementsByTagName(ROW).getLength();                
-                NodeList rowNodeList = eElementLevel.getElementsByTagName(ROW);
-
-                //get the name of the gameLevel
-                levelName = eElementLevel.getAttribute(LVLNAME);
-                //get rules for the gameLevel					
-                attackerCredit = Integer.parseInt
+                //set rules for the gameLevel					
+                gameLevel.setAttackerCredit(Integer.parseInt
                         (eElementLevel.getElementsByTagName("attackerCredit").
-                                item(0).getTextContent());
-                defenderCredit = Integer.parseInt
+                                item(0).getTextContent()));
+                gameLevel.setDefenderCredit(Integer.parseInt
                         (eElementLevel.getElementsByTagName("defenderCredit").
-                                item(0).getTextContent());
-                scoreGoal = (Integer.parseInt
+                                item(0).getTextContent()));
+                gameLevel.setAttackingPlayerScoreGoal(Integer.parseInt
                         (eElementLevel.getElementsByTagName
                                 ("attackingPlayerScoreGoal").item(0).
                                 getTextContent()));
-                timeToFinish = Integer.parseInt(eElementLevel.
+                gameLevel.setTimeToFinish(Integer.parseInt(eElementLevel.
                         getElementsByTagName("timeToFinish").item(0).
-                        getTextContent());
-                nrOfTemplates = Integer.parseInt(eElementLevel.
+                        getTextContent()));
+                gameLevel.setNrOfTemplates(Integer.parseInt(eElementLevel.
                         getElementsByTagName("nrOfTemplates").item(0).
-                        getTextContent());
+                        getTextContent()));
+
+                nrOfRows = eElementLevel.getElementsByTagName("row").getLength();
+
+                System.out.println("NrOfRows : " + nrOfRows);
+                NodeList rowNodeList = eElementLevel.getElementsByTagName("row");
+
+                System.out.println("Level name : " + eElementLevel.getAttribute("name"));                   
 
                 //For every row
                 for (int rowIndex = 0; rowIndex < nrOfRows; rowIndex++) {                      
 
-                    if(rowNodeList.item(rowIndex).getNodeType()
-                            == Node.ELEMENT_NODE)
+                    if(rowNodeList.item(rowIndex).getNodeType() == Node.ELEMENT_NODE)
                     {
-                        //Get the current row to be read and get its tiles +
-                        //nr of tiles
+                        //Get the element to be read and get the tiles + nr of tiles
                         eElementRow = (Element) rowNodeList.item(rowIndex);
-                        eElementsTiles = eElementRow.getElementsByTagName(TILE);
+                        eElementsTiles = eElementRow.getElementsByTagName("tile");
                         nrOfTiles = eElementsTiles.getLength();                        							
 
                         //For every tile
-                        for (int tileIndex = 0; tileIndex <nrOfTiles;
-                                tileIndex++) {
+                        for (int tileIndex = 0; tileIndex <nrOfTiles; tileIndex++) {
 
                             //take out the target tile and cast to an element
-                            aTileElement = (Element) eElementsTiles.
-                                    item(tileIndex);	
+                            aTileElement = (Element) eElementsTiles.item(tileIndex);	
 
-                            //create a position out of the rowIndex and
-                            //tileIndex.position = new Position(rowIndex * 50, 
-                            //tileIndex * 50);
-                            position = new Position(rowIndex, tileIndex);
-                            AreaPosition areaPosition = new AreaPosition
-                                    (position, 50, 50);
-                            tileType = eElementsTiles.item(tileIndex).
-                                    getTextContent();                    
-
-                            ValidPath validPath = null;
-
-                            validPath = ValidPath.getEnumByString
-                                    (aTileElement.getAttribute(DIRECTION));
+                            //create a position out of the rowIndex and tileIndex
+                            //position = new Position(rowIndex * 50, tileIndex * 50);                            
+                            AreaPosition areaPosition = new AreaPosition(rowIndex, tileIndex, 50, 50);
+                            tileType = eElementsTiles.item(tileIndex).getTextContent();                                                     
 
                             //check what kind of tile it is and put a
                             // tile of that type into the gameLevel map
                             //at that position
 
-                            //TELEPOROTOTOT
-                            if(tileType.equals("V") || tileType.equals("W")){
+                            if(tileType.equals("W")){
+                                gameLevel.getLevelMap().put(areaPosition, new WallTile(position, tileType));
+                            }else if(tileType.equals("P")){
+                                
+                                if(aTileElement.hasAttribute("landOn")){                                
 
-                                if(aTileElement.hasAttribute(LANDON)){                                    
-                                    levelMap.put(areaPosition,
-                                            (Tile)landOnAreaCreator.
-                                            CreateTileDynamically(aTileElement.
-                                                    getAttribute(LANDON), position));                                    
-                                }
-                                else if(tileType.equals("W")){
+                                    try {       
+                                        //casta till den pathTile. 
+                                        // aClassName.cast
+                                        
+                                        aTileElement.getAttribute("direction");
+                                        
+                                        ValidPath validPath = PathTile.ValidPath.CROSSROAD;
+                                        
+                                        Class<?> landOnClass = Class.forName("tiles." + 
+                                                aTileElement.getAttribute("landOn"));
 
-                                    levelMap.put(areaPosition,
-                                            new WallTile(position, tileType));
-                                }
-                                else if(tileType.equals("V")){
+                                        PathTile pathTile = (PathTile) landOnAreaCreator.CreateTileDynamically(
+                                                landOnClass, areaPosition);  
 
-                                    levelMap.put(areaPosition,
-                                            new WallTile(position, tileType));
-                                }
+                                        System.out.println("created a landOn dynamically");
+
+                                        gameLevel.getLevelMap().put(areaPosition,
+                                                new TeleportTile(areaPosition, null));
+
+                                    } catch (ClassNotFoundException e) {
+                                        // TODO Auto-generated catch block
+                                        e.printStackTrace();
+                                    }              
+
+                                }else{
+                                    gameLevel.getLevelMap().put(position, new PathTile(areaPosition, tileType, validPath));
+                                }	
                             }
-                            else if(tileType.equals("P")||
-                                    tileType.equals("S")||
-                                    tileType.equals("G")){
-                                if(aTileElement.hasAttribute(LANDON)){                        
-
-                                    PathTile pathTile = (PathTile) 
-                                            landOnAreaCreator.
-                                            CreatePathTileDynamically(
-                                                    aTileElement.
-                                                    getAttribute(LANDON),
-                                                    position, validPath);
-
-                                    levelMap.put(areaPosition,
-                                            pathTile);             
-                                }
-                                else{
-                                    levelMap.put(areaPosition,
-                                            new PathTile(position, validPath));
-                                }
+                            else if(tileType.equals("S")){gameLevel.getLevelMap().put(position, new StartTile(position, tileType ,validPath));
                             }
-                            //not sure on this else, it makes sure that
-                            //the hashMap is always created though..
-                            /*else{levelMap.put(areaPosition,
-                                    new VoidTile(position));
-                            }*/
+                            else if(tileType.equals("G")){gameLevel.getLevelMap().put(position, new GoalTile(position, tileType ,validPath));
+                            }
+                            else{gameLevel.getLevelMap().put(position, new VoidTile(position));
+                            }
                         }
                     }
                 }
+
+                //input each gamelevel into the arraylist of gameLevels to be returned
+                //gameLevelArrayList[level] = gameLevel;
             }
         }
         //atm only the last level in the xml file is returned..
-        return new GameLevel(scoreGoal, levelMap, levelName,
-                attackerCredit, defenderCredit, timeToFinish, nrOfTemplates);
+
+        return gameLevel;
     }
 
-    /**
-     * Author: Jan Nylén
-     * @param xmlFile
-     * @param validationFile
-     * @return
-     */
     public boolean validateXmlAgainstXsds(String xmlFile,
             String validationFile)  
     {
@@ -301,185 +261,7 @@ public class LevelXMLReader{
         return true;
     }
 
-    /**
-     * @return
-     */
-    public ArrayList<String> getLvlNames(){  
 
-        Document levelsDoc = null;
-        NodeList nNodeLevelList = null;
 
-        ArrayList<String> gameLevelNames = new ArrayList<String>();
-        levelsDoc = createDocument(XMLFile);
-
-        nNodeLevelList = levelsDoc.getElementsByTagName(LEVEL); 
-
-        for(int i=0; i<nNodeLevelList.getLength(); i++ ){
-            //GETS THE NAME WRONG
-            //gameLevelNames.add(nNodeLevelList.item(i).getAttribute("name");
-        }        
-        return gameLevelNames;        
-    }
-
-    /**
-     * @param lvlName The name attribute of a level as
-     *  specified in the levelmap
-     * @return a gameLevel specified in the xmlFile sent in as a
-     *  parameter in the constructor
-     *  
-     *  funkar inte med string, use attribute - ID instead
-     */
-    public GameLevel getLevelByName(String lvlName){
-
-        // temp holders
-        Document levelsDoc = null;
-        Element eElementRow = null;
-        Element eElementLevel = null;
-        NodeList eElementsTiles = null;
-        Element aTileElement = null;
-        
-        Position position = null;
-        int nrOfRows = 0;
-        int nrOfTiles = 0;
-        String tileType = null;
-
-        int attackerCredit = 0;
-        int defenderCredit = 0;
-        int scoreGoal = 0;
-        int timeToFinish = 0;
-        int nrOfTemplates = 0;
-        String levelName = new String("default");
-
-        HashMap<AreaPosition, Tile> levelMap = 
-                new HashMap<AreaPosition, Tile>();
-
-        LandOnAreaCreator landOnAreaCreator = new LandOnAreaCreator();
-
-        levelsDoc = createDocument(XMLFile);
-        
-        
-        //levelsDoc.getElementsByTagName(lvlName);
-        
-        //System.out.println("test byName");
-
-        eElementLevel = levelsDoc.getElementById(lvlName);
-        System.out.println("test ID");
-        nrOfRows = eElementLevel.getElementsByTagName(ROW).getLength(); 
-        System.out.println("test ID2");
-        NodeList rowNodeList = eElementLevel.getElementsByTagName(ROW);
-        System.out.println("test ID3");
-
-        //get the name of the gameLevel
-        
-        System.out.println("test beforeLvlName");
-        levelName = eElementLevel.getAttribute(LVLNAME);
-        
-        System.out.println("test levelName:" + levelName);
-        //get rules for the gameLevel                   
-        attackerCredit = Integer.parseInt(eElementLevel.
-                getElementsByTagName("attackerCredit").item(0)
-                .getTextContent());
-        defenderCredit = Integer.parseInt(eElementLevel.
-                getElementsByTagName("defenderCredit").item(0)
-                .getTextContent());
-        scoreGoal = (Integer.parseInt(eElementLevel.
-                getElementsByTagName("attackingPlayerScoreGoal").item(0)
-                .getTextContent()));
-        timeToFinish = Integer.parseInt(eElementLevel.
-                getElementsByTagName("timeToFinish").item(0)
-                .getTextContent());
-        nrOfTemplates = Integer.parseInt(eElementLevel.
-                getElementsByTagName("nrOfTemplates").item(0)
-                .getTextContent());
-
-        //For every row in a level
-        for (int rowIndex = 0; rowIndex < nrOfRows; rowIndex++) {                      
-
-            if(rowNodeList.item(rowIndex).getNodeType()
-                    == Node.ELEMENT_NODE)
-            {
-                // return null;
-            }
-
-            //Get the current row to be read and get its tiles +
-            //nr of tiles
-            eElementRow = (Element) rowNodeList.item(rowIndex);
-            eElementsTiles = eElementRow.getElementsByTagName(TILE);
-            nrOfTiles = eElementsTiles.getLength();                                                 
-
-            //For every tile
-            for (int tileIndex = 0; tileIndex <nrOfTiles; tileIndex++){
-
-                //take out the target tile and cast to an element
-                aTileElement = (Element) eElementsTiles.
-                        item(tileIndex);    
-
-                position = new Position(rowIndex, tileIndex);
-                AreaPosition areaPosition = new AreaPosition(position, 50, 50);
-                tileType = eElementsTiles.item(tileIndex).getTextContent();                    
-
-                ValidPath validPath = null;
-
-                validPath = ValidPath.getEnumByString
-                        (aTileElement.getAttribute(DIRECTION));
-
-                //check what kind of tile it is and put a
-                // tile of that type into the gameLevel map
-                //at that position
-
-                //TELEPOROTOTOT
-
-                //If it is a void or wall tile
-                if(tileType.equals("V") || tileType.equals("W")){
-                    if(aTileElement.hasAttribute(LANDON)){                                    
-                        levelMap.put(areaPosition,
-                                (Tile)landOnAreaCreator
-                                .CreateTileDynamically(aTileElement
-                                        .getAttribute(LANDON), position));                                    
-                    }
-                    else if(tileType.equals("W")){
-
-                        levelMap.put(areaPosition,
-                                new WallTile(position, tileType));
-                    }
-                    else if(tileType.equals("V")){
-
-                        levelMap.put(areaPosition,
-                                new WallTile(position, tileType));
-                    }
-                }
-                // If it is a kind of pathTile
-                else if(tileType.equals("P")||
-                        tileType.equals("S")||
-                        tileType.equals("G")){
-                    if(aTileElement.hasAttribute(LANDON)){                        
-
-                        PathTile pathTile = (PathTile)landOnAreaCreator
-                                .CreatePathTileDynamically(aTileElement
-                                        .getAttribute(LANDON), position,
-                                        validPath);
-
-                        levelMap.put(areaPosition,
-                                pathTile);             
-                    }
-                    else{
-                        levelMap.put(areaPosition,
-                                new PathTile(position, validPath));
-                    }
-                }
-                //not sure on this else, it makes sure that
-                //the hashMap is always created though..
-                else{
-                    //create any tile or say that the tileType is undefined...
-                    //levelMap.put(areaPosition, new VoidTile(position));
-                    //return null
-                }
-            }
-            //}
-            // else return null;??
-        }
-        return new GameLevel(scoreGoal, levelMap, levelName,
-                attackerCredit, defenderCredit, timeToFinish, nrOfTemplates);
-    }
 }
 
