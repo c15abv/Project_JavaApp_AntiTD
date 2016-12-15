@@ -1,19 +1,15 @@
 package gui;
 
 import java.awt.Color;
-import java.awt.GridBagLayout;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.swing.JPanel;
-
 import creatures.AttackingPlayer;
 import creatures.CreatureFigureTemplate;
 import start.AreaPosition;
 import start.Game;
-import start.Game.GameState;
 import start.GameLevel;
 import start.GameRunner;
 import start.Position;
@@ -36,8 +32,8 @@ import utilities.Lock;
 /**
  * Class responsible for communicating gui events to game logic.
  * 
- * @author karro
- *
+ * @author Karolina Jonzén and Alexander Ekström
+ * @version 1.0
  */
 public class GameViewAdapter implements GameViewModel {
 	private AttackingPlayer player1;
@@ -50,23 +46,38 @@ public class GameViewAdapter implements GameViewModel {
 	private LevelInfo levelInfo;
 	private ArrayList<CreatureFigureTemplate> troops = new ArrayList<>();
 	private Thread thread;
+	private Thread thread2;
 	private DatabaseHandler databaseHandler = new DatabaseHandler();
 	private Lock lock = new Lock();
+	private View view;
 
 	@Override
 	public void pauseGame() {
-		game.pauseGame();
+		try {
+			lock.lock();
+			game.pauseGame();
+		} catch (InterruptedException e) {
+		} finally {
+			lock.unlock();
+		}
+
 	}
 
 	@Override
 	public void resumeGame() {
-		game.resumeGame();
+		try {
+			lock.lock();
+			game.resumeGame();
+		} catch (InterruptedException e) {
+		} finally {
+			lock.unlock();
+		}
 	}
 
 	@Override
-	public void initGame(JPanel panel) {
+	public void initGame(View view) {
 		readLevelMap();
-		levelInfo = new LevelInfo(3, 50, 100, 500, level);
+		levelInfo = new LevelInfo(3, 10, 20, 500, level);
 
 		player1 = new AttackingPlayer(100, level);
 		player2 = new DefendingPlayer(100, level);
@@ -75,11 +86,9 @@ public class GameViewAdapter implements GameViewModel {
 		runner = new GameRunner(game);
 		timer = game.getTimer();
 
-		panel.removeAll();
-		panel.setBackground(Color.black);
-		panel.add(game);
-		panel.revalidate();
-		panel.repaint();
+		this.view = view;
+
+		initiateMap();
 
 		thread = new Thread(runner);
 		thread.start();
@@ -106,10 +115,10 @@ public class GameViewAdapter implements GameViewModel {
 			player1.addCreatureFigure(troop
 					.createNewCreature(start.getPosition(), Direction.EAST));
 
-			lock.unlock();
+			player1.setCredits(player1.getCredits() - troop.getCost());
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} finally {
+			lock.unlock();
 		}
 
 	}
@@ -128,10 +137,9 @@ public class GameViewAdapter implements GameViewModel {
 			lock.lock();
 			player1.addCreatureFigure(troop
 					.createNewCreature(start.getPosition(), Direction.EAST));
-			lock.unlock();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} finally {
+			lock.unlock();
 		}
 
 	}
@@ -330,66 +338,18 @@ public class GameViewAdapter implements GameViewModel {
 
 	@Override
 	public void startGame() {
-		game.startGame();
+		try {
+			lock.lock();
+			game.startGame();
 
-		// StartTile start = new StartTile(new Position(Tile.size, Tile.size),
-		// ValidPath.EAST);
+			GameListener gameListener = new GameListener(game, view, player1);
 
-		/*
-		 * CircleTowerFigure tFig = new CircleTowerFigure(1,180,300, new
-		 * Position(Tile.size, 2 * Tile.size));
-		 * 
-		 * tFig.setActionTimer(timer); tFig.setTowerAction(() -> {
-		 * tFig.attack(); tFig.setIsOnCooldown(true);
-		 * tFig.getActionTimer().setTimer(timer.getNewUniqueId(), tFig, 200);
-		 * }); tFig.setOnNotification(id -> { tFig.setIsOnCooldown(false); });
-		 * 
-		 * 
-		 * SquareTowerFigure tFig2 = new SquareTowerFigure(1,46,300, new
-		 * Position(Tile.size * 3, 2 * Tile.size));
-		 * 
-		 * tFig2.setActionTimer(timer); tFig2.setTowerAction(() -> {
-		 * tFig2.attack(); tFig2.setIsOnCooldown(true);
-		 * tFig2.getActionTimer().setTimer(timer.getNewUniqueId(), tFig2, 300);
-		 * }); tFig2.setOnNotification(id -> { tFig2.setIsOnCooldown(false); });
-		 * 
-		 * StarTowerFigure tFig3 = new StarTowerFigure(1,120,300, new
-		 * Position(Tile.size * 5, 2 * Tile.size));
-		 * 
-		 * tFig3.setActionTimer(timer); tFig3.setTowerAction(() -> {
-		 * tFig3.attack(); tFig3.setIsOnCooldown(true);
-		 * tFig3.getActionTimer().setTimer(timer.getNewUniqueId(), tFig3, 250);
-		 * }); tFig3.setOnNotification(id -> { tFig3.setIsOnCooldown(false); });
-		 * 
-		 * TriangleTowerFigure tFig4 = new TriangleTowerFigure(1,1,300, new
-		 * Position(Tile.size * 5, 4 * Tile.size));
-		 * 
-		 * tFig4.setActionTimer(timer); tFig4.setTowerAction(() -> {
-		 * tFig4.attack(); tFig4.setIsOnCooldown(true);
-		 * tFig4.getActionTimer().setTimer(timer.getNewUniqueId(), tFig4, 500);
-		 * }); tFig4.setOnNotification(id -> { tFig4.setIsOnCooldown(false); });
-		 * 
-		 * TriangleTowerFigure tFig5 = new TriangleTowerFigure(1,300,300, new
-		 * Position(Tile.size * 3, 4 * Tile.size));
-		 * 
-		 * tFig5.setActionTimer(timer); tFig5.setTowerAction(() -> {
-		 * tFig5.attack(); tFig5.setIsOnCooldown(true);
-		 * tFig5.getActionTimer().setTimer(timer.getNewUniqueId(), tFig5, 400);
-		 * }); tFig5.setOnNotification(id -> { tFig5.setIsOnCooldown(false); });
-		 * 
-		 * player2.addTowerFigure(tFig); player2.addTowerFigure(tFig2);
-		 * player2.addTowerFigure(tFig3); player2.addTowerFigure(tFig4);
-		 * player2.addTowerFigure(tFig5);
-		 */
-		/*
-		 * CircleCreatureFigure fig = new CircleCreatureFigure(100, 0.5f, new
-		 * Position(start.getPosition().getX(), start.getPosition().getY(),
-		 * Tile.size), Orientation.FORWARD, null);
-		 * 
-		 * fig.setNavigation(Direction.EAST);
-		 * fig.getMemory().rememberBackTrackDirection(fig.getPosition(),
-		 * Direction.WEST); player1.addCreatureFigure(fig);
-		 */
+			thread2 = new Thread(gameListener);
+			thread2.start();
+		} catch (InterruptedException e) {
+		} finally {
+			lock.unlock();
+		}
 	}
 
 	@Override
@@ -407,6 +367,64 @@ public class GameViewAdapter implements GameViewModel {
 			String level) throws SQLException {
 		databaseHandler.insertToDatabase(name, score, time, level);
 
+	}
+
+	@Override
+	public int getHitpoints(int index) {
+		int hitPoints = 0;
+		try {
+			lock.lock();
+			//hitPoints = player1.getHorde().get(index).getHitPoints();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			lock.unlock();
+
+		}
+		return hitPoints;
+	}
+
+	@Override
+	public int getCredits() {
+		int currentCredits = 0;
+		try {
+			lock.lock();
+			currentCredits = player1.getCredits();
+
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			lock.unlock();
+		}
+		return currentCredits;
+
+	}
+
+	@Override
+	public int getScoreGoal() {
+		int scoreGoal = 1000;
+		try {
+			lock.lock();
+			scoreGoal = player1.getLevel().getAttackingPlayerScoreGoal();
+		} catch (InterruptedException e) {
+		} finally{
+			lock.unlock();
+		}
+		
+		return scoreGoal;
+	}
+
+	/**
+	 * Initiates the map displayed in the gui.
+	 */
+	private void initiateMap() {
+		view.getLevelMapPanel().removeAll();
+		view.getLevelMapPanel().setBackground(Color.black);
+		view.getLevelMapPanel().add(game);
+		view.getLevelMapPanel().revalidate();
+		view.getLevelMapPanel().repaint();
 	}
 
 }

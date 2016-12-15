@@ -30,7 +30,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
@@ -46,14 +45,14 @@ import start.Figures;
  * buy troops.
  * 
  * @author karro
- *
+ * @version 1.0
  */
 @SuppressWarnings("serial")
 public class RightPanel extends JPanel {
 	private List<FigureRepresentation> troop = new ArrayList<>();
 	private Color backgroundColor = UIManager.getColor("control");
 	private Font textFont = new Font("Arial", Font.BOLD, 30);
-	private int currentCredit;
+	private int currentCredit = 0;
 	private JPanel modePanel;
 	private boolean isPlayMode = false;
 	private ButtonGroup shapeBtnGroup = new ButtonGroup();
@@ -61,6 +60,7 @@ public class RightPanel extends JPanel {
 	private JPanel creaturePreview;
 	private JButton createBtn;
 	private JButton startGameBtn;
+	private JButton buyBtn;
 	private FigureRepresentation figure;
 	private JSlider colorSlider;
 	private JSlider sizeSlider;
@@ -88,14 +88,7 @@ public class RightPanel extends JPanel {
 	 */
 	public RightPanel(GameViewModel gameViewModel) {
 		super();
-		this.currentCreatureCost = 0;
-		this.currentCredit = 0;
 		this.gameViewModel = gameViewModel;
-
-		/*
-		 * SwingUtilities.invokeLater(new Runnable() { public void run() {
-		 * initUI(); } });
-		 */
 	}
 
 	/**
@@ -104,7 +97,7 @@ public class RightPanel extends JPanel {
 	 * @param credit
 	 */
 	public void initCreditTextFieldValue() {
-		currentCredit = gameViewModel.getLevelInfo().getStartCredit();
+		currentCredit = gameViewModel.getCredits();
 		creditTextField.setText(String.valueOf(currentCredit));
 	}
 
@@ -132,7 +125,7 @@ public class RightPanel extends JPanel {
 
 		teleporterTimeSlider.setLabelTable(labelTable);
 
-		setStyle(teleporterTimeSlider, "CHOOSE TELEPORTER\n DROP TIME");
+		setStyle(teleporterTimeSlider, "CHOOSE DROP TIME");
 	}
 
 	/**
@@ -467,19 +460,19 @@ public class RightPanel extends JPanel {
 											.get(index);
 									updateCreaturePreview(figure);
 									gameViewModel.addTroop(figure);
-									hitPointsTextField.setText("HP: " + "?");
-									speedTextField.setText("Speed" + "?");
+									hitPointsTextField.setText("HP: "
+											+ String.valueOf(gameViewModel
+													.getHitpoints(index)));
+									speedTextField.setText("Speed: " + "?");
 									directionTextField.setText("Orientation: "
 											+ figure.orientation.name());
 
 									if (figure.isTeleportCreature) {
 										teleporterTextField.setText(
 												"Teleporter: " + "Yes");
-										System.out.println(teleporterTimeSlider
-												.getValue());
 
 										teleporterTimeSlider.setEnabled(true);
-										;
+
 									} else {
 										teleporterTextField
 												.setText("Teleporter: " + "No");
@@ -505,12 +498,6 @@ public class RightPanel extends JPanel {
 					if (figure.getOrientation() != null) {
 						troop.add(figure);
 
-						/*
-						 * message = "Type: " + figure.creatureType +
-						 * "\nOrientation: " + figure.orientation +
-						 * "\nIsTeleport: " + figure.isTeleportCreature;
-						 */
-
 						createNewCreature(figure.getCreatureType().name());
 
 						troopPanel.remove(index);
@@ -527,13 +514,20 @@ public class RightPanel extends JPanel {
 				} catch (NullPointerException e) {
 					message = "Select troop first.";
 					JOptionPane.showMessageDialog(container, message);
-
-					// e.printStackTrace();
 				}
 
 			}
 
 		});
+	}
+
+	/**
+	 * Disables components.
+	 */
+	public void disableComponents() {
+		buyBtn.setEnabled(false);
+		teleporterTimeSlider.setEnabled(false);
+
 	}
 
 	/**
@@ -575,8 +569,8 @@ public class RightPanel extends JPanel {
 	 * 
 	 * @return
 	 */
-	private JButton createBuyButton() {
-		JButton buyBtn = new JButton("Buy");
+	private void initBuyButton() {
+		buyBtn = new JButton("Buy");
 		Container container = this.getTopLevelAncestor();
 
 		buyBtn.addActionListener(new ActionListener() {
@@ -598,7 +592,7 @@ public class RightPanel extends JPanel {
 						updateCreditTextField();
 					} else {
 						JOptionPane.showMessageDialog(null,
-								"FÖR LITE KREDITER!!!!!!!!");
+								"You don't have enough credit to buy this creature.");
 					}
 
 				} catch (NullPointerException e) {
@@ -609,19 +603,24 @@ public class RightPanel extends JPanel {
 			}
 
 		});
-
-		return buyBtn;
 	}
 
 	/**
 	 * Updates the credit text field based on the chosen creature's cost.
 	 */
-	private void updateCreditTextField() {
+	public void updateCreditTextField() {
 		int oldCredit = Integer.parseInt(creditTextField.getText());
 		int newCredit = oldCredit - currentCreatureCost;
 		currentCredit = newCredit;
 
 		creditTextField.setText(String.valueOf(currentCredit));
+	}
+
+	/**
+	 * Sets the credit text field to the given parameter.
+	 */
+	public synchronized void setCreditTextField(int credit) {
+		creditTextField.setText(String.valueOf(credit));
 	}
 
 	/**
@@ -641,6 +640,9 @@ public class RightPanel extends JPanel {
 				GridBagConstraints c = new GridBagConstraints();
 				settingsPanel.remove(modePanel);
 				modePanel = playModePanel;
+
+				troopsBtnGroup.setSelected(((AbstractButton) troopsBtnGroup
+						.getElements().nextElement()).getModel(), true);
 
 				c.gridx = 0;
 				c.gridy = 0;
@@ -705,7 +707,7 @@ public class RightPanel extends JPanel {
 		c.gridy = 3;
 		c.fill = GridBagConstraints.NONE;
 
-		JButton buyBtn = createBuyButton();
+		initBuyButton();
 		gb.setConstraints(buyBtn, c);
 		playModePanel.add(buyBtn);
 

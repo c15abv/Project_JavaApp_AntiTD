@@ -9,8 +9,8 @@ import start.Figures;
 /**
  * FigureRepresentation that represents square figures.
  * 
- * @author karro
- *
+ * @author Karolina Jonzén
+ * @version 1.0
  */
 @SuppressWarnings("serial")
 class SquareRepresentation extends FigureRepresentation {

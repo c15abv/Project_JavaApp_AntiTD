@@ -15,8 +15,8 @@ import java.awt.Dimension;
  * Abstract radio button class to represent different creatures the user can
  * choose from.
  * 
- * @author karro
- *
+ * @author Karolina Jonzén
+ * @version 1.0
  */
 @SuppressWarnings("serial")
 public abstract class FigureRadioButton extends JRadioButton {

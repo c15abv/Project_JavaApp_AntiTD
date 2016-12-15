@@ -11,8 +11,8 @@ import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 /**
  * Class responsible for communicating with the database.
  * 
- * @author karro 
- *
+ * @author Karolina Jonzén and Alexander Ekström 
+ * @version 1.0
  */
 public class DatabaseHandler {
 	private final static String url = "mysql.cs.umu.se";
@@ -33,7 +33,7 @@ public class DatabaseHandler {
 	}
 
 	/**
-	 * Gets and returns the top 5 highest scores from database.
+	 * Gets and returns the top 10 highest scores from database.
 	 * 
 	 * @return
 	 * @throws SQLException
@@ -44,7 +44,7 @@ public class DatabaseHandler {
 		HighScoreInfo highScore;
 
 		String query = "SELECT * FROM " + id
-				+ ". Highscore ORDER BY SCORE DESC LIMIT 5";
+				+ ". Highscore ORDER BY SCORE DESC LIMIT 10";
 
 		setUpConnection();
 

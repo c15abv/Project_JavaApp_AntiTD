@@ -9,8 +9,8 @@ import start.Figures;
 /**
  * FigureRepresentation that represents triangle figures.
  * 
- * @author karro
- *
+ * @author Karolina Jonzén
+ * @version 1.0
  */
 @SuppressWarnings("serial")
 class TriangleRepresentation extends FigureRepresentation {

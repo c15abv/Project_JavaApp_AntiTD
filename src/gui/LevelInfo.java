@@ -5,8 +5,8 @@ import start.GameLevel;
 /**
  * Class that holds level information.
  * 
- * @author karro
- *
+ * @author Karolina Jonzén
+ * @version 1.0
  */
 public class LevelInfo {
 	private int nrOfTroops;
