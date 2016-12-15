@@ -13,7 +13,7 @@ public class CreatureFigureTemplate{
 	private Figures creatureType;
 	private int hue;
 	private float scale;
-	private int cost;
+	private int cost, creditOnGoal, creditOnKill;
 	private Orientation orientation;
 	private GameLevel level;
 	private long time;
@@ -28,8 +28,9 @@ public class CreatureFigureTemplate{
 		this.orientation = orientation;
 		this.level = level;
 		
-		time = -1;
-		speed = CreatureFigure.BASE_SPEED;
+		creditOnGoal = creditOnKill = cost / 4;
+		
+		time = -1;		speed = CreatureFigure.BASE_SPEED;
 	}
 	
 	public int getCost(){
@@ -60,6 +61,16 @@ public class CreatureFigureTemplate{
 		this.speed = speed;
 	}
 
+	
+	public void setCreditOnGoal(int creditOnGoal){
+		this.creditOnGoal = creditOnGoal;
+	}
+	
+	public void setCreditOnKill(int creditOnKill){
+		this.creditOnKill = creditOnKill;
+	}
+
+
 	public CreatureFigure createNewCreature(Position position,
 			Direction direction){
 		CreatureFigure creature = creatureType == Figures.CIRCLE ? 
@@ -77,6 +88,9 @@ public class CreatureFigureTemplate{
 			creature.getMemory().rememberBackTrackDirection(position,
 					Direction.getOpposite(direction));
 		}
+		
+		creature.setCreditOnGoal(creditOnGoal);
+		creature.setCreditOnKill(creditOnKill);
 		return creature;
 	}
 	
