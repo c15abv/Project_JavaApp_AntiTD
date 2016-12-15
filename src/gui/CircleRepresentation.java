@@ -9,8 +9,8 @@ import start.Figures;
 /**
  * FigureRepresentation that represents circle figures.
  * 
- * @author karro
- *
+ * @author Karolina Jonzén
+ * @version 1.0
  */
 @SuppressWarnings("serial")
 class CircleRepresentation extends FigureRepresentation {

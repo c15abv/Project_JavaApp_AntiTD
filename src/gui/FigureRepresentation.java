@@ -17,8 +17,8 @@ import utilities.ColorCreator;
 /**
  * Abstract class that represents different creature figures.
  * 
- * @author karro
- *
+ * @author Karolina Jonzén
+ * @version 1.0
  */
 @SuppressWarnings("serial")
 public abstract class FigureRepresentation extends JPanel {

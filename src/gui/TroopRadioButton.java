@@ -12,8 +12,8 @@ import java.awt.Graphics2D;
 /**
  * Radio button for troop types being displayed in the troop panel.
  * 
- * @author karro
- *
+ * @author Karolina Jonzén
+ * @version 1.0
  */
 @SuppressWarnings("serial")
 class TroopRadioButton extends FigureRadioButton {
