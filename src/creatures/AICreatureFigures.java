@@ -30,26 +30,32 @@ public class AICreatureFigures{
 		PositionConnection pair = null;
 		ConnectedPositions connected = null;
 		Position figPos;
+		int moveNumTiles = 0;
 		
 		for(CreatureFigure figure : horde){
-			figPos = new Position(figure.getPosition().getX()
-					+ Tile.size / 2, figure.getPosition().getY()
-					+ Tile.size / 2, Tile.size);
-			if((tile = map.get(figPos.toArea())) != null &&
-					tile.walkable()){
-				pair = ((PathTile)tile).getPosPair(figure.getPosition());
-				connected = pair.getConnectedPositions();
-				if(!findNewPos(connected, figure)){
+			moveNumTiles = figure.getTilesMoved();
+			for(int i = 0; i < moveNumTiles; i++){
+				figPos = new Position(figure.getPosition().getX()
+						+ Tile.size / 2, figure.getPosition().getY()
+						+ Tile.size / 2, Tile.size);
+				if((tile = map.get(figPos.toArea())) != null &&
+						tile.walkable()){
+					pair = ((PathTile)tile).getPosPair(figure.getPosition());
+					connected = pair.getConnectedPositions();
+					if(!findNewPos(connected, figure)){
+						figure.remove();
+					}else if(((PathTile)tile).isGoalPosition(figure.getPosition())){
+						figure.setHasReachedGoal(true);
+						figure.setFinished(true);
+					}else if(((PathTile)tile).hasEffect()){
+						((PathTile)tile).landOn(figure);
+					}
+				}else{
 					figure.remove();
-				}else if(((PathTile)tile).isGoalPosition(figure.getPosition())){
-					figure.setHasReachedGoal(true);
-					figure.setFinished(true);
-				}else if(((PathTile)tile).hasEffect()){
-					((PathTile)tile).landOn(figure);
 				}
-			}else{
-				figure.remove();
 			}
+			if(moveNumTiles > 0)
+				figure.resetTilesMoved();
 		}
 	}
 	

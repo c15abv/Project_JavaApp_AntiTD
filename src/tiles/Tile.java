@@ -10,6 +10,7 @@ public abstract class Tile{
 	
 	private Position position;
 	private long id;
+	private boolean selected;
 	
 	public Tile(Position position){
 		this.position = position;
@@ -25,7 +26,8 @@ public abstract class Tile{
 	public int hashCode(){
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((position == null) ? 0 : position.hashCode());
+		result = prime * result 
+				+ ((position == null) ? 0 : position.hashCode());
 		return result;
 	}
 
@@ -58,11 +60,35 @@ public abstract class Tile{
 		return id;
 	}
 	
+	public boolean isGoalPosition(Position position){
+		return false;
+	}
+	
+	public boolean isStartPosition(Position position){
+		return false;
+	}
+	
+	public boolean hasEffect(){
+		return false;
+	}
+	
 	public boolean isGoal(){
 		return false;
 	}
 	
 	public boolean isStart(){
 		return false;
+	}
+	
+	public boolean selectable(){
+		return false;
+	}
+	
+	public boolean getSelected(){
+		return selected;
+	}
+	
+	public void setSelected(boolean selected){
+		this.selected = selected;
 	}
 }

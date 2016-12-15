@@ -2,9 +2,9 @@ package start;
 
 public class GameRunner implements Runnable{
 	
-	private static final int UPS = 60;
-	private static final long MARGIN = (long) (1000000000 / UPS);
-	private static final int FPS_SKIP = 10;
+	public static final int UPS = 60;
+	public static final long MARGIN = (long) (1000000000 / UPS);
+	public static final int FPS_SKIP = 10;
 	
 	private volatile boolean isRunning = true;
 	private Game game;

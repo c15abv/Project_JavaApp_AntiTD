@@ -14,6 +14,7 @@ import java.util.Map;
 import start.AreaPosition;
 import start.Figures;
 import start.GameLevel;
+import start.GameRunner;
 import start.Position;
 import tiles.PathTile;
 import tiles.PathTile.Direction;
@@ -33,7 +34,8 @@ public abstract class CreatureFigure implements TimerListener{
 	}
 	
 	public static final int BASE_HITPOINTS = 100;
-	public static final int BASE_SIZE = 30;
+	public static final int BASE_SIZE = 26;
+	public static final double BASE_SPEED = 1;
 
 	private Color creatureColor;
 	private Orientation orientation;
@@ -42,7 +44,7 @@ public abstract class CreatureFigure implements TimerListener{
 	private PathMemory memory;
 	private GameLevel level;
 	private int hue;
-	private double scale;
+	private double scale, speed, tilesMoved;
 	private Position position;
 	private int hitPoints;
 	private int startHitPoints;
@@ -59,13 +61,14 @@ public abstract class CreatureFigure implements TimerListener{
 	private boolean hasReachedGoal;
 	
 	public CreatureFigure(int hue, double scale, Position position,
-			Orientation orientation, GameLevel level){
+			Orientation orientation, GameLevel level, double speed){
 		this.hue = hue;
 		this.scale = scale;
 		this.position = position;
 		this.creatureColor = ColorCreator.generateColorFromHue(hue);
 		this.orientation = orientation;
 		this.level = level;
+		this.speed = speed;
 		
 		init();
 	}
@@ -97,6 +100,9 @@ public abstract class CreatureFigure implements TimerListener{
 			for(Action action : this.onActiveActionList){
 				action.executeAction();
 			}
+			
+			tilesMoved += speed;
+			
 		}else if(!isAlive && !finished){
 			for(Action action : onDeathActionList){
 				action.executeAction();
@@ -244,6 +250,9 @@ public abstract class CreatureFigure implements TimerListener{
 		
 		hitPoints = startHitPoints = (int)(BASE_HITPOINTS * scale);
 		navigation = navigationFrom = PathTile.Direction.NA;
+		
+		speed = speed / scale;
+		tilesMoved = 1;
 	}
 	
 	public int getHue(){
@@ -329,5 +338,13 @@ public abstract class CreatureFigure implements TimerListener{
 					teleportTile);
 			
 		}
+	}
+	
+	public int getTilesMoved(){
+		return (int)tilesMoved;
+	}
+	
+	public void resetTilesMoved(){
+		tilesMoved = Math.round(tilesMoved) - tilesMoved;
 	}
 }
