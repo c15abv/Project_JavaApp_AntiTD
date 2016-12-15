@@ -32,10 +32,10 @@ public class SquareTowerFigure extends TowerFigure{
 	@Override
 	public void render(Graphics2D g2d){
 		g2d.setColor(this.getColor());
-		g2d.drawRect(this.getPosition().getX() - TowerFigure.TEMP_SIZE/2,
-				this.getPosition().getY() - TowerFigure.TEMP_SIZE/2,
-				TowerFigure.TEMP_SIZE,
-				TowerFigure.TEMP_SIZE);
+		g2d.drawRect(this.getPosition().getX() - TowerFigure.SIZE/2,
+				this.getPosition().getY() - TowerFigure.SIZE/2,
+				TowerFigure.SIZE,
+				TowerFigure.SIZE);
 		
 		for(Map.Entry<ProjectileFigure, CreatureFigure> entry : 
 				projectiles.entrySet()){

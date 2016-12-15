@@ -32,7 +32,7 @@ public class AttackingPlayer extends Player{
 				currentHorde.remove(i);
 				if(figure.hasReachedGoal()){
 					points++;
-					this.setCredits(getCredits() + figure.getCreditOnGoal());
+					setCredits(getCredits() + figure.getCreditOnGoal());
 				}
 			}
 		}

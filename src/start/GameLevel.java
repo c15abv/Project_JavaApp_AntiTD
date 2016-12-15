@@ -23,6 +23,7 @@ public class GameLevel{
 	private int attackerCredit = DEFAULT_CREDIT;
 	private int defenderCredit = DEFAULT_CREDIT;
 	private int timeToFinish = DEFAULT_TIME; 
+	private int levelMapHash;
 	
 	public GameLevel(){
 		this(DEFAULT_PLAYER_SCORE_GOAL, null, null, null);
@@ -41,6 +42,9 @@ public class GameLevel{
 		}
 		if((this.levelMap = levelMap) == null){
 			this.levelMap = new HashMap<AreaPosition, Tile>();
+			levelMapHash = 0;
+		}else{
+			levelMapHash = this.levelMap.hashCode();
 		}
 		
 		idCounter = new IdCounter(1);
@@ -89,6 +93,7 @@ public class GameLevel{
 
 	public void setLevelMap(HashMap<AreaPosition, Tile> levelMap) {
 		this.levelMap = levelMap;
+		levelMapHash = this.levelMap.hashCode();
 	}
 	
 	public ArrayList<String> getRules() {
@@ -113,6 +118,10 @@ public class GameLevel{
 	
 	public int getAttackingPlayerScoreGoal() {
 		return attackingPlayerScoreGoal;
+	}
+	
+	public int getInitialLevelMapHash(){
+		return levelMapHash;
 	}
 	
 	public void changeTile(AreaPosition areaPosition, Tile newTile){
