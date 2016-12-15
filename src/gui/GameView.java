@@ -58,6 +58,7 @@ public class GameView implements View {
 	private RightPanel rightPanel;
 	private JTextField timeTextField;
 	private JTextField pointsTextField;
+	private JTextField levelTextField;
 
 	/**
 	 * Constructor that sets the view model to the given parameter and initiates
@@ -165,7 +166,7 @@ public class GameView implements View {
 		c.weighty = 1;
 		c.anchor = GridBagConstraints.WEST;
 		c.fill = GridBagConstraints.NONE;
-		
+				
 		gridBag.setConstraints(timeContainer, c);
 		
 		c.gridy = 1;

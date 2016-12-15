@@ -44,7 +44,7 @@ import start.Figures;
  * Class that builds the right panel of the gui where the user can create and
  * buy troops.
  * 
- * @author karro
+ * @author Karolina Jonzén
  * @version 1.0
  */
 @SuppressWarnings("serial")
@@ -89,43 +89,6 @@ public class RightPanel extends JPanel {
 	public RightPanel(GameViewModel gameViewModel) {
 		super();
 		this.gameViewModel = gameViewModel;
-	}
-
-	/**
-	 * Sets the credit text field to its start value.
-	 * 
-	 * @param credit
-	 */
-	public void initCreditTextFieldValue() {
-		currentCredit = gameViewModel.getCredits();
-		creditTextField.setText(String.valueOf(currentCredit));
-	}
-
-	/**
-	 * Resets the gui for a new game.
-	 */
-	public void resetGui() {
-		this.removeAll();
-		currentCreatureCost = 0;
-	}
-
-	public void createTeleporterTimeSlider() {
-		teleporterTimeSlider = new JSlider(JSlider.HORIZONTAL, 1000, 5000,
-				1000);
-		teleporterTimeSlider.setMinorTickSpacing(1000);
-		// teleporterTimeSlider.setMajorTickSpacing(100);
-		teleporterTimeSlider.setPaintTicks(true);
-		teleporterTimeSlider.setPaintLabels(true);
-
-		java.util.Hashtable<Integer, JLabel> labelTable = new java.util.Hashtable<Integer, JLabel>();
-
-		labelTable.put(new Integer(5000), new JLabel("5 s"));
-		labelTable.put(new Integer(3000), new JLabel("3 s"));
-		labelTable.put(new Integer(1000), new JLabel("1 s"));
-
-		teleporterTimeSlider.setLabelTable(labelTable);
-
-		setStyle(teleporterTimeSlider, "CHOOSE DROP TIME");
 	}
 
 	/**
@@ -459,7 +422,6 @@ public class RightPanel extends JPanel {
 									FigureRepresentation figure = troop
 											.get(index);
 									updateCreaturePreview(figure);
-									gameViewModel.addTroop(figure);
 									hitPointsTextField.setText("HP: "
 											+ String.valueOf(gameViewModel
 													.getHitpoints(index)));
@@ -643,6 +605,10 @@ public class RightPanel extends JPanel {
 
 				troopsBtnGroup.setSelected(((AbstractButton) troopsBtnGroup
 						.getElements().nextElement()).getModel(), true);
+				
+				for(FigureRepresentation figure:troop)	{
+					gameViewModel.addTroop(figure);
+				}
 
 				c.gridx = 0;
 				c.gridy = 0;
@@ -999,6 +965,46 @@ public class RightPanel extends JPanel {
 		titledBorder.setTitleJustification(TitledBorder.CENTER);
 		comp.setBorder(titledBorder);
 
+	}
+	
+	/**
+	 * Sets the credit text field to its start value.
+	 * 
+	 * @param credit
+	 */
+	public void initCreditTextFieldValue() {
+		currentCredit = gameViewModel.getCredits();
+		creditTextField.setText(String.valueOf(currentCredit));
+	}
+
+	/**
+	 * Resets the gui for a new game.
+	 */
+	public void resetGui() {
+		this.removeAll();
+		currentCreatureCost = 0;
+	}
+
+	/**
+	 * Creates the time slider where user chooses the drop time for teleporters.
+	 */
+	public void createTeleporterTimeSlider() {
+		teleporterTimeSlider = new JSlider(JSlider.HORIZONTAL, 1000, 5000,
+				1000);
+		teleporterTimeSlider.setMinorTickSpacing(1000);
+		// teleporterTimeSlider.setMajorTickSpacing(100);
+		teleporterTimeSlider.setPaintTicks(true);
+		teleporterTimeSlider.setPaintLabels(true);
+
+		java.util.Hashtable<Integer, JLabel> labelTable = new java.util.Hashtable<Integer, JLabel>();
+
+		labelTable.put(new Integer(5000), new JLabel("5 s"));
+		labelTable.put(new Integer(3000), new JLabel("3 s"));
+		labelTable.put(new Integer(1000), new JLabel("1 s"));
+
+		teleporterTimeSlider.setLabelTable(labelTable);
+
+		setStyle(teleporterTimeSlider, "CHOOSE DROP TIME");
 	}
 
 }
