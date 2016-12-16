@@ -407,6 +407,7 @@ public class RightPanel extends JPanel {
 					
 					JRadioButton troopCreature = new TroopRadioButton(figure,
 							index);
+					
 					troopsBtnGroup.add(troopCreature);
 
 					ItemListener itemListener = new ItemListener() {
@@ -544,16 +545,29 @@ public class RightPanel extends JPanel {
 
 				try {
 					ButtonModel btn = troopsBtnGroup.getSelection();
+					
 					int index = Integer.parseInt(btn.getActionCommand());
 
-					if (currentCreatureCost <= currentCredit) {
+					if (currentCreatureCost <= Integer.parseInt(creditTextField.getText())) {
 						if (troop.get(index).isTeleportCreature) {
+							try{
 							gameViewModel.buyCreature(index,
 									(long) teleporterTimeSlider.getValue());
+							updateCreditTextField();
+							} catch (NullPointerException e)	{
+								message = "Select start position first.";
+								JOptionPane.showMessageDialog(container, message);
+							}
 						} else {
+							try {
 							gameViewModel.buyCreature(index);
+							updateCreditTextField();
+							} catch (NullPointerException e)	{
+								message = "Select start position first.";
+								JOptionPane.showMessageDialog(container, message);
+							}
 						}
-						updateCreditTextField();
+						
 					} else {
 						JOptionPane.showMessageDialog(null,
 								"You don't have enough credit to buy this creature.");
@@ -561,7 +575,6 @@ public class RightPanel extends JPanel {
 
 				} catch (NullPointerException e) {
 					message = "Select troop first.";
-					e.printStackTrace();
 					JOptionPane.showMessageDialog(container, message);
 				}
 

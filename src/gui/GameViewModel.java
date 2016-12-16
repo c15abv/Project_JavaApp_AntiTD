@@ -18,7 +18,7 @@ public interface GameViewModel {
 	 * 
 	 * @param view
 	 */
-	void initGame(View view);
+	void initGame(View view, int levelIndex);
 
 	/**
 	 * Starts the game.
@@ -48,7 +48,7 @@ public interface GameViewModel {
 	 * 
 	 * @param index
 	 */
-	void buyCreature(int index);
+	void buyCreature(int index) throws NullPointerException;
 
 	/**
 	 * Adds a new teleporter creature to the attacking players horde based on
@@ -57,7 +57,7 @@ public interface GameViewModel {
 	 * @param index
 	 * @param time
 	 */
-	void buyCreature(int index, long time);
+	void buyCreature(int index, long time)throws NullPointerException;
 
 	/**
 	 * Gets the level score goal.
@@ -109,5 +109,12 @@ public interface GameViewModel {
 	 * @return
 	 */
 	int getCredits();
+	
+	/**
+	 * Restarts the game with next level.
+	 * 
+	 * @return
+	 */
+	void playNextLevel();
 
 }

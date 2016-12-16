@@ -319,8 +319,8 @@ public class GameView implements View {
 
 			public void actionPerformed(ActionEvent arg0) {
 
-				viewModel.initGame(view);
-
+				viewModel.initGame(view, 1);
+				
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						rightPanel.resetGui();
@@ -456,7 +456,7 @@ public class GameView implements View {
 
 			if (n == JOptionPane.YES_OPTION) {
 
-				// Load next level (save score)
+				viewModel.initGame(this, 0);
 
 			} else {
 				showOnQuitDialog(score, time);
@@ -473,7 +473,7 @@ public class GameView implements View {
 					null, options4, options4[0]);
 
 			if (n == JOptionPane.YES_NO_OPTION) {
-				// restart level
+				viewModel.initGame(this, 1);
 			} else {
 				showOnQuitDialog(score, time);
 			}
@@ -501,7 +501,7 @@ public class GameView implements View {
 					"Enter your name: ");
 			try {
 				viewModel.insertIntoDataBase(name, score, time,
-						viewModel.getLevelInfo().getLevel().getLevelName());
+						viewModel.getLevelInfo().getLevelName());
 
 				Object[] options2 = { "View high score table", "Quit game" };
 				infoMessage = "Your score was saved.";

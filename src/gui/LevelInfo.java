@@ -13,7 +13,8 @@ public class LevelInfo {
 	private int creatureCost;
 	private int teleporterCost;
 	private int startCredit;
-	private GameLevel level;
+	private String levelName;
+
 
 	/**
 	 * Constructor that initiates the object with the given parameters.
@@ -22,19 +23,16 @@ public class LevelInfo {
 	 * @param creatureCost
 	 * @param teleporterCost
 	 * @param startCredit
-	 * @param level
+	 * 
 	 */
 	public LevelInfo(int nrOfTroops, int creatureCost, int teleporterCost,
-			int startCredit, GameLevel level) {
+			int startCredit, String levelName) {
 		this.nrOfTroops = nrOfTroops;
 		this.creatureCost = creatureCost;
 		this.teleporterCost = teleporterCost;
 		this.startCredit = startCredit;
-		this.level = level;
-	}
+		this.levelName = levelName;
 
-	public GameLevel getLevel() {
-		return level;
 	}
 
 	public int getNrOfTroops() {
@@ -68,5 +66,10 @@ public class LevelInfo {
 	public void setStartCredit(int startCredit) {
 		this.startCredit = startCredit;
 	}
+	
+	public String getLevelName() {
+		return levelName;
+	}
+
 
 }
