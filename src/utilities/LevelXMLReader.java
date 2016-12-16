@@ -28,14 +28,13 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.sun.org.apache.xerces.internal.impl.xpath.XPath;
-import com.sun.org.apache.xml.internal.security.utils.XPathFactory;
-
 import start.AreaPosition;
 import start.GameLevel;
 import start.Position;
+import tiles.GoalTile;
 import tiles.PathTile;
 import tiles.PathTile.ValidPath;
+import tiles.StartTile;
 import tiles.Tile;
 import tiles.VoidTile;
 import tiles.WallTile;
@@ -83,10 +82,10 @@ public class LevelXMLReader{
 
                 eElementLevel = (Element) nNodeLevel;
 
-                System.out.println("nameId:" + eElementLevel.getAttribute("nameID"));
+               // System.out.println("nameId:" + eElementLevel.getAttribute("nameID"));
 
                 if(eElementLevel.getAttribute("nameID").equals(lvlName)){
-                    System.out.println("returneed element");
+                   // System.out.println("returneed element");
 
                     return eElementLevel;                                       
                 }        
@@ -128,7 +127,7 @@ public class LevelXMLReader{
 
         LandOnAreaCreator landOnAreaCreator = new LandOnAreaCreator();
 
-        System.out.println("----------------------------");
+   //     System.out.println("----------------------------");
         levelsDoc = createDocument(xmlMapFile);
         NodeList levelList = levelsDoc.getElementsByTagName(LEVEL);
 
@@ -137,8 +136,8 @@ public class LevelXMLReader{
                 levelList.getLength(); levelIndex++) {
 
             nNodeLevel = levelList.item(levelIndex); 
-            System.out.println("\nCurrent Element :"
-                    + nNodeLevel.getNodeName());
+            //System.out.println("\nCurrent Element :"
+              //      + nNodeLevel.getNodeName());
 
             if (nNodeLevel.getNodeType() == Node.ELEMENT_NODE){
 
@@ -186,9 +185,9 @@ public class LevelXMLReader{
                             //create a position out of the rowIndex and
                             //tileIndex.position = new Position(rowIndex * 50, 
                             //tileIndex * 50);
-                            position = new Position(rowIndex, tileIndex);
+                            position = new Position(tileIndex*Tile.size, rowIndex*Tile.size);
                             AreaPosition areaPosition = new AreaPosition
-                                    (position, 50, 50);
+                                    (position, Tile.size, Tile.size);
                             tileType = eElementsTiles.item(tileIndex)
                                     .getTextContent();   
 
@@ -416,6 +415,7 @@ public class LevelXMLReader{
                 getElementsByTagName("nrOfTemplates").item(0)
                 .getTextContent());
 
+    //    System.out.println(tileType);
         //For every row in a level
         for (int rowIndex = 0; rowIndex <
                 rowNodeList.getLength(); rowIndex++) {                      
@@ -428,6 +428,7 @@ public class LevelXMLReader{
                 eElementRow = (Element) rowNodeList.item(rowIndex);
                 eElementsTiles = eElementRow.getElementsByTagName(TILE);                                            
 
+              //  System.out.println();
                 //For every tile
                 for (int tileIndex = 0; tileIndex <eElementsTiles
                         .getLength(); tileIndex++){
@@ -436,12 +437,14 @@ public class LevelXMLReader{
                     aTileElement = (Element) eElementsTiles.
                             item(tileIndex);    
 
-                    position = new Position(rowIndex, tileIndex);
+                    position = new Position(tileIndex*Tile.size, rowIndex*Tile.size);
                     AreaPosition areaPosition = 
-                            new AreaPosition(position, 50, 50);
+                            new AreaPosition(position, Tile.size, Tile.size);
                     tileType = eElementsTiles.item(tileIndex).getTextContent();
                     validPath = ValidPath.getEnumByString
                             (aTileElement.getAttribute(DIRECTION));
+                    
+                    
 
                     //check what kind of tile it is and put a
                     // tile of that type into the gameLevel map
@@ -459,19 +462,23 @@ public class LevelXMLReader{
                         if(tileType.equals("W")){
 
                             levelMap.put(areaPosition,
-                                    new WallTile(position, tileType));
+                                    new VoidTile(position));
+                       //     System.out.print(tileType);
                         }
                         else if(tileType.equals("V")){
 
                             levelMap.put(areaPosition,
-                                    new WallTile(position, tileType));
+                                    new VoidTile(position));
+                          //  System.out.print(tileType);
                         }
                     }
                     // If it is a kind of pathTile
                     else if(tileType.equals("P")||
                             tileType.equals("S")||
                             tileType.equals("G")){
-                        if(aTileElement.hasAttribute(LANDON)){                        
+                        if(aTileElement.hasAttribute(LANDON)){ 
+                        	
+                        	//System.out.print(tileType);
 
                             PathTile pathTile = (PathTile)landOnAreaCreator
                                     .CreatePathTileDynamically(aTileElement
@@ -479,7 +486,22 @@ public class LevelXMLReader{
                                             validPath);
 
                             levelMap.put(areaPosition,
-                                    pathTile);             
+                                    pathTile);       
+                        	
+                        	/*if(tileType.equals("P")){
+
+                        		levelMap.put(areaPosition, new PathTile(position, null, null, validPath));
+                           
+                            }
+                            else if(tileType.equals("S")){
+
+                            	levelMap.put(areaPosition, new StartTile(position, null, validPath));
+                            else if(tileType.equals("G")){
+
+                            	levelMap.put(areaPosition, new GoalTile(position, null, validPath));
+                            }*/
+                        	
+                        	
                         }
                         else{
                             levelMap.put(areaPosition,

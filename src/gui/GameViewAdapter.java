@@ -105,18 +105,18 @@ public class GameViewAdapter implements GameViewModel {
 	@Override
 	public void buyCreature(int index) {
 
-		StartTile start = new StartTile(new Position(Tile.size, Tile.size),
-				ValidPath.EAST);
-
-		CreatureFigureTemplate troop = troops.get(index);
-
 		try {
 			lock.lock();
-			player1.addCreatureFigure(troop
-					.createNewCreature(start.getPosition(), Direction.EAST));
+			Position startPosition = game.getSelectedStart();
+			StartTile start = (StartTile)level.getLevelMap().get(startPosition.toArea());
+			CreatureFigureTemplate troop = troops.get(index);
+			
+			
 
-			player1.setCredits(player1.getCredits() - troop.getCost());
-		} catch (InterruptedException e) {
+			player1.addCreatureFigure(troop
+					.createNewCreature(start.getPosition(), start.getStartingDirection()));
+
+		} catch (InterruptedException e1) {
 		} finally {
 			lock.unlock();
 		}
@@ -126,18 +126,23 @@ public class GameViewAdapter implements GameViewModel {
 	@Override
 	public void buyCreature(int index, long time) {
 
-		StartTile start = new StartTile(new Position(Tile.size, Tile.size),
-				ValidPath.EAST);
-
-		CreatureFigureTemplate troop = troops.get(index);
-
-		troop.enableTeleporter(time);
-
 		try {
 			lock.lock();
+			Position startPosition = game.getSelectedStart();
+			StartTile start = (StartTile) level.getLevelMap()
+					.get(startPosition.toArea());
+			
+			
+			
+			CreatureFigureTemplate troop = troops.get(index);
+
+			troop.enableTeleporter(time);
+			
+
 			player1.addCreatureFigure(troop
-					.createNewCreature(start.getPosition(), Direction.EAST));
-		} catch (InterruptedException e) {
+					.createNewCreature(start.getPosition(), start.getStartingDirection()));
+
+		} catch (InterruptedException e1) {
 		} finally {
 			lock.unlock();
 		}
@@ -148,193 +153,139 @@ public class GameViewAdapter implements GameViewModel {
 	 * Reads the level map and sets the level info.
 	 */
 	private void readLevelMap() {
-		/*
-		 * LevelXMLReader reader = new LevelXMLReader();
-		 * if(reader.validateXmlAgainstXsds("XML/Levels.xml",
-		 * "XML/LevelsXMLSchema.xsd")){
-		 * 
-		 * level = reader.toLevel("XML/Levels.xml"); }
-		 */
 
-		HashMap<AreaPosition, Tile> levelMap = new HashMap<AreaPosition, Tile>();
-		TeleportTile tele1;
-		TeleportTile tele2;
+		LevelXMLReader levelXMLReader = new LevelXMLReader("XML/Levels.xml");
 
-		levelMap.put(new AreaPosition(0, 0, Tile.size, Tile.size),
-				new VoidTile(new Position(0, 0)));
-		levelMap.put(new AreaPosition(Tile.size, 0, Tile.size, Tile.size),
-				new VoidTile(new Position(Tile.size, 0)));
-		levelMap.put(new AreaPosition(2 * Tile.size, 0, Tile.size, Tile.size),
-				new VoidTile(new Position(2 * Tile.size, 0)));
-		levelMap.put(new AreaPosition(3 * Tile.size, 0, Tile.size, Tile.size),
-				new VoidTile(new Position(3 * Tile.size, 0)));
+		ArrayList<String> lvlNames = levelXMLReader.getLvlNames();
 
-		levelMap.put(new AreaPosition(0, Tile.size, Tile.size, Tile.size),
-				new VoidTile(new Position(0, Tile.size)));
-		levelMap.put(
-				new AreaPosition(Tile.size, Tile.size, Tile.size, Tile.size),
-				new StartTile(new Position(Tile.size, Tile.size),
-						ValidPath.EAST));
-		levelMap.put(
-				new AreaPosition(2 * Tile.size, Tile.size, Tile.size,
-						Tile.size),
-				new PathTile(new Position(2 * Tile.size, Tile.size),
-						ValidPath.L_TURN_HORIZONTAL_SOUTH_TO_WEST));
-		levelMap.put(
-				new AreaPosition(3 * Tile.size, Tile.size, Tile.size,
-						Tile.size),
-				new VoidTile(new Position(3 * Tile.size, Tile.size)));
+		GameLevel gameLevel = levelXMLReader.getLevelByName(lvlNames.get(0));
 
-		levelMap.put(new AreaPosition(0, 2 * Tile.size, Tile.size, Tile.size),
-				new VoidTile(new Position(0, 2 * Tile.size)));
-		levelMap.put(
-				new AreaPosition(Tile.size, 2 * Tile.size, Tile.size,
-						Tile.size),
-				new VoidTile(new Position(Tile.size, 2 * Tile.size)));
-		levelMap.put(
-				new AreaPosition(2 * Tile.size, 2 * Tile.size, Tile.size,
-						Tile.size),
-				new PathTile(new Position(2 * Tile.size, 2 * Tile.size),
-						ValidPath.VERTICAL));
-		levelMap.put(
-				new AreaPosition(3 * Tile.size, 2 * Tile.size, Tile.size,
-						Tile.size),
-				new VoidTile(new Position(3 * Tile.size, 2 * Tile.size)));
-
-		levelMap.put(new AreaPosition(0, 3 * Tile.size, Tile.size, Tile.size),
-				new VoidTile(new Position(0, 3 * Tile.size)));
-		levelMap.put(
-				new AreaPosition(Tile.size, 3 * Tile.size, Tile.size,
-						Tile.size),
-				new VoidTile(new Position(Tile.size, 3 * Tile.size)));
-		levelMap.put(
-				new AreaPosition(2 * Tile.size, 3 * Tile.size, Tile.size,
-						Tile.size),
-				new PathTile(new Position(2 * Tile.size, 3 * Tile.size),
-						ValidPath.L_TURN_HORIZONTAL_NORTH_TO_EAST));
-
-		levelMap.put(
-				new AreaPosition(3 * Tile.size, 3 * Tile.size, Tile.size,
-						Tile.size),
-				new PathTile(new Position(3 * Tile.size, 3 * Tile.size),
-						ValidPath.HORIZONTAL));
-
-		levelMap.put(
-				new AreaPosition(4 * Tile.size, 3 * Tile.size, Tile.size,
-						Tile.size),
-				new PathTile(new Position(4 * Tile.size, 3 * Tile.size),
-						ValidPath.CROSSROAD));
-
-		tele1 = new TeleportTile(new Position(5 * Tile.size, 3 * Tile.size),
-				ValidPath.HORIZONTAL);
-		levelMap.put(new AreaPosition(5 * Tile.size, 3 * Tile.size, Tile.size,
-				Tile.size), tele1);
-
-		levelMap.put(
-				new AreaPosition(4 * Tile.size, 4 * Tile.size, Tile.size,
-						Tile.size),
-				new PathTile(new Position(4 * Tile.size, 4 * Tile.size),
-						ValidPath.VERTICAL));
-
-		levelMap.put(
-				new AreaPosition(4 * Tile.size, 5 * Tile.size, Tile.size,
-						Tile.size),
-				new PathTile(new Position(4 * Tile.size, 5 * Tile.size),
-						ValidPath.HORIZONTAL_T_NORTH));
-
-		levelMap.put(
-				new AreaPosition(3 * Tile.size, 5 * Tile.size, Tile.size,
-						Tile.size),
-				new PathTile(new Position(3 * Tile.size, 5 * Tile.size),
-						ValidPath.L_TURN_HORIZONTAL_SOUTH_TO_EAST));
-
-		levelMap.put(
-				new AreaPosition(3 * Tile.size, 6 * Tile.size, Tile.size,
-						Tile.size),
-				new PathTile(new Position(3 * Tile.size, 6 * Tile.size),
-						ValidPath.L_TURN_HORIZONTAL_NORTH_TO_EAST));
-
-		levelMap.put(
-				new AreaPosition(5 * Tile.size, 5 * Tile.size, Tile.size,
-						Tile.size),
-				new PathTile(new Position(5 * Tile.size, 5 * Tile.size),
-						ValidPath.L_TURN_HORIZONTAL_SOUTH_TO_WEST));
-
-		levelMap.put(
-				new AreaPosition(5 * Tile.size, 6 * Tile.size, Tile.size,
-						Tile.size),
-				new PathTile(new Position(5 * Tile.size, 6 * Tile.size),
-						ValidPath.L_TURN_HORIZONTAL_NORTH_TO_WEST));
-
-		levelMap.put(
-				new AreaPosition(4 * Tile.size, 6 * Tile.size, Tile.size,
-						Tile.size),
-				new PathTile(new Position(4 * Tile.size, 6 * Tile.size),
-						ValidPath.HORIZONTAL_T_SOUTH));
-
-		levelMap.put(
-				new AreaPosition(4 * Tile.size, 7 * Tile.size, Tile.size,
-						Tile.size),
-				new GoalTile(new Position(4 * Tile.size, 7 * Tile.size),
-						ValidPath.NORTH));
-
-		levelMap.put(
-				new AreaPosition(4 * Tile.size, 2 * Tile.size, Tile.size,
-						Tile.size),
-				new PathTile(new Position(4 * Tile.size, 2 * Tile.size),
-						ValidPath.VERTICAL));
-
-		levelMap.put(
-				new AreaPosition(4 * Tile.size, Tile.size, Tile.size,
-						Tile.size),
-				new PathTile(new Position(4 * Tile.size, Tile.size),
-						ValidPath.L_TURN_HORIZONTAL_SOUTH_TO_EAST));
-
-		levelMap.put(
-				new AreaPosition(6 * Tile.size, 3 * Tile.size, Tile.size,
-						Tile.size),
-				new PathTile(new Position(6 * Tile.size, 3 * Tile.size),
-						ValidPath.L_TURN_HORIZONTAL_NORTH_TO_WEST));
-
-		levelMap.put(
-				new AreaPosition(6 * Tile.size, 2 * Tile.size, Tile.size,
-						Tile.size),
-				new PathTile(new Position(6 * Tile.size, 2 * Tile.size),
-						ValidPath.VERTICAL_T_EAST));
-
-		levelMap.put(
-				new AreaPosition(7 * Tile.size, 2 * Tile.size, Tile.size,
-						Tile.size),
-				new PathTile(new Position(7 * Tile.size, 2 * Tile.size),
-						ValidPath.VERTICAL_T_WEST));
-
-		levelMap.put(
-				new AreaPosition(7 * Tile.size, 1 * Tile.size, Tile.size,
-						Tile.size),
-				new GoalTile(new Position(7 * Tile.size, 1 * Tile.size),
-						ValidPath.SOUTH));
-
-		levelMap.put(
-				new AreaPosition(7 * Tile.size, 3 * Tile.size, Tile.size,
-						Tile.size),
-				new GoalTile(new Position(7 * Tile.size, 3 * Tile.size),
-						ValidPath.NORTH));
-
-		tele2 = new TeleportTile(new Position(5 * Tile.size, Tile.size),
-				ValidPath.HORIZONTAL);
-		tele2.setConnection(tele1);
-		tele1.setConnection(tele2);
-		levelMap.put(new AreaPosition(5 * Tile.size, Tile.size, Tile.size,
-				Tile.size), tele2);
-
-		levelMap.put(
-				new AreaPosition(6 * Tile.size, Tile.size, Tile.size,
-						Tile.size),
-				new PathTile(new Position(6 * Tile.size, Tile.size),
-						ValidPath.L_TURN_HORIZONTAL_SOUTH_TO_WEST));
-
-		level.setLevelMap(levelMap);
+		level.setLevelMap(gameLevel.getLevelMap());
 	}
+	/*
+	 * 
+	 * HashMap<AreaPosition, Tile> levelMap = new HashMap<AreaPosition, Tile>();
+	 * TeleportTile tele1; TeleportTile tele2;
+	 * 
+	 * levelMap.put(new AreaPosition(0, 0, Tile.size, Tile.size), new
+	 * VoidTile(new Position(0, 0))); levelMap.put(new AreaPosition(Tile.size,
+	 * 0, Tile.size, Tile.size), new VoidTile(new Position(Tile.size, 0)));
+	 * levelMap.put(new AreaPosition(2 * Tile.size, 0, Tile.size, Tile.size),
+	 * new VoidTile(new Position(2 * Tile.size, 0))); levelMap.put(new
+	 * AreaPosition(3 * Tile.size, 0, Tile.size, Tile.size), new VoidTile(new
+	 * Position(3 * Tile.size, 0)));
+	 * 
+	 * levelMap.put(new AreaPosition(0, Tile.size, Tile.size, Tile.size), new
+	 * VoidTile(new Position(0, Tile.size))); levelMap.put( new
+	 * AreaPosition(Tile.size, Tile.size, Tile.size, Tile.size), new
+	 * StartTile(new Position(Tile.size, Tile.size), ValidPath.EAST));
+	 * levelMap.put( new AreaPosition(2 * Tile.size, Tile.size, Tile.size,
+	 * Tile.size), new PathTile(new Position(2 * Tile.size, Tile.size),
+	 * ValidPath.L_TURN_HORIZONTAL_SOUTH_TO_WEST)); levelMap.put( new
+	 * AreaPosition(3 * Tile.size, Tile.size, Tile.size, Tile.size), new
+	 * VoidTile(new Position(3 * Tile.size, Tile.size)));
+	 * 
+	 * levelMap.put(new AreaPosition(0, 2 * Tile.size, Tile.size, Tile.size),
+	 * new VoidTile(new Position(0, 2 * Tile.size))); levelMap.put( new
+	 * AreaPosition(Tile.size, 2 * Tile.size, Tile.size, Tile.size), new
+	 * VoidTile(new Position(Tile.size, 2 * Tile.size))); levelMap.put( new
+	 * AreaPosition(2 * Tile.size, 2 * Tile.size, Tile.size, Tile.size), new
+	 * PathTile(new Position(2 * Tile.size, 2 * Tile.size),
+	 * ValidPath.VERTICAL)); levelMap.put( new AreaPosition(3 * Tile.size, 2 *
+	 * Tile.size, Tile.size, Tile.size), new VoidTile(new Position(3 *
+	 * Tile.size, 2 * Tile.size)));
+	 * 
+	 * levelMap.put(new AreaPosition(0, 3 * Tile.size, Tile.size, Tile.size),
+	 * new VoidTile(new Position(0, 3 * Tile.size))); levelMap.put( new
+	 * AreaPosition(Tile.size, 3 * Tile.size, Tile.size, Tile.size), new
+	 * VoidTile(new Position(Tile.size, 3 * Tile.size))); levelMap.put( new
+	 * AreaPosition(2 * Tile.size, 3 * Tile.size, Tile.size, Tile.size), new
+	 * PathTile(new Position(2 * Tile.size, 3 * Tile.size),
+	 * ValidPath.L_TURN_HORIZONTAL_NORTH_TO_EAST));
+	 * 
+	 * levelMap.put( new AreaPosition(3 * Tile.size, 3 * Tile.size, Tile.size,
+	 * Tile.size), new PathTile(new Position(3 * Tile.size, 3 * Tile.size),
+	 * ValidPath.HORIZONTAL));
+	 * 
+	 * levelMap.put( new AreaPosition(4 * Tile.size, 3 * Tile.size, Tile.size,
+	 * Tile.size), new PathTile(new Position(4 * Tile.size, 3 * Tile.size),
+	 * ValidPath.CROSSROAD));
+	 * 
+	 * tele1 = new TeleportTile(new Position(5 * Tile.size, 3 * Tile.size),
+	 * ValidPath.HORIZONTAL); levelMap.put(new AreaPosition(5 * Tile.size, 3 *
+	 * Tile.size, Tile.size, Tile.size), tele1);
+	 * 
+	 * levelMap.put( new AreaPosition(4 * Tile.size, 4 * Tile.size, Tile.size,
+	 * Tile.size), new PathTile(new Position(4 * Tile.size, 4 * Tile.size),
+	 * ValidPath.VERTICAL));
+	 * 
+	 * levelMap.put( new AreaPosition(4 * Tile.size, 5 * Tile.size, Tile.size,
+	 * Tile.size), new PathTile(new Position(4 * Tile.size, 5 * Tile.size),
+	 * ValidPath.HORIZONTAL_T_NORTH));
+	 * 
+	 * levelMap.put( new AreaPosition(3 * Tile.size, 5 * Tile.size, Tile.size,
+	 * Tile.size), new PathTile(new Position(3 * Tile.size, 5 * Tile.size),
+	 * ValidPath.L_TURN_HORIZONTAL_SOUTH_TO_EAST));
+	 * 
+	 * levelMap.put( new AreaPosition(3 * Tile.size, 6 * Tile.size, Tile.size,
+	 * Tile.size), new PathTile(new Position(3 * Tile.size, 6 * Tile.size),
+	 * ValidPath.L_TURN_HORIZONTAL_NORTH_TO_EAST));
+	 * 
+	 * levelMap.put( new AreaPosition(5 * Tile.size, 5 * Tile.size, Tile.size,
+	 * Tile.size), new PathTile(new Position(5 * Tile.size, 5 * Tile.size),
+	 * ValidPath.L_TURN_HORIZONTAL_SOUTH_TO_WEST));
+	 * 
+	 * levelMap.put( new AreaPosition(5 * Tile.size, 6 * Tile.size, Tile.size,
+	 * Tile.size), new PathTile(new Position(5 * Tile.size, 6 * Tile.size),
+	 * ValidPath.L_TURN_HORIZONTAL_NORTH_TO_WEST));
+	 * 
+	 * levelMap.put( new AreaPosition(4 * Tile.size, 6 * Tile.size, Tile.size,
+	 * Tile.size), new PathTile(new Position(4 * Tile.size, 6 * Tile.size),
+	 * ValidPath.HORIZONTAL_T_SOUTH));
+	 * 
+	 * levelMap.put( new AreaPosition(4 * Tile.size, 7 * Tile.size, Tile.size,
+	 * Tile.size), new GoalTile(new Position(4 * Tile.size, 7 * Tile.size),
+	 * ValidPath.NORTH));
+	 * 
+	 * levelMap.put( new AreaPosition(4 * Tile.size, 2 * Tile.size, Tile.size,
+	 * Tile.size), new PathTile(new Position(4 * Tile.size, 2 * Tile.size),
+	 * ValidPath.VERTICAL));
+	 * 
+	 * levelMap.put( new AreaPosition(4 * Tile.size, Tile.size, Tile.size,
+	 * Tile.size), new PathTile(new Position(4 * Tile.size, Tile.size),
+	 * ValidPath.L_TURN_HORIZONTAL_SOUTH_TO_EAST));
+	 * 
+	 * levelMap.put( new AreaPosition(6 * Tile.size, 3 * Tile.size, Tile.size,
+	 * Tile.size), new PathTile(new Position(6 * Tile.size, 3 * Tile.size),
+	 * ValidPath.L_TURN_HORIZONTAL_NORTH_TO_WEST));
+	 * 
+	 * levelMap.put( new AreaPosition(6 * Tile.size, 2 * Tile.size, Tile.size,
+	 * Tile.size), new PathTile(new Position(6 * Tile.size, 2 * Tile.size),
+	 * ValidPath.VERTICAL_T_EAST));
+	 * 
+	 * levelMap.put( new AreaPosition(7 * Tile.size, 2 * Tile.size, Tile.size,
+	 * Tile.size), new PathTile(new Position(7 * Tile.size, 2 * Tile.size),
+	 * ValidPath.VERTICAL_T_WEST));
+	 * 
+	 * levelMap.put( new AreaPosition(7 * Tile.size, 1 * Tile.size, Tile.size,
+	 * Tile.size), new GoalTile(new Position(7 * Tile.size, 1 * Tile.size),
+	 * ValidPath.SOUTH));
+	 * 
+	 * levelMap.put( new AreaPosition(7 * Tile.size, 3 * Tile.size, Tile.size,
+	 * Tile.size), new GoalTile(new Position(7 * Tile.size, 3 * Tile.size),
+	 * ValidPath.NORTH));
+	 * 
+	 * tele2 = new TeleportTile(new Position(5 * Tile.size, Tile.size),
+	 * ValidPath.HORIZONTAL); tele2.setConnection(tele1);
+	 * tele1.setConnection(tele2); levelMap.put(new AreaPosition(5 * Tile.size,
+	 * Tile.size, Tile.size, Tile.size), tele2);
+	 * 
+	 * levelMap.put( new AreaPosition(6 * Tile.size, Tile.size, Tile.size,
+	 * Tile.size), new PathTile(new Position(6 * Tile.size, Tile.size),
+	 * ValidPath.L_TURN_HORIZONTAL_SOUTH_TO_WEST));
+	 * 
+	 * level.setLevelMap(levelMap); }
+	 */
 
 	@Override
 	public void startGame() {
@@ -374,7 +325,7 @@ public class GameViewAdapter implements GameViewModel {
 		int hitPoints = 0;
 		try {
 			lock.lock();
-			//hitPoints = player1.getHorde().get(index).getHitPoints();
+			// hitPoints = player1.getHorde().get(index).getHitPoints();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -409,10 +360,10 @@ public class GameViewAdapter implements GameViewModel {
 			lock.lock();
 			scoreGoal = player1.getLevel().getAttackingPlayerScoreGoal();
 		} catch (InterruptedException e) {
-		} finally{
+		} finally {
 			lock.unlock();
 		}
-		
+
 		return scoreGoal;
 	}
 
@@ -421,7 +372,7 @@ public class GameViewAdapter implements GameViewModel {
 	 */
 	private void initiateMap() {
 		view.getLevelMapPanel().removeAll();
-		view.getLevelMapPanel().setBackground(Color.black);
+		view.getLevelMapPanel().setBackground(Color.RED);
 		view.getLevelMapPanel().add(game);
 		view.getLevelMapPanel().revalidate();
 		view.getLevelMapPanel().repaint();

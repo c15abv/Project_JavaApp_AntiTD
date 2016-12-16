@@ -37,7 +37,7 @@ xsi:schemaLocation="LevelsXMLSchema.xsd">
 			<tile>V</tile>
 			<tile>V</tile>
 			<tile>V</tile>
-			<tile landOn="GoalTile" direction="EAST">G</tile>
+			<tile landOn="GoalTile" direction="SOUTH">G</tile>
 			<tile>V</tile>
 			<tile>V</tile>
 			<tile>W</tile>
@@ -48,7 +48,7 @@ xsi:schemaLocation="LevelsXMLSchema.xsd">
 			<tile direction="L_TURN_HORIZONTAL_SOUTH_TO_EAST">P</tile>
 			<tile direction="HORIZONTAL">P</tile>
 			<tile direction="HORIZONTAL_T_NORTH">P</tile>
-			<tile direction="L_TURN_HORIZONTAL_NORTH_TO_EAST">P</tile>
+			<tile direction="L_TURN_HORIZONTAL_SOUTH_TO_WEST">P</tile>
 			<tile>V</tile>
 			<tile>W</tile>
 		</row>
@@ -75,9 +75,9 @@ xsi:schemaLocation="LevelsXMLSchema.xsd">
 		<row Index="6">
 			<tile>W</tile>
 			<tile>V</tile>
-			<tile direction="L_TURN_HORIZONTAL_SOUTH_TO_EAST">P</tile>
+			<tile direction="L_TURN_HORIZONTAL_NORTH_TO_EAST">P</tile>
 			<tile direction="HORIZONTAL">P</tile>
-			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="HORIZONTAL_T_SOUTH">P</tile>
 			<tile direction="L_TURN_HORIZONTAL_NORTH_TO_WEST">P</tile>
 			<tile>V</tile>
 			<tile>W</tile>
@@ -87,7 +87,7 @@ xsi:schemaLocation="LevelsXMLSchema.xsd">
 			<tile>V</tile>
 			<tile>V</tile>
 			<tile>V</tile>
-			<tile landOn="StartTile" direction="WEST">S</tile>
+			<tile landOn="StartTile" direction="NORTH">S</tile>
 			<tile>V</tile>
 			<tile>V</tile>
 			<tile>W</tile>
@@ -128,7 +128,7 @@ xsi:schemaLocation="LevelsXMLSchema.xsd">
 			<tile>V</tile>
 			<tile>V</tile>
 			<tile>V</tile>
-			<tile landOn="GoalTile" direction="NORTH">G</tile>
+			<tile landOn="GoalTile" direction="SOUTH">G</tile>
 			<tile>V</tile>
 			<tile>V</tile>
 			<tile>W</tile>
@@ -153,6 +153,7 @@ xsi:schemaLocation="LevelsXMLSchema.xsd">
 			<tile>V</tile>
 			<tile>W</tile>
 		</row>
+				
 		<row Index="5">
 			<tile>W</tile>
 			<tile>V</tile>
@@ -178,7 +179,7 @@ xsi:schemaLocation="LevelsXMLSchema.xsd">
 			<tile>V</tile>
 			<tile>V</tile>
 			<tile>V</tile>
-			<tile landOn="StartTile" direction="SOUTH">S</tile>
+			<tile landOn="StartTile" direction="NORTH">S</tile>
 			<tile>V</tile>
 			<tile>V</tile>
 			<tile>W</tile>

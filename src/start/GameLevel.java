@@ -7,12 +7,15 @@ import java.util.Map;
 
 import tiles.Tile;
 import utilities.IdCounter;
+import utilities.Lock;
 
 public class GameLevel{
 
 	public static final int DEFAULT_PLAYER_SCORE_GOAL = 100;
 	public static final int DEFAULT_CREDIT = 100;
 	public static final int DEFAULT_TIME = 120;
+	public static final int DEFAULT_TEMPLATES = 3;
+	public static final String DEFAULT_MAP_NAME = "Unknown";
 	
 	private static final int TILES_X = 32;
 	private static final int TILES_Y = 32;
@@ -22,16 +25,41 @@ public class GameLevel{
 	private ArrayList<String> landOnFiles;
 	private IdCounter idCounter;
 	
+	private String levelName = DEFAULT_MAP_NAME;
 	private int attackingPlayerScoreGoal = DEFAULT_PLAYER_SCORE_GOAL;
 	private int attackerCredit = DEFAULT_CREDIT;
 	private int defenderCredit = DEFAULT_CREDIT;
 	private int timeToFinish = DEFAULT_TIME; 
 	private volatile int levelMapHash, tilesX, tilesY;
 	private volatile Position currentStartPosition;
+	private int nrOfTemplates = DEFAULT_TEMPLATES;
+	private Lock lock;
 	
 	public GameLevel(){
 		this(DEFAULT_PLAYER_SCORE_GOAL, null, null, null);
 	}
+	
+
+    public GameLevel(int attackingPlayerScoreGoal,
+            HashMap<AreaPosition, Tile> levelMap, String levelName,
+            int attackerCredit, int defenderCredit, int timeToFinish,
+            int nrOfTemplates){
+                
+        this.levelName  = levelName; 
+        this.attackingPlayerScoreGoal = attackingPlayerScoreGoal;       
+        this.attackerCredit = attackerCredit;
+        this.defenderCredit = defenderCredit;
+        this.timeToFinish = timeToFinish;
+        this.nrOfTemplates = nrOfTemplates;
+
+        if((this.levelMap = levelMap) == null){
+            this.levelMap = new HashMap<AreaPosition, Tile>();
+        }
+        
+        idCounter = new IdCounter();
+        lock = new Lock();
+    }
+
 	
 	public GameLevel(int attackingPlayerScoreGoal, ArrayList<String> rules,
 			ArrayList<String> landOnFiles,
@@ -187,8 +215,10 @@ public class GameLevel{
 				Tile.size).toArea();
 		Tile tile = levelMap.get(clickedAreaPosition);
 		
+		
 		if(tile != null && tile.selectable()){
 			tile.setSelected(true);
+
 			return clickedAreaPosition;
 		}
 		
@@ -202,4 +232,9 @@ public class GameLevel{
 			tile.setSelected(false);
 		}
 	}
+	
+	public String getLevelName() {
+		return levelName;
+	}
+		
 }

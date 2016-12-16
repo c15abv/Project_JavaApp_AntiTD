@@ -561,6 +561,7 @@ public class RightPanel extends JPanel {
 
 				} catch (NullPointerException e) {
 					message = "Select troop first.";
+					e.printStackTrace();
 					JOptionPane.showMessageDialog(container, message);
 				}
 
