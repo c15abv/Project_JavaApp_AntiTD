@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!-- Author: Jan Nylén -->
 
 <!-- HORIZONTAL("HORIZONTAL"), VERTICAL("VERTICAL"),
 
-		HORIZONTAL_T_SOUTH("HORIZONTAL_T_SOUTH"),
-		
+		HORIZONTAL_T_SOUTH("HORIZONTAL_T_SOUTH"),		
 		HORIZONTAL_T_NORTH("HORIZONTAL_T_NORTH"),
 		
-		VERTICAL_T_EAST("VERTICAL_T_EAST"),
-		
+		VERTICAL_T_EAST("VERTICAL_T_EAST")		
 		VERTICAL_T_WEST("VERTICAL_T_WEST"),
 		
 		CROSSROAD("CROSSROAD"),
@@ -19,8 +18,9 @@
 		NORTH("NORTH"), WEST("WEST"),
 		EAST("EAST"), SOUTH("SOUTH");
 			-->
-<levels>	
-	<level name="testlevel">
+<levels xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="LevelsXMLSchema.xsd">	
+	<level nameID="testlevel">
 		<row Index="1">
 			<!-- <cell landOn = "haste">W</cell> -->
 			<tile>W</tile>
@@ -111,7 +111,7 @@
 		</rules>
 	</level>
 	
-	<level name="testlevel2">
+	<level nameID="testlevel2">
 		<row Index="1">
 			<!-- <cell landOn = "haste">W</cell> -->
 			<tile>W</tile>
@@ -194,11 +194,11 @@
 			<tile>W</tile>
 		</row>
 		<rules>
-			<attackerCredit>101</attackerCredit>
-			<defenderCredit>101</defenderCredit>
-			<timeToFinish>11</timeToFinish>
-			<nrOfTemplates>7</nrOfTemplates>
-			<attackingPlayerScoreGoal>8</attackingPlayerScoreGoal>
+			<attackerCredit>102</attackerCredit>
+			<defenderCredit>102</defenderCredit>
+			<timeToFinish>12</timeToFinish>
+			<nrOfTemplates>10</nrOfTemplates>
+			<attackingPlayerScoreGoal>5</attackingPlayerScoreGoal>
 		</rules>
 	</level>
 </levels>
