@@ -27,10 +27,7 @@ public abstract class TowerFigure implements TimerListener{
 	public static final int SIZE = 40;
 	public static final int COOLDOWN = 1000;
 	
-	private int baseDamage;
-	private int hue;
-	private int range;
-	private int cooldown;
+	private int baseDamage, hue, range, cooldown, killed;
 	private Color towerColor;
 	private Position position;
 	private boolean isOnCooldown;
@@ -50,6 +47,8 @@ public abstract class TowerFigure implements TimerListener{
 		towerColor = ColorCreator.generateColorFromHue(hue);
 		projectiles = new HashMap<ProjectileFigure, CreatureFigure>();
 		actionTimer = null;
+		
+		killed = 0;
 		
 		setDefaultBehaviour();
 	}
@@ -106,6 +105,9 @@ public abstract class TowerFigure implements TimerListener{
 	    while(it.hasNext()){
 	    	pair = (Map.Entry<ProjectileFigure, CreatureFigure>)it.next();
 	    	if(!pair.getKey().isAlive()){
+	    		if(pair.getKey().killedTarget()){
+	    			killed++;
+	    		}
 	    		it.remove();
 	    	}else{
 	    		pair.getKey().update(pair.getValue());
@@ -143,6 +145,10 @@ public abstract class TowerFigure implements TimerListener{
 	
 	public Position getPosition(){
 		return position;
+	}
+	
+	public int getKilled(){
+		return killed;
 	}
 	
 	@Override

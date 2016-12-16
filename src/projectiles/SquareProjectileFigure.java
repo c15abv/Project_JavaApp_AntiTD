@@ -25,20 +25,25 @@ public class SquareProjectileFigure extends ProjectileFigure{
 
 	@Override
 	public void update(CreatureFigure figure){
+		boolean tempAlive;
 		super.update(figure);
-		if(figure.isCollision(this.getPosition())){
+		if(figure.isCollision(getPosition())){
+			tempAlive = figure.isAlive();
 			figure.setDamageTaken((int)(ProjectileFigure.calculateDamageMultiplier(
-					this.getShape(), figure.getShape(),
-					this.getHue(), figure.getHue()) * this.damage));
-			this.setIsDead();
+					getShape(), figure.getShape(),
+					getHue(), figure.getHue()) * damage));
+			if(tempAlive && !figure.isAlive()){
+				killedTarget = true;
+			}
+			setIsDead();
 		}
 	}
 	
 	@Override
 	public void render(Graphics2D g2d){
-		g2d.setColor(this.getColor());
-		g2d.drawRect(this.getPosition().getX() - ProjectileFigure.TEMP_SIZE/2,
-				this.getPosition().getY() - ProjectileFigure.TEMP_SIZE/2,
+		g2d.setColor(getColor());
+		g2d.drawRect(getPosition().getX() - ProjectileFigure.TEMP_SIZE/2,
+				getPosition().getY() - ProjectileFigure.TEMP_SIZE/2,
 				ProjectileFigure.TEMP_SIZE,
 				ProjectileFigure.TEMP_SIZE);
 	}

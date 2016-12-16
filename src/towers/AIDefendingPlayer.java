@@ -2,12 +2,19 @@ package towers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
+import creatures.AttackingPlayer;
+import creatures.CreatureFigure;
 import creatures.CreatureFigureTemplate;
+import start.AreaPosition;
 import start.Figures;
 import start.Game;
 import start.GameLevel;
+import start.Position;
+import tiles.Tile;
+import tiles.VoidTile;
 import towers.PlanDetails.TowerBuildPlan;
 import utilities.ActionTimer;
 import utilities.ColorCreator;
@@ -20,28 +27,34 @@ import utilities.TimerListener;
  * @author Alexander Beliaev
  * @version 1.0
  */
-public class AIDefendingPlayer extends Thread implements TimerListener{
+public class AIDefendingPlayer implements TimerListener, Runnable{
 	
 	public static class Builder{
 		
 		public static final int DEFAULT_NUMBER_OF_TOWERS = 3;
 		public static final int DEFAULT_TOWER_MUTATION_RANGE = 1000;
 		public static final int DEFAULT_TOWER_MUTATION_CHANCE_PERCENT = 2;
+		public static final int DEFAULT_TOWER_BUILD_CHANCE_PERMILLION = 10000;
 		
-		private DefendingPlayer player;
+		private DefendingPlayer defender;
+		private AttackingPlayer attacker;
 		private GameLevel level;
+		private Game game;
 		private AIMemory memory;
 		private int numberOfTowers, towerMutationChance,
-			towerMutationRange;
+			towerMutationRange, towerBuildChance;
 		private ArrayList<CreatureFigureTemplate> knownTargets;
 		private Lock gameLock;
 		private ActionTimer timer;
 		private long timerId;
+		private boolean enableLearnFromExperiences;
 		
-		public Builder(DefendingPlayer player, GameLevel level,
-				Game game, AIMemory memory){
-			this.player = player;
+		public Builder(DefendingPlayer player, AttackingPlayer attacker,
+				GameLevel level, Game game, AIMemory memory){
+			this.defender = player;
+			this.attacker = attacker;
 			this.level = level;
+			this.game = game;
 			this.memory = memory;
 			this.knownTargets = new ArrayList<CreatureFigureTemplate>();
 			this.numberOfTowers = DEFAULT_NUMBER_OF_TOWERS;
@@ -49,15 +62,18 @@ public class AIDefendingPlayer extends Thread implements TimerListener{
 			this.timerId = game.getGameTimeTimerId();
 			this.towerMutationRange = DEFAULT_TOWER_MUTATION_RANGE;
 			this.towerMutationChance = DEFAULT_TOWER_MUTATION_CHANCE_PERCENT;
+			this.towerBuildChance = DEFAULT_TOWER_BUILD_CHANCE_PERMILLION;
+			this.enableLearnFromExperiences = false;
 		}
 		
 		public Builder setNumberOfTowers(int numberOfTowers){
-			this.numberOfTowers = numberOfTowers;
+			if(numberOfTowers > 0)
+				this.numberOfTowers = numberOfTowers;
 			return this;
 		}
 		
-		public Builder setKnownTowerTargets(
-				CreatureFigureTemplate ... templates){
+		public Builder setKnownTowerTargets(CreatureFigureTemplate ...
+				templates){
 			for(CreatureFigureTemplate template : templates){
 				knownTargets.add(template);
 			}
@@ -80,8 +96,20 @@ public class AIDefendingPlayer extends Thread implements TimerListener{
 			return this;
 		}
 		
+		//percent
 		public Builder setTowerMutationTimeChance(int towerMutationChance){
 			this.towerMutationChance = towerMutationChance;
+			return this;
+		}
+		
+		//per million
+		public Builder setBuildTowerChance(int towerBuildChance){
+			this.towerBuildChance = towerBuildChance;
+			return this;
+		}
+		
+		public Builder enableLearnFromExperience(){
+			enableLearnFromExperiences = true;
 			return this;
 		}
 		
@@ -92,37 +120,55 @@ public class AIDefendingPlayer extends Thread implements TimerListener{
 	
 	private volatile boolean isRunning = false;
 	
-	private DefendingPlayer player;
+	private DefendingPlayer defender;
+	private AttackingPlayer attacker;
 	private GameLevel level;
+	private Game game;
 	private AIMemory memory;
-	private int numberOfTowers, towerMutationChance,
-		towerMutationRange;
+	private int numberOfTowers, towerMutationTimeChance,
+		towerMutationTimeRange;
 	private ArrayList<CreatureFigureTemplate> knownTargets;
 	private ArrayList<TowerFigureTemplate> towerTemplates;
 	private ArrayList<TowerBuildPlan> towerBuildPlanList;
 	private HashMap<Long, PlanDetails> towerBuildPlanMap;
 	private ArrayList<Long> notifiedList;
+	private ArrayList<Long> plannedTowersLeft;
+	private ArrayList<TowerBuildPlan> builtTowersList;
 	private Lock gameLock, lock;
-	private int currentTower;
+	private int towerBuildChance;
 	private ActionTimer timer;
-	private long timerId;
+	private long timerId, gameStartedAt;
+	private boolean enableLearnFromExperiences, canBuildTowers;
+	
+	private final double middleX, middleY;
 	
 	private AIDefendingPlayer(Builder builder){
-		this.player = builder.player;
+		this.defender = builder.defender;
+		this.attacker = builder.attacker;
 		this.level = builder.level;
+		this.game = builder.game;
 		this.memory = builder.memory;
 		this.numberOfTowers = builder.numberOfTowers;
 		this.knownTargets = builder.knownTargets;
 		this.gameLock = builder.gameLock;
 		this.timer = builder.timer;
 		this.timerId = builder.timerId;
-		this.towerMutationRange = builder.towerMutationRange;
-		this.towerMutationChance = builder.towerMutationChance;
+		this.towerMutationTimeRange = builder.towerMutationRange;
+		this.towerMutationTimeChance = builder.towerMutationChance;
+		this.towerBuildChance = builder.towerBuildChance;
+		this.enableLearnFromExperiences = builder.enableLearnFromExperiences;
+		
+		gameStartedAt = 0;
+		middleX = (double)level.getTilesX() / 2;
+		middleY = (double)level.getTilesY() / 2;
+		
+		canBuildTowers = true;
 		
 		towerTemplates = new ArrayList<TowerFigureTemplate>();
 		towerBuildPlanMap = new HashMap<Long, PlanDetails>();
 		notifiedList = new ArrayList<Long>();
-		currentTower = 0;
+		builtTowersList = new ArrayList<TowerBuildPlan>();
+		plannedTowersLeft = new ArrayList<Long>();
 		lock = new Lock();
 		init();
 	}
@@ -130,8 +176,61 @@ public class AIDefendingPlayer extends Thread implements TimerListener{
 
 	@Override
 	public void run(){
+		Random random = new Random();
+		int hordeSize = 0;
+		ArrayList<Long> tempNotified = null;
+		ArrayList<Long> notifiedBuilt;
+		PlanDetails detailsTemp;
+		
 		while(isRunning){
-			//to be implemented
+			notifiedBuilt = null;
+			
+			if(canBuildTowers){
+				if(towerBuildPlanMap.isEmpty()){
+					if((random.nextInt((int)10e6) + 1) <= towerBuildChance){
+						buildTower(null);
+					}
+				}else{
+					hordeSize = getHordeSize();
+					tempNotified = getTempNotifiedList();
+					for(Long id : tempNotified){
+						if((detailsTemp = towerBuildPlanMap.get(id)) != null){
+							if(notifiedBuilt == null){
+								notifiedBuilt = new ArrayList<Long>();
+							}
+							buildTower(detailsTemp);
+							notifiedBuilt.add(id);
+							plannedTowersLeft.remove(id);
+						}
+					}
+					
+					detailsTemp = towerBuildPlanMap.get(plannedTowersLeft.get(0));
+					if(detailsTemp != null && 
+							detailsTemp.getNumFigures() <= hordeSize){
+						if(notifiedBuilt == null){
+							notifiedBuilt = new ArrayList<Long>();
+						}
+						timer.removeTimer(plannedTowersLeft.get(0));
+						buildTower(detailsTemp);
+						notifiedBuilt.add(plannedTowersLeft.get(0));
+						plannedTowersLeft.remove(0);
+					}
+					
+					if(notifiedBuilt != null){
+						removeNotifiedBuilt(notifiedBuilt);
+					}
+				}
+			}
+		}
+	}
+	
+	public void finalize(){
+		int success;
+		if(!isRunning){
+			success = calculateSuccess();
+			if(enableLearnFromExperiences){
+				
+			}
 		}
 	}
 	
@@ -150,12 +249,424 @@ public class AIDefendingPlayer extends Thread implements TimerListener{
 		}
 	}
 	
+	private int calculateSuccess(){
+		ArrayList<TowerFigure> towers = getTowers();
+		int creaturesInGoal = getPlayerScore();
+		int killedCreatures = 0;
+		int creaturesSpawned = getCreaturesSpawned();
+		int goalRequired = getAttackerGoalScoreRequired();
+		int success = 0;
+		double goalToRequired = 0;
+		double killedToSpawnedRatio = 0;
+		long timeLeft = timer.timeLeft(timerId);
+		
+		if(towers != null){
+			for(TowerFigure tower : towers){
+				killedCreatures += tower.getKilled();
+			}
+			
+			if(creaturesSpawned > 0){
+				killedToSpawnedRatio = (double)killedCreatures /
+						creaturesSpawned;
+			}else{
+				killedToSpawnedRatio = 1;
+			}
+			
+			if(killedToSpawnedRatio == 1){
+				success = 200;
+			}else{
+				if(timeLeft <= 0){
+					success = 100;
+					
+					if(goalRequired > 0){
+						goalToRequired = (double)creaturesInGoal / 
+								goalRequired;
+					}
+					success += Math.abs(killedToSpawnedRatio -
+							goalToRequired) * 100;
+				}else{
+					if(killedToSpawnedRatio == 0){
+						success = 0;
+					}else{
+						if(timer.timeElapsed() + timeLeft > 0){
+							success = (int)(((double)timer.timeElapsed() / 
+								(timer.timeElapsed() + timeLeft)) * 100);
+						}else{
+							success = 0;
+						}
+					}
+				}
+			}
+		}
+		
+		return success;
+	}
+	
+	private int getHordeSize(){
+		int hordeSize = 0;
+		
+		try{
+			gameLock.lock();
+			hordeSize = attacker.getHordeSize();
+		}catch(InterruptedException e){
+		}finally{
+			gameLock.unlock();
+		}
+		
+		return hordeSize;
+	}
+	
+	private int getAttackerGoalScoreRequired(){
+		int score = 0;
+		
+		try{
+			gameLock.lock();
+			score = level.getAttackingPlayerScoreGoal();
+		}catch(InterruptedException e){
+		}finally{
+			gameLock.unlock();
+		}
+		
+		return score;
+	}
+	
+	private int getCreaturesSpawned(){
+		int creatures = 0;
+		
+		try{
+			gameLock.lock();
+			creatures = attacker.getCreaturesBought();
+		}catch(InterruptedException e){
+		}finally{
+			gameLock.unlock();
+		}
+		
+		return creatures;
+	}
+	
+	private int getPlayerScore(){
+		int score = 0;
+		
+		try{
+			gameLock.lock();
+			score = attacker.getPoints();
+		}catch(InterruptedException e){
+		}finally{
+			gameLock.unlock();
+		}
+		
+		return score;
+	}
+	
+	private HashMap<AreaPosition, Tile> getLevelMap(){
+		HashMap<AreaPosition, Tile> levelMap = null;
+		
+		try{
+			gameLock.lock();
+			levelMap = level.getLevelMap();
+		}catch(InterruptedException e){
+		}finally{
+			gameLock.unlock();
+		}
+		
+		return levelMap;
+	}
+	
+	private ArrayList<TowerFigure> getTowers(){
+		ArrayList<TowerFigure> towers = null;
+		
+		try{
+			gameLock.lock();
+			towers = defender.getDefence();
+		}catch(InterruptedException e){
+		}finally{
+			gameLock.unlock();
+		}
+		
+		return towers;
+	}
+	
+	private boolean addTower(TowerFigure tower){
+		boolean success = false;
+		
+		try{
+			gameLock.lock();
+			defender.addTowerFigure(tower);
+			success = true;
+		}catch(InterruptedException e){
+		}finally{
+			gameLock.unlock();
+		}
+		
+		return success;
+	}
+	
+	private int getAverageHueAmongHorde(){
+		ArrayList<CreatureFigure> horde = null;
+		int hueTotal = 0;
+		
+		try{
+			gameLock.lock();
+			horde = attacker.getHorde();
+		}catch(InterruptedException e){
+		}finally{
+			gameLock.unlock();
+		}
+		
+		if(horde != null){
+			for(CreatureFigure figure : horde){
+				hueTotal += figure.getHue();
+			}
+		}
+		
+		return hueTotal / horde.size();
+	}
+	
+	private Figures getMostCommonShapeAmongHorde(){
+		ArrayList<CreatureFigure> horde = null;
+		Figures shape;
+		int circle, triangle, square;
+		circle = triangle = square = 0;
+		
+		try{
+			gameLock.lock();
+			horde = attacker.getHorde();
+		}catch(InterruptedException e){
+		}finally{
+			gameLock.unlock();
+		}
+		
+		if(horde != null){
+			for(CreatureFigure figure : horde){
+				switch(figure.getShape()){
+				case CIRCLE:
+					circle++;
+					break;
+				case SQUARE:
+					square++;
+					break;
+				case TRIANGLE:
+					triangle++;
+					break;
+				default:
+					break;
+				}
+			}
+		}
+		
+		if(circle > square && circle > triangle){
+			shape = Figures.CIRCLE;
+		}else if(square > circle && square > triangle){
+			shape = Figures.SQUARE;
+		}else if(triangle > circle && triangle > square){
+			shape = Figures.TRIANGLE; 
+		}else{
+			shape = Figures.STAR;
+		}
+		
+		return shape;
+	}
+	
+	private ArrayList<Long> getTempNotifiedList(){
+		ArrayList<Long> tempNotified = null;
+		
+		try{
+			lock.lock();
+			tempNotified = new ArrayList<Long>(notifiedList);
+		}catch(InterruptedException e){
+		}finally{
+			lock.unlock();
+		}
+		
+		return tempNotified;
+	}
+	
+	private void removeNotifiedBuilt(ArrayList<Long> ids){
+		try{
+			lock.lock();
+			for(Long id : ids){
+				notifiedList.remove(id);
+			}
+		}catch(InterruptedException e){
+		}finally{
+			lock.unlock();
+		}
+	}
+	
+	private void buildTower(PlanDetails details){
+		if(details != null){
+			buildTowerFromPlan(details);
+			towerBuildPlanMap.remove(plannedTowersLeft.get(0));
+		}else{
+			buildTowerFromScratch();
+		}
+	}
+	
+	private HashMap<AreaPosition, VoidTile> getAvailableVoidTiles(
+			HashMap<AreaPosition, Tile> levelMap){
+		HashMap<AreaPosition, VoidTile> voidMap = 
+				new HashMap<AreaPosition, VoidTile>();
+		Tile tile = null;
+		for(Map.Entry<AreaPosition, Tile> entry : levelMap.entrySet()){
+			tile = entry.getValue();
+			if(tile.buildable() && !((VoidTile)tile).occupied()){
+				voidMap.put(entry.getKey(), (VoidTile)tile);
+			}
+		}
+		
+		return new HashMap<AreaPosition, VoidTile> (voidMap);
+	}
+	
+	private void buildTowerFromScratch(){
+		Random random = new Random();
+		TowerFigureTemplate template = 
+			towerTemplates.get(random.nextInt(numberOfTowers));
+		HashMap<AreaPosition, Tile> levelMap = getLevelMap();
+		TowerBuildPlan plan = null;
+		HashMap<AreaPosition, VoidTile> voidMap = null;
+		VoidTile tile = null;
+		int randomTile;
+		int temp = 0;
+		
+		if(levelMap != null){
+			voidMap = getAvailableVoidTiles(levelMap);
+			if(voidMap.size() > 0){
+				randomTile = random.nextInt(voidMap.size());
+				for(Map.Entry<AreaPosition, VoidTile> entry : voidMap.entrySet()){
+					if(randomTile == temp){
+						tile = entry.getValue();
+						if(addTower(template.createNewTower(
+								new Position(tile.getPosition().getX(),
+										tile.getPosition().getY(), Tile.size)))){
+							tile.setIsOccupied(true);
+							plan = generateBuildPlan(tile);
+							builtTowersList.add(plan);
+							return;
+						}
+					}
+					temp++;
+				}
+			}else{
+				canBuildTowers = false;
+			}
+		}
+	}
+	
+	private TowerBuildPlan generateBuildPlan(VoidTile tile){
+		PlanDetails details;
+		int tileX, tileY;
+		double relPositionVal;
+		long time = getCurrentGameTimeElapsed();
+		int hordeSize = getHordeSize();
+		
+		tileX = tile.getPosition().getX() / Tile.size;
+		tileY = tile.getPosition().getY() / Tile.size;
+		tileX = (int) Math.abs(tileX - middleX);
+		tileY = (int) Math.abs(tileY - middleY);
+		relPositionVal = Math.sqrt(Math.pow((double)tileX / middleX, 2) +
+					Math.pow((double)tileY / middleY, 2));
+		
+		details = new PlanDetails(hordeSize, relPositionVal);
+		
+		return details.new TowerBuildPlan(time, details);
+	}
+	
+	private void buildTowerFromPlan(PlanDetails details){
+		Random random = new Random();
+		HashMap<AreaPosition, Tile> levelMap = getLevelMap();
+		HashMap<AreaPosition, VoidTile> voidMap = null;
+		VoidTile tile = null;
+		int averageHue = getAverageHueAmongHorde();
+		Figures mostCommonShape = getMostCommonShapeAmongHorde();
+		TowerFigureTemplate template = 
+				chooseTemplateToUse(averageHue, mostCommonShape);
+		double posValue = details.getPositionValue();
+		AreaPosition areaPosition = null;
+		int tileX, tileY;
+		int randomTile;
+		int temp = 0;
+		
+		tileX = (int)(middleX * posValue);
+		tileY = (int)(middleY * posValue);
+		
+		if(levelMap != null){
+			voidMap = getAvailableVoidTiles(levelMap);
+			if(voidMap.size() > 0){
+				for(int x = -tileX; x < tileX; x++){
+					for(int y = -tileY; y < tileY; y++){
+						areaPosition = new AreaPosition((int)(x + middleX) * Tile.size,
+								(int)(y + middleY) * Tile.size, Tile.size, Tile.size);
+						if((tile = voidMap.get(areaPosition)) != null &&
+								addTower(template.createNewTower(
+										new Position(tile.getPosition().getX(),
+												tile.getPosition().getY(),
+												Tile.size)))){
+							tile.setIsOccupied(true);
+							builtTowersList.add(generateBuildPlan(tile));
+							return;
+						}
+					}
+				}
+				
+				randomTile = random.nextInt(voidMap.size());
+				for(Map.Entry<AreaPosition, VoidTile> entry : voidMap.entrySet()){
+					if(randomTile == temp){
+						tile = entry.getValue();
+						if(addTower(template.createNewTower(
+								new Position(tile.getPosition().getX(),
+										tile.getPosition().getY(), Tile.size)))){
+							tile.setIsOccupied(true);
+							builtTowersList.add(generateBuildPlan(tile));
+							return;
+						}
+					}
+					temp++;
+				}
+			}
+		}else{
+			canBuildTowers = false;
+		}
+	}
+	
+	private TowerFigureTemplate chooseTemplateToUse(int hue,
+			Figures shape){
+		TowerFigureTemplate temp = null;
+		
+		for(TowerFigureTemplate template : towerTemplates){
+			if(template.getTowerType() == shape){
+				if(temp == null || temp.getTowerType() != shape){
+					temp = template;
+				}else if(temp.getTowerType() == shape &&
+						Math.abs(hue - template.getHue()) <
+						Math.abs(hue - temp.getHue())){
+					temp = template;
+				}
+			}else{
+				if(temp == null){
+					temp = template;
+				}else if(temp.getTowerType() != shape &&
+						Math.abs(hue - template.getHue()) <
+						Math.abs(hue - temp.getHue())){
+					temp = template;
+				}
+			}
+		}
+		
+		return temp;
+	}
+	
+	private long getCurrentGameTimeElapsed(){
+		return (long) (timer.timeElapsed() / 10e5);
+	}
+	
 	private void init(){
 		chooseTowers();
 		loadMemory();
 	}
 
-	//not very elegant
+	//not very elegant;
+	//requires a lot of testing/balancing to
+	//find the most appropriate values.
 	private void chooseTowers(){
 		CreatureFigureTemplate creatureTemplate;
 		for(int i = 0; i < numberOfTowers; i++){
@@ -181,12 +692,12 @@ public class AIDefendingPlayer extends Thread implements TimerListener{
 		for(TowerBuildPlan plan : towerBuildPlanList){
 			id = timer.getNewUniqueId();
 			time = plan.getTime();
-			if(random.nextInt(100) + 1 <= towerMutationChance){
-				time = (timeTemp = random.nextInt(2 * towerMutationRange) + 
-						1) <= towerMutationRange ? time + timeTemp : 
-							Math.abs(time + (towerMutationRange - timeTemp));
+			if(random.nextInt(100) + 1 <= towerMutationTimeChance){
+				time = (timeTemp = random.nextInt(2 * towerMutationTimeRange) + 
+						1) <= towerMutationTimeRange ? time + timeTemp : 
+							Math.abs(time + (towerMutationTimeRange - timeTemp));
 			}
-			
+			plannedTowersLeft.add(id);
 			towerBuildPlanMap.put(id, plan.getDetails());
 			timer.setTimer(id, this, time);
 		}

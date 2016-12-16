@@ -28,6 +28,26 @@ public class TowerFigureTemplate{
 		return cost;
 	}
 	
+	public Figures getTowerType() {
+		return towerType;
+	}
+
+	public int getHue() {
+		return hue;
+	}
+
+	public int getRange() {
+		return range;
+	}
+
+	public int getBaseDamage() {
+		return baseDamage;
+	}
+
+	public int getCooldown() {
+		return cooldown;
+	}
+
 	public TowerFigure createNewTower(Position position){
 		return towerType == Figures.CIRCLE ? 
 				createNewCircleTower(position) : 

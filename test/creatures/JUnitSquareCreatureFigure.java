@@ -10,6 +10,12 @@ import start.Figures;
 import start.Position;
 import utilities.ActionTimer;
 
+/**
+ * JUnitSquareCreatureFigure.
+ * 
+ * @author Alexander Beliaev
+ * @version 1.0
+ */
 public class JUnitSquareCreatureFigure{
 
 	@Test
@@ -17,7 +23,7 @@ public class JUnitSquareCreatureFigure{
 		CreatureFigureTemplate template = new CreatureFigureTemplate(Figures.SQUARE, 100,
 				1, 100, CreatureFigure.Orientation.RANDOM, null);
 		SquareCreatureFigure fig = (SquareCreatureFigure)template.createNewCreature(
-				new Position(250,250));
+				new Position(250,250), null);
 		
 		assertTrue(fig.getHue() == 100);
 		assertTrue(fig.isAlive() == true);
@@ -62,7 +68,7 @@ public class JUnitSquareCreatureFigure{
 		
 		fig.setActionTimer(timer);
 		
-		fig.addOnSpawnTimedAction(1000, () -> {
+		fig.addOnSpawnTimedAction((long)1000, () -> {
 			fig.setDamageTaken(25);
 		});
 		

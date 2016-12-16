@@ -6,6 +6,12 @@ import java.awt.Color;
 
 import org.junit.Test;
 
+/**
+ * JUnitColorCreator.
+ * 
+ * @author Alexander Beliaev
+ * @version 1.0
+ */
 public class JUnitColorCreator{
 	
 	@Test

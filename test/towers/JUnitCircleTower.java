@@ -4,21 +4,27 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import creatures.AttackingPlayer;
 import creatures.CircleCreatureFigure;
 import creatures.CreatureFigure.Orientation;
 import creatures.SquareCreatureFigure;
 import creatures.TriangleCreatureFigure;
-import start.AttackingPlayer;
 import start.Figures;
 import start.Position;
 import utilities.ActionTimer;
 
+/**
+ * JUnitCircleTower.
+ * 
+ * @author Alexander Beliaev
+ * @version 1.0
+ */
 public class JUnitCircleTower{
 	
 	@Test
 	public void testTemplate(){
 		TowerFigureTemplate template = new TowerFigureTemplate(
-				Figures.CIRCLE, 100, 200, 20, 50);
+				Figures.CIRCLE, 100, 200, 1000, 20, 50);
 		CircleTowerFigure fig = (CircleTowerFigure)template.createNewTower(
 				new Position(250,250));
 		
@@ -80,8 +86,8 @@ public class JUnitCircleTower{
 	
 	@Test
 	public void testFindsTargetWithinRange(){
-		AttackingPlayer player1 = new AttackingPlayer(100);
-		DefendingPlayer player2 = new DefendingPlayer(100);
+		AttackingPlayer player1 = new AttackingPlayer(100, null);
+		DefendingPlayer player2 = new DefendingPlayer(100, null);
 		AITowerFigures ai = new AITowerFigures(player1, player2);
 		player2.setTowersAI(ai);
 		
@@ -102,8 +108,8 @@ public class JUnitCircleTower{
 	
 	@Test
 	public void testDoNotFindTarget(){
-		AttackingPlayer player1 = new AttackingPlayer(100);
-		DefendingPlayer player2 = new DefendingPlayer(100);
+		AttackingPlayer player1 = new AttackingPlayer(100, null);
+		DefendingPlayer player2 = new DefendingPlayer(100, null);
 		AITowerFigures ai = new AITowerFigures(player1, player2);
 		player2.setTowersAI(ai);
 		
@@ -124,8 +130,8 @@ public class JUnitCircleTower{
 	
 	@Test
 	public void testFindsBestTargetAmongShapes(){
-		AttackingPlayer player1 = new AttackingPlayer(100);
-		DefendingPlayer player2 = new DefendingPlayer(100);
+		AttackingPlayer player1 = new AttackingPlayer(100, null);
+		DefendingPlayer player2 = new DefendingPlayer(100, null);
 		AITowerFigures ai = new AITowerFigures(player1, player2);
 		player2.setTowersAI(ai);
 		
@@ -150,8 +156,8 @@ public class JUnitCircleTower{
 	
 	@Test
 	public void testFindBestTargetOnHue(){
-		AttackingPlayer player1 = new AttackingPlayer(100);
-		DefendingPlayer player2 = new DefendingPlayer(100);
+		AttackingPlayer player1 = new AttackingPlayer(100, null);
+		DefendingPlayer player2 = new DefendingPlayer(100, null);
 		AITowerFigures ai = new AITowerFigures(player1, player2);
 		player2.setTowersAI(ai);
 		
@@ -176,8 +182,8 @@ public class JUnitCircleTower{
 	
 	@Test
 	public void testFindBestTargetOnLife(){
-		AttackingPlayer player1 = new AttackingPlayer(100);
-		DefendingPlayer player2 = new DefendingPlayer(100);
+		AttackingPlayer player1 = new AttackingPlayer(100, null);
+		DefendingPlayer player2 = new DefendingPlayer(100, null);
 		AITowerFigures ai = new AITowerFigures(player1, player2);
 		player2.setTowersAI(ai);
 		
@@ -204,8 +210,8 @@ public class JUnitCircleTower{
 	
 	@Test
 	public void testTargetDies(){
-		AttackingPlayer player1 = new AttackingPlayer(100);
-		DefendingPlayer player2 = new DefendingPlayer(100);
+		AttackingPlayer player1 = new AttackingPlayer(100, null);
+		DefendingPlayer player2 = new DefendingPlayer(100, null);
 		AITowerFigures ai = new AITowerFigures(player1, player2);
 		player2.setTowersAI(ai);
 		
@@ -233,8 +239,8 @@ public class JUnitCircleTower{
 	public void testDoesNotAttackOnCooldown(){
 		ActionTimer timer = new ActionTimer();
 		Thread thread = new Thread(timer);
-		AttackingPlayer player1 = new AttackingPlayer(100);
-		DefendingPlayer player2 = new DefendingPlayer(100);
+		AttackingPlayer player1 = new AttackingPlayer(100, null);
+		DefendingPlayer player2 = new DefendingPlayer(100, null);
 		AITowerFigures ai = new AITowerFigures(player1, player2);
 		player2.setTowersAI(ai);
 		
@@ -275,8 +281,8 @@ public class JUnitCircleTower{
 	public void testDamageAgaintBadTarget(){
 		ActionTimer timer = new ActionTimer();
 		Thread thread = new Thread(timer);
-		AttackingPlayer player1 = new AttackingPlayer(100);
-		DefendingPlayer player2 = new DefendingPlayer(100);
+		AttackingPlayer player1 = new AttackingPlayer(100, null);
+		DefendingPlayer player2 = new DefendingPlayer(100, null);
 		AITowerFigures ai = new AITowerFigures(player1, player2);
 		player2.setTowersAI(ai);
 		
@@ -318,8 +324,8 @@ public class JUnitCircleTower{
 	public void testDefaultAction(){
 		ActionTimer timer = new ActionTimer();
 		Thread thread = new Thread(timer);
-		AttackingPlayer player1 = new AttackingPlayer(100);
-		DefendingPlayer player2 = new DefendingPlayer(100);
+		AttackingPlayer player1 = new AttackingPlayer(100, null);
+		DefendingPlayer player2 = new DefendingPlayer(100, null);
 		AITowerFigures ai = new AITowerFigures(player1, player2);
 		player2.setTowersAI(ai);
 		

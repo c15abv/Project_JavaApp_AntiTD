@@ -7,17 +7,22 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 
 import creatures.AttackingPlayer;
+import tiles.Tile;
 import towers.AITowerFigures;
 import towers.DefendingPlayer;
 import utilities.ActionTimer;
 import utilities.Lock;
 import utilities.TimerListener;
 
-public class Game extends Canvas implements TimerListener{
+public class Game extends Canvas implements TimerListener, MouseListener,
+		MouseMotionListener{
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -38,6 +43,9 @@ public class Game extends Canvas implements TimerListener{
 	private volatile ActionTimer timer;
 	private Thread timerThread;
 	private volatile long gameTimeTimerId;
+	private int mouseCoordinateX, mouseCoordinateY,
+		cameraOffsetX, cameraOffsetY;
+	private volatile Position currentSelectedStartPosition;
 	
 	private AttackingPlayer attacker;
 	private DefendingPlayer defender;
@@ -81,11 +89,19 @@ public class Game extends Canvas implements TimerListener{
 		
 		g = null;
 		g2d = null;
+		
+		mouseCoordinateX = mouseCoordinateY = cameraOffsetX = 
+				cameraOffsetY = 0;
+		currentSelectedStartPosition = null;
+		
+		addMouseMotionListener(this);
+	    addMouseListener(this);
 	}
 	
 	public void update(){
 		try{
 			lock.lock();
+			updateCanvasCamera();
 			level.update();
 			if(gameState == GameState.RUNNING){
 				defender.update();
@@ -101,6 +117,24 @@ public class Game extends Canvas implements TimerListener{
 		}
 	}
 	
+	private void updateCanvasCamera(){
+		if(mouseCoordinateX > SIZE_X - 40){
+			if(cameraOffsetX < level.getWidth())
+				cameraOffsetX += 4;
+		}else if(mouseCoordinateX < 40){
+			if(cameraOffsetX > 0)
+				cameraOffsetX -= 4;
+		}
+		
+		if(mouseCoordinateY > SIZE_Y - 40){
+			if(cameraOffsetX < level.getHeight())
+				cameraOffsetY += 4;
+		}else if(mouseCoordinateY < 40){
+			if(cameraOffsetY > 0)
+				cameraOffsetY -= 4;
+		}
+	}
+	
 	public void render(){
 		try{
 			lock.lock();
@@ -112,7 +146,8 @@ public class Game extends Canvas implements TimerListener{
 			
 			g2d = bufferedImage.createGraphics();
 			g2d.setColor(Color.BLACK);
-			g2d.fillRect(0, 0, SIZE_X, SIZE_Y);
+			g2d.fillRect(-Tile.size, -Tile.size,
+					level.getWidth(), level.getHeight());
 			
 			//render stuff
 			level.render(g2d);
@@ -120,7 +155,8 @@ public class Game extends Canvas implements TimerListener{
 			attacker.render(g2d);
 			
 			g = buffer.getDrawGraphics();
-			g.drawImage(bufferedImage, 0, 0, null);
+			g.drawImage(bufferedImage, -cameraOffsetX,
+					-cameraOffsetY, null);
 			
 			if(!buffer.contentsLost()){
 				buffer.show();
@@ -190,10 +226,55 @@ public class Game extends Canvas implements TimerListener{
 		return lock;
 	}
 	
-
 	public synchronized long getGameTimeTimerId(){
 		return gameTimeTimerId;
 	}
+	
+	public synchronized Position getSelectedStart(){
+		return currentSelectedStartPosition;
+	}
 
+	@Override
+	public void mouseDragged(MouseEvent arg0){
+	}
 
+	@Override
+	public void mouseMoved(MouseEvent arg0){
+		mouseCoordinateX = arg0.getX();
+		mouseCoordinateY = arg0.getY();
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent arg0){
+		Position position = level.getAdjacentStartPosition(arg0.getX() +
+				Tile.size / 2, arg0.getY() + Tile.size / 2);
+		if(position != null){
+			level.selectTile(position.getX() + Tile.size / 2,
+					position.getY() + Tile.size / 2);
+			currentSelectedStartPosition = position;
+		}else{
+			if(currentSelectedStartPosition != null){
+				level.deselectTile(currentSelectedStartPosition.toArea());
+				currentSelectedStartPosition = null;
+			}
+		}
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0){
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0){
+		/*mouseCoordinateX = 100;
+		mouseCoordinateY = 100;*/
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0){
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0){
+	}
 }

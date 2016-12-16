@@ -1,6 +1,7 @@
 package utilities;
 
 import java.awt.Color;
+import java.util.Random;
 
 /**
  * ColorCreator.
@@ -16,6 +17,10 @@ public class ColorCreator{
 	public static Color generateColorFromHue(int hue){
 		float hue_rad = (float)(hue) / (float)(360);
 		return Color.getHSBColor(hue_rad, (float)SATURATION, (float)VALUE);
+	}
+	
+	public static int getRandomHue(){
+		return new Random().nextInt(361);
 	}
 	
 	public static int getHueDiff(int hue1, int hue2){

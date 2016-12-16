@@ -4,7 +4,13 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-public class JUnitActionTimer {
+/**
+ * JUnitActionTimer.
+ * 
+ * @author Alexander Beliaev
+ * @version 1.0
+ */
+public class JUnitActionTimer{
 
 	class TestClass implements TimerListener{
 		

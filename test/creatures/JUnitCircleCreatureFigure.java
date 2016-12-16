@@ -9,6 +9,12 @@ import start.Figures;
 import start.Position;
 import utilities.ActionTimer;
 
+/**
+ * JUnitCircleCreatureFigure.
+ * 
+ * @author Alexander Beliaev
+ * @version 1.0
+ */
 public class JUnitCircleCreatureFigure{
 	
 	@Test
@@ -16,7 +22,7 @@ public class JUnitCircleCreatureFigure{
 		CreatureFigureTemplate template = new CreatureFigureTemplate(Figures.CIRCLE, 100,
 				1, 100, CreatureFigure.Orientation.RANDOM, null);
 		CircleCreatureFigure fig = (CircleCreatureFigure)template.createNewCreature(
-				new Position(250,250));
+				new Position(250,250), null);
 		
 		assertTrue(fig.getHue() == 100);
 		assertTrue(fig.isAlive() == true);
@@ -61,7 +67,7 @@ public class JUnitCircleCreatureFigure{
 		
 		fig.setActionTimer(timer);
 		
-		fig.addOnSpawnTimedAction(1000, () -> {
+		fig.addOnSpawnTimedAction((long)1000, () -> {
 			fig.setDamageTaken(25);
 		});
 		
