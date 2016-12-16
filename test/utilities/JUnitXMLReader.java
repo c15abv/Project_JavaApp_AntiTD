@@ -85,7 +85,7 @@ public class JUnitXMLReader {
 
         gameLevels = levelXMLReader.toLevel("XML/Levels.xml");
 
-        System.out.println("gameLevel.getLevelMap().size()" + 
+        System.out.print("gameLevel.getLevelMap().size()" + 
         gameLevels.get(0).getLevelMap().size());
 
         assertTrue(gameLevels.get(0).getLevelMap().size() == 64);
@@ -98,7 +98,7 @@ public class JUnitXMLReader {
         
         ArrayList<String> lvlNames = levelXMLReader.getLvlNames();
         
-        System.out.println("JUnit lvlName:" + lvlNames.get(1));
+        System.out.print("JUnit lvlName:" + lvlNames.get(1));
         
         assertTrue(lvlNames.get(1).equals("testlevel2"));
 
@@ -113,9 +113,9 @@ public class JUnitXMLReader {
 
         gameLevel = levelXMLReader.getLevelByName("testlevel");
         
-        System.out.println("Level name junit:" + gameLevel.getLevelName());
+        System.out.print("Level name junit:" + gameLevel.getLevelName());
 
-        System.out.println("Junit: map size: gameLevel.getLevelMap().size()"
+        System.out.print("Junit: map size: gameLevel.getLevelMap().size()"
                 + gameLevel.getLevelMap().size());
         assertTrue(gameLevel.getLevelMap().size() == 64);
 
