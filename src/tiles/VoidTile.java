@@ -1,19 +1,19 @@
 package tiles;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RadialGradientPaint;
 import java.awt.geom.Point2D;
 
 import start.Position;
-import utilities.CustomShapes;
 
 public class VoidTile extends BuildableTile{
 
-	private Color[] colors1 = {getColor1(), getColor3()};
-	private Color[] colors2 = {getColor2(), getColor3()};
+	private Color[] colors1 = {getColor1(), getColor2()};
 	private float[] distance = {0.0f, 1.0f};
-	private RadialGradientPaint paint1, paint2;
+	private RadialGradientPaint paint1;
+	private Font font;
 	
 	public VoidTile(Position position) {
 		super(position);
@@ -21,10 +21,7 @@ public class VoidTile extends BuildableTile{
 				new Point2D.Float(getPosition().getX(),
 						getPosition().getY()), Tile.size / 2,
 		        		 distance, colors1);
-		paint2 = new RadialGradientPaint(
-				new Point2D.Float(getPosition().getX(),
-						getPosition().getY()), Tile.size / 2,
-		        		 distance, colors2);
+		font = new Font("Monospaced", Font.PLAIN, 20);
 	}
 	
 	@Override
@@ -32,15 +29,11 @@ public class VoidTile extends BuildableTile{
 	
 	@Override
 	public void render(Graphics2D g2d) {
-		//g2d.setColor();
 		if(!this.occupied()){
 			g2d.setPaint(paint1);
-			g2d.fill(CustomShapes.createStar(this.getPosition(),
-					Tile.size));
-			/*g2d.fillOval(this.getPosition().getX() - Tile.size/2,
-					this.getPosition().getY() - Tile.size/2,
-					Tile.size,
-					Tile.size);*/
+			g2d.setFont(font); 
+			g2d.drawString("X", this.getPosition().getX() - 5,
+					this.getPosition().getY() + 5);
 		}
 	}
 	
@@ -49,10 +42,6 @@ public class VoidTile extends BuildableTile{
 	}
 	
 	private static final Color getColor2(){
-		return new Color((float)220/255, (float)200/255, (float)120/255, 0.4f);
-	}
-	
-	private static final Color getColor3(){
 		return new Color((float)200/255, (float)200/255, (float)200/255, 0f);
 	}
 }
