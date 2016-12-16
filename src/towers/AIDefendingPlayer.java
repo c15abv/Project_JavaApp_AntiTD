@@ -27,7 +27,7 @@ import utilities.TimerListener;
  * @author Alexander Beliaev
  * @version 1.0
  */
-public class AIDefendingPlayer extends Thread implements TimerListener{
+public class AIDefendingPlayer implements TimerListener, Runnable{
 	
 	public static class Builder{
 		
