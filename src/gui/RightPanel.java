@@ -404,6 +404,7 @@ public class RightPanel extends JPanel {
 						index = troopSize;
 					}
 
+					
 					JRadioButton troopCreature = new TroopRadioButton(figure,
 							index);
 					troopsBtnGroup.add(troopCreature);
@@ -505,6 +506,7 @@ public class RightPanel extends JPanel {
 					(float) sizeSlider.getValue() / 100,
 					figure.isTeleportCreature, figure.getOrientation(),
 					figure.cost);
+			//System.out.println("Figure size = "+figure.getScale());
 
 			break;
 
@@ -819,7 +821,7 @@ public class RightPanel extends JPanel {
 			}
 		});
 
-		setStyle(sizeSlider, "CHOOSE SIZE");
+		setStyle(sizeSlider, "CHOOSE HP/SPEED");
 	}
 
 	/**

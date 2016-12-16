@@ -74,18 +74,18 @@ public class GameListener implements Runnable {
 				try {
 					lock.lock();
 					GameResult gameResult = game.getGameResult();
-					int score = 0; // ska räknas ut sen
+					int score = 1; // ska räknas ut sen
 					Time time = new Time(12345); // räknas också ut sen
-					
-					SwingUtilities.invokeLater(() -> view
-							.showResult(gameResult, score, time));
-					
+
+					SwingUtilities.invokeLater(
+							() -> view.showResult(gameResult, score, time));
+
 					isRunning = false;
 				} catch (InterruptedException e) {
 				} finally {
 					lock.unlock();
 				}
-				
+
 			}
 
 		}

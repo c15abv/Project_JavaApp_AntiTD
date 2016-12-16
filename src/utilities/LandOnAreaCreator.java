@@ -1,3 +1,10 @@
+/*
+ * LandOnAreaCreator
+ *
+ * Version 0.1
+ *
+ * Copyright grupp 9 antiTD apjava ht 16
+ */
 package utilities;
 
 import java.lang.reflect.Constructor;
@@ -23,7 +30,7 @@ public class LandOnAreaCreator {
 
     }
 
-    // main is used for testing
+   /* // main is used for testing
     public static void main(String[] args){
 
         LandOnAreaCreator landOnCreator = new LandOnAreaCreator();
@@ -31,19 +38,20 @@ public class LandOnAreaCreator {
         
         Class<?> classFromInput;
         PathTile pathTile = (PathTile) landOnCreator.
-                CreatePathTileDynamically("PathTile", position, ValidPath.getEnumByString("HORIZONTAL"));
+                CreatePathTileDynamically("PathTile", position,
+                        ValidPath.getEnumByString("HORIZONTAL"));
 
         if(pathTile instanceof PathTile ){
         }
-    }
+    }*/
 
     /**
+     * Used to create a tile of type PathTile dynamiccaly
      * @param aClassName
      * @param position
      * @return null if the tile couldnt be created, else it returns an object
      * of the tile that was specified in the parameter aClassName
-     * 
-     * 
+  
      */
     public Object CreatePathTileDynamically(String aClassName,
             Position position, ValidPath validPath){
@@ -56,8 +64,7 @@ public class LandOnAreaCreator {
             // Get the constructor, create an instance of it.                       
             Constructor<?> constructor = aClass.getConstructor
                     (Position.class, ValidPath.class);
-            System.out.println("passed 1!");
-
+            
             //check so that it implements interface
             if(checkIfclassImplEnterTileEffectandTile
                     (constructor.newInstance(position, validPath))){
@@ -98,6 +105,7 @@ public class LandOnAreaCreator {
     }
     
     /**
+     * Used to create a tile of type Tile dynamiccaly
      * @param aClassName
      * @param position
      * @return
@@ -111,11 +119,11 @@ public class LandOnAreaCreator {
             
             // Get the constructor, create an instance of it.                       
             Constructor<?> constructor = aClass.getConstructor
-                    (Position.class, ValidPath.class);
+                    (Position.class);
 
             //check so that it implements interface
-            if(checkIfclassImplEnterTileEffectandTile
-                    (constructor.newInstance(position))){
+            if(checkIfclassImplEnterTileEffectandTile(constructor
+                    .newInstance(position))){
                 
                 //return a tile casted to the class that
                 //was specified in the aClassName param
@@ -123,6 +131,7 @@ public class LandOnAreaCreator {
                 Object object = new Object();
                 object = constructor.newInstance(position);
                 
+                System.out.println("created object");                
                 return  object;
             }                
         } catch (SecurityException e) {
@@ -154,7 +163,8 @@ public class LandOnAreaCreator {
     }
 
     /**
-     * Should be changed to instanceOf pathTile
+     * Used to test if a class implements the EnterTileEffect LandOn and that it
+     * extends the Tile class
      * @param myClassObject
      * @return
      */
@@ -166,4 +176,6 @@ public class LandOnAreaCreator {
 
         return false;
     }
+    
+    
 }
