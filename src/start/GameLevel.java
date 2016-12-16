@@ -34,6 +34,8 @@ public class GameLevel{
 	private volatile Position currentStartPosition;
 	private int nrOfTemplates = DEFAULT_TEMPLATES;
 	private Lock lock;
+	private int nrOfXTiles = 0;
+	private int nrOfYTiles = 0;
 	
 	public GameLevel(){
 		this(DEFAULT_PLAYER_SCORE_GOAL, null, null, null);
@@ -43,7 +45,7 @@ public class GameLevel{
     public GameLevel(int attackingPlayerScoreGoal,
             HashMap<AreaPosition, Tile> levelMap, String levelName,
             int attackerCredit, int defenderCredit, int timeToFinish,
-            int nrOfTemplates){
+            int nrOfTemplates, int nrOfX, int nrOfY){
                 
         this.levelName  = levelName; 
         this.attackingPlayerScoreGoal = attackingPlayerScoreGoal;       
@@ -51,6 +53,8 @@ public class GameLevel{
         this.defenderCredit = defenderCredit;
         this.timeToFinish = timeToFinish;
         this.nrOfTemplates = nrOfTemplates;
+        this.nrOfXTiles = nrOfX;
+        this.nrOfYTiles = nrOfY;
 
         if((this.levelMap = levelMap) == null){
             this.levelMap = new HashMap<AreaPosition, Tile>();
@@ -96,6 +100,15 @@ public class GameLevel{
 		for(Map.Entry<AreaPosition, Tile> entry : levelMap.entrySet()){
 		    entry.getValue().render(g2d);
 		}
+	}
+	
+	public int getNrOfXTiles() {
+		return nrOfXTiles;
+	}
+
+
+	public int getNrOfYTiles() {
+		return nrOfYTiles;
 	}
 	
 	public synchronized int getTilesX(){
