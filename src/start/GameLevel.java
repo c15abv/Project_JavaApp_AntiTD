@@ -14,6 +14,9 @@ public class GameLevel{
 	public static final int DEFAULT_CREDIT = 100;
 	public static final int DEFAULT_TIME = 120;
 	
+	private static final int TILES_X = 32;
+	private static final int TILES_Y = 32;
+	
 	private HashMap<AreaPosition, Tile> levelMap;
 	private ArrayList<String> rules;
 	private ArrayList<String> landOnFiles;
@@ -24,6 +27,7 @@ public class GameLevel{
 	private int defenderCredit = DEFAULT_CREDIT;
 	private int timeToFinish = DEFAULT_TIME; 
 	private volatile int levelMapHash, tilesX, tilesY;
+	private volatile Position currentStartPosition;
 	
 	public GameLevel(){
 		this(DEFAULT_PLAYER_SCORE_GOAL, null, null, null);
@@ -47,8 +51,10 @@ public class GameLevel{
 			levelMapHash = this.levelMap.hashCode();
 		}
 		
-		tilesX = tilesY = 0;
+		tilesX = TILES_X;
+		tilesY = TILES_Y;
 		idCounter = new IdCounter(1);
+		currentStartPosition = null;
 	}
 	
 	
@@ -68,8 +74,16 @@ public class GameLevel{
 		return tilesX;
 	}
 	
+	public int getWidth(){
+		return tilesX * Tile.size;
+	}
+	
 	public synchronized int getTilesY(){
 		return tilesY;
+	}
+	
+	public int getHeight(){
+		return tilesY * Tile.size;
 	}
 	
 	public int getAttackerCredit() {
@@ -161,7 +175,8 @@ public class GameLevel{
 		Tile tile = levelMap.get(clickedAreaPosition);
 		
 		if(tile != null && tile.isStart()){
-			return tile.getPosition();
+			return new Position(tile.getPosition().getX(),
+					tile.getPosition().getY(), Tile.size);
 		}
 		
 		return null;
