@@ -248,7 +248,7 @@ public class LevelXMLReader{
                 }
             }
             GameLevels.add(new GameLevel(scoreGoal, levelMap, levelName,
-                    attackerCredit, defenderCredit, timeToFinish, nrOfTemplates));
+                    attackerCredit, defenderCredit, timeToFinish, nrOfTemplates, 0, 0));
         }
         
         //atm only the last level in the xml file is returned..
@@ -520,7 +520,9 @@ public class LevelXMLReader{
             //else{return null;}
         }
         return new GameLevel(scoreGoal, levelMap, levelName,
-                attackerCredit, defenderCredit, timeToFinish, nrOfTemplates);
+                attackerCredit, defenderCredit, timeToFinish,
+                nrOfTemplates, eElementsTiles.getLength(),
+                rowNodeList.getLength());
     }
 }
 
