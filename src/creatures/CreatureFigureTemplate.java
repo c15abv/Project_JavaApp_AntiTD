@@ -12,14 +12,14 @@ public class CreatureFigureTemplate{
 	
 	private Figures creatureType;
 	private int hue;
-	private float scale;
+	private double scale;
 	private int cost, creditOnGoal, creditOnKill;
 	private Orientation orientation;
 	private GameLevel level;
 	private long time;
 	private double speed;
 	
-	public CreatureFigureTemplate(Figures creatureType, int hue, float scale,
+	public CreatureFigureTemplate(Figures creatureType, int hue, double scale,
 			int cost, Orientation orientation, GameLevel level){
 		this.creatureType = creatureType;
 		this.hue = hue;
@@ -46,7 +46,7 @@ public class CreatureFigureTemplate{
 		return hue;
 	}
 
-	public float getScale() {
+	public double getScale() {
 		return scale;
 	}
 
