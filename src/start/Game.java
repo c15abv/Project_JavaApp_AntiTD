@@ -44,7 +44,7 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 	private Thread timerThread;
 	private volatile long gameTimeTimerId;
 	private int mouseCoordinateX, mouseCoordinateY,
-		cameraOffsetX, cameraOffsetY;
+		cameraOffsetX, cameraOffsetY, canvasWidth, canvasHeight;
 	private volatile Position currentSelectedStartPosition;
 	
 	private AttackingPlayer attacker;
@@ -60,32 +60,32 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 	private Graphics g;
 	private Graphics2D g2d;
 	
-	public Game(GameLevel level, AttackingPlayer attacker,
-			DefendingPlayer defender){
-		this(level, attacker, defender, new Lock());
+	public Game(GameLevel level){
+		this(level, SIZE_X, SIZE_Y);
 	}
 	
-	public Game(GameLevel level, AttackingPlayer attacker,
-			DefendingPlayer defender, Lock lock){
+	public Game(GameLevel level, int canvasWidth, int canvasHeight){
 		this.level = level;
-		this.attacker = attacker;
-		this.defender = defender;
-		this.lock = lock;
+		this.canvasWidth = canvasWidth;
+		this.canvasHeight = canvasHeight;
 		
-		aiTower = new AITowerFigures(this.attacker, this.defender);
-		this.defender.setTowersAI(aiTower);
-		
+		attacker = new AttackingPlayer(this.level);
+		defender = new DefendingPlayer(this.level);
+		lock = new Lock();
+		aiTower = new AITowerFigures(attacker, defender);
+		defender.setTowersAI(aiTower);
 		timer = new ActionTimer();
 		timerThread = new Thread(timer);
 		gameTimeTimerId = timer.getNewUniqueId();
 		
 		this.setIgnoreRepaint(true);
-		this.setSize(SIZE_X, SIZE_Y);
+		this.setSize(canvasWidth, canvasHeight);
 		
 		graphicsE = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		device = graphicsE.getDefaultScreenDevice();
 		configuration = device.getDefaultConfiguration();
-		bufferedImage = configuration.createCompatibleImage(SIZE_X, SIZE_Y);
+		bufferedImage = configuration.createCompatibleImage(canvasWidth,
+				canvasHeight);
 		
 		g = null;
 		g2d = null;
@@ -99,27 +99,57 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 	}
 	
 	public void update(){
-		try{
-			lock.lock();
-			updateCanvasCamera();
-			level.update();
-			if(gameState == GameState.RUNNING){
-				defender.update();
-				attacker.update();
-				if(attacker.getPoints() >= level.getAttackingPlayerScoreGoal()){
-					gameResult = GameResult.ATTACKER_WINNER;
-					endGame();
+		if(gameState != GameState.ENDED){
+			try{
+				lock.lock();
+				updateCanvasCamera();
+				level.update();
+				if(gameState == GameState.RUNNING){
+					defender.update();
+					attacker.update();
+					if(attacker.getPoints() >= level.getAttackingPlayerScoreGoal()){
+						gameResult = GameResult.ATTACKER_WINNER;
+						endGame();
+					}else if(attacker.getCredits() < attacker.getLowestCost() &&
+							attacker.noHorde()){
+						gameResult = GameResult.DEFENDER_WINNER;
+						endGame();
+					}
 				}
+			}catch(InterruptedException e){
+			}finally{
+				lock.unlock();
 			}
-		}catch(InterruptedException e){
-		}finally{
-			lock.unlock();
 		}
+	}
+	
+	public synchronized AttackingPlayer getAttacker(){
+		return attacker;
+	}
+	
+	public synchronized DefendingPlayer getDefender(){
+		return defender;
+	}
+	
+	private int widthDelta(){
+		if(level.getWidth() > canvasWidth){
+			return level.getWidth() - canvasWidth;
+		}
+		
+		return 0;
+	}
+	
+	private int heightDelta(){
+		if(level.getWidth() > canvasWidth){
+			return level.getHeight() - canvasHeight;
+		}
+		
+		return 0;
 	}
 	
 	private void updateCanvasCamera(){
 		if(mouseCoordinateX > SIZE_X - 40){
-			if(cameraOffsetX < level.getWidth())
+			if(cameraOffsetX < widthDelta())
 				cameraOffsetX += 4;
 		}else if(mouseCoordinateX < 40){
 			if(cameraOffsetX > 0)
@@ -127,7 +157,7 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 		}
 		
 		if(mouseCoordinateY > SIZE_Y - 40){
-			if(cameraOffsetX < level.getHeight())
+			if(cameraOffsetY < heightDelta())
 				cameraOffsetY += 4;
 		}else if(mouseCoordinateY < 40){
 			if(cameraOffsetY > 0)
@@ -136,42 +166,44 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 	}
 	
 	public void render(){
-		try{
-			lock.lock();
-			buffer = this.getBufferStrategy();
-			if(buffer == null){
-				this.createBufferStrategy(2);
-				return;
+		if(gameState != GameState.ENDED){
+			try{
+				lock.lock();
+				buffer = this.getBufferStrategy();
+				if(buffer == null){
+					this.createBufferStrategy(2);
+					return;
+				}
+				
+				g2d = bufferedImage.createGraphics();
+				g2d.setColor(Color.BLACK);
+				g2d.fillRect(-Tile.size, -Tile.size,
+						level.getWidth() + Tile.size, level.getHeight() + Tile.size);
+				
+				//render stuff
+				level.render(g2d);
+				defender.render(g2d);
+				attacker.render(g2d);
+				
+				g = buffer.getDrawGraphics();
+				g.drawImage(bufferedImage, -cameraOffsetX,
+						-cameraOffsetY, null);
+				
+				if(!buffer.contentsLost()){
+					buffer.show();
+				}
+				
+				if(g != null){
+					g.dispose();
+				}
+				
+				if(g2d != null){
+					g2d.dispose();
+				}
+			}catch(InterruptedException e){
+			}finally{
+				lock.unlock();
 			}
-			
-			g2d = bufferedImage.createGraphics();
-			g2d.setColor(Color.BLACK);
-			g2d.fillRect(-Tile.size, -Tile.size,
-					level.getWidth(), level.getHeight());
-			
-			//render stuff
-			level.render(g2d);
-			defender.render(g2d);
-			attacker.render(g2d);
-			
-			g = buffer.getDrawGraphics();
-			g.drawImage(bufferedImage, -cameraOffsetX,
-					-cameraOffsetY, null);
-			
-			if(!buffer.contentsLost()){
-				buffer.show();
-			}
-			
-			if(g != null){
-				g.dispose();
-			}
-			
-			if(g2d != null){
-				g2d.dispose();
-			}
-		}catch(InterruptedException e){
-		}finally{
-			lock.unlock();
 		}
 	}
 
@@ -201,13 +233,29 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 	
 	public synchronized void quitGame(){
 		timer.terminate();
+		timerThread.interrupt();
 		gameResult = GameResult.DEFENDER_WINNER;
 		gameState = GameState.ENDED;
 	}
 	
 	public synchronized void endGame(){
 		timer.terminate();
+		timerThread.interrupt();
 		gameState = GameState.ENDED;
+	}
+	
+	public synchronized void newLevel(GameLevel level){
+		if(gameState == GameState.ENDED){
+			this.level = level;
+			this.attacker = new AttackingPlayer(this.level);
+			this.defender = new DefendingPlayer(this.level);
+			this.aiTower = new AITowerFigures(attacker, defender);
+			this.defender.setTowersAI(aiTower);
+			this.timer = new ActionTimer();
+			this.timerThread = new Thread(timer);
+			this.gameTimeTimerId = timer.getNewUniqueId();
+			this.currentSelectedStartPosition = null;
+		}
 	}
 
 	public synchronized GameState getGameState(){

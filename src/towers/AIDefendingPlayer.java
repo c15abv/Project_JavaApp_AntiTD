@@ -34,7 +34,7 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 		public static final int DEFAULT_NUMBER_OF_TOWERS = 3;
 		public static final int DEFAULT_TOWER_MUTATION_RANGE = 1000;
 		public static final int DEFAULT_TOWER_MUTATION_CHANCE_PERCENT = 2;
-		public static final int DEFAULT_TOWER_BUILD_CHANCE_PERMILLION = 10000;
+		public static final int DEFAULT_TOWER_BUILD_CHANCE_PERMILLION = 500;
 		
 		private DefendingPlayer defender;
 		private AttackingPlayer attacker;
@@ -118,6 +118,8 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 		}
 	}
 	
+	public static final int MILLION = (int) 10e6;
+	
 	private volatile boolean isRunning = false;
 	
 	private DefendingPlayer defender;
@@ -136,8 +138,9 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 	private ArrayList<TowerBuildPlan> builtTowersList;
 	private Lock gameLock, lock;
 	private int towerBuildChance;
+	private volatile int successThisSession;
 	private ActionTimer timer;
-	private long timerId, gameStartedAt;
+	private long timerId;
 	private boolean enableLearnFromExperiences, canBuildTowers;
 	
 	private final double middleX, middleY;
@@ -158,11 +161,11 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 		this.towerBuildChance = builder.towerBuildChance;
 		this.enableLearnFromExperiences = builder.enableLearnFromExperiences;
 		
-		gameStartedAt = 0;
 		middleX = (double)level.getTilesX() / 2;
 		middleY = (double)level.getTilesY() / 2;
 		
 		canBuildTowers = true;
+		successThisSession = 0;
 		
 		towerTemplates = new ArrayList<TowerFigureTemplate>();
 		towerBuildPlanMap = new HashMap<Long, PlanDetails>();
@@ -181,57 +184,71 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 		ArrayList<Long> tempNotified = null;
 		ArrayList<Long> notifiedBuilt;
 		PlanDetails detailsTemp;
+		isRunning = true;
+		long timedelta = 0;
 		
-		while(isRunning){
+		while(isRunning && !Thread.interrupted()){
 			notifiedBuilt = null;
 			
 			if(canBuildTowers){
 				if(towerBuildPlanMap.isEmpty()){
-					if((random.nextInt((int)10e6) + 1) <= towerBuildChance){
+					if((random.nextInt(MILLION) + 1) <= towerBuildChance){
 						buildTower(null);
 					}
 				}else{
-					hordeSize = getHordeSize();
+					//hordeSize = getHordeSize();
 					tempNotified = getTempNotifiedList();
 					for(Long id : tempNotified){
 						if((detailsTemp = towerBuildPlanMap.get(id)) != null){
 							if(notifiedBuilt == null){
 								notifiedBuilt = new ArrayList<Long>();
 							}
+							System.out.println("I'm buildin', bitch!");
 							buildTower(detailsTemp);
 							notifiedBuilt.add(id);
 							plannedTowersLeft.remove(id);
 						}
 					}
 					
-					detailsTemp = towerBuildPlanMap.get(plannedTowersLeft.get(0));
-					if(detailsTemp != null && 
-							detailsTemp.getNumFigures() <= hordeSize){
-						if(notifiedBuilt == null){
-							notifiedBuilt = new ArrayList<Long>();
+					/*if(plannedTowersLeft.size() > 0){
+						detailsTemp = towerBuildPlanMap.get(plannedTowersLeft.get(0));
+						if(detailsTemp != null && 
+								detailsTemp.getNumFigures() <= hordeSize){
+							if(notifiedBuilt == null){
+								notifiedBuilt = new ArrayList<Long>();
+							}
+							timer.removeTimer(plannedTowersLeft.get(0));
+							buildTower(detailsTemp);
+							notifiedBuilt.add(plannedTowersLeft.get(0));
+							plannedTowersLeft.remove(0);
 						}
-						timer.removeTimer(plannedTowersLeft.get(0));
-						buildTower(detailsTemp);
-						notifiedBuilt.add(plannedTowersLeft.get(0));
-						plannedTowersLeft.remove(0);
-					}
+					}*/
 					
 					if(notifiedBuilt != null){
 						removeNotifiedBuilt(notifiedBuilt);
 					}
 				}
 			}
+			timedelta = System.currentTimeMillis();
+			while(System.currentTimeMillis() - timedelta < 1);
 		}
+		
+		successThisSession = finalizeAI();
 	}
 	
-	public void finalize(){
-		int success;
+	private int finalizeAI(){
+		int success = 0;
 		if(!isRunning){
 			success = calculateSuccess();
 			if(enableLearnFromExperiences){
-				
+				memory.saveMemory(success, builtTowersList);
 			}
 		}
+		return success;
+	}
+	
+	public synchronized int getSuccess(){
+		return successThisSession;
 	}
 	
 	public synchronized void terminate(){
@@ -251,10 +268,8 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 	
 	private int calculateSuccess(){
 		ArrayList<TowerFigure> towers = getTowers();
-		int creaturesInGoal = getPlayerScore();
 		int killedCreatures = 0;
 		int creaturesSpawned = getCreaturesSpawned();
-		int goalRequired = getAttackerGoalScoreRequired();
 		int success = 0;
 		double goalToRequired = 0;
 		double killedToSpawnedRatio = 0;
@@ -274,60 +289,18 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 			
 			if(killedToSpawnedRatio == 1){
 				success = 200;
+			}else if(timeLeft <= 0){
+				success = 100;
+				
+				success += Math.abs(killedToSpawnedRatio -
+						goalToRequired) * 100;
 			}else{
-				if(timeLeft <= 0){
-					success = 100;
-					
-					if(goalRequired > 0){
-						goalToRequired = (double)creaturesInGoal / 
-								goalRequired;
-					}
-					success += Math.abs(killedToSpawnedRatio -
-							goalToRequired) * 100;
-				}else{
-					if(killedToSpawnedRatio == 0){
-						success = 0;
-					}else{
-						if(timer.timeElapsed() + timeLeft > 0){
-							success = (int)(((double)timer.timeElapsed() / 
-								(timer.timeElapsed() + timeLeft)) * 100);
-						}else{
-							success = 0;
-						}
-					}
-				}
+				success += Math.abs(killedToSpawnedRatio -
+						goalToRequired) * 100;
 			}
 		}
 		
 		return success;
-	}
-	
-	private int getHordeSize(){
-		int hordeSize = 0;
-		
-		try{
-			gameLock.lock();
-			hordeSize = attacker.getHordeSize();
-		}catch(InterruptedException e){
-		}finally{
-			gameLock.unlock();
-		}
-		
-		return hordeSize;
-	}
-	
-	private int getAttackerGoalScoreRequired(){
-		int score = 0;
-		
-		try{
-			gameLock.lock();
-			score = level.getAttackingPlayerScoreGoal();
-		}catch(InterruptedException e){
-		}finally{
-			gameLock.unlock();
-		}
-		
-		return score;
 	}
 	
 	private int getCreaturesSpawned(){
@@ -344,30 +317,10 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 		return creatures;
 	}
 	
-	private int getPlayerScore(){
-		int score = 0;
-		
-		try{
-			gameLock.lock();
-			score = attacker.getPoints();
-		}catch(InterruptedException e){
-		}finally{
-			gameLock.unlock();
-		}
-		
-		return score;
-	}
-	
 	private HashMap<AreaPosition, Tile> getLevelMap(){
 		HashMap<AreaPosition, Tile> levelMap = null;
 		
-		try{
-			gameLock.lock();
-			levelMap = level.getLevelMap();
-		}catch(InterruptedException e){
-		}finally{
-			gameLock.unlock();
-		}
+		levelMap = level.getLevelMap();
 		
 		return levelMap;
 	}
@@ -386,17 +339,13 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 		return towers;
 	}
 	
-	private boolean addTower(TowerFigure tower){
+	private boolean addTower(TowerFigure tower, int cost){
 		boolean success = false;
 		
-		try{
-			gameLock.lock();
-			defender.addTowerFigure(tower);
-			success = true;
-		}catch(InterruptedException e){
-		}finally{
-			gameLock.unlock();
-		}
+		tower.setActionTimer(timer);
+		defender.addTowerFigure(tower);
+		defender.setCredits(defender.getCredits() - cost);
+		success = true;
 		
 		return success;
 	}
@@ -405,13 +354,7 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 		ArrayList<CreatureFigure> horde = null;
 		int hueTotal = 0;
 		
-		try{
-			gameLock.lock();
-			horde = attacker.getHorde();
-		}catch(InterruptedException e){
-		}finally{
-			gameLock.unlock();
-		}
+		horde = attacker.getHorde();
 		
 		if(horde != null){
 			for(CreatureFigure figure : horde){
@@ -419,7 +362,7 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 			}
 		}
 		
-		return hueTotal / horde.size();
+		return horde.size() != 0 ? hueTotal / horde.size() : 0;
 	}
 	
 	private Figures getMostCommonShapeAmongHorde(){
@@ -428,13 +371,7 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 		int circle, triangle, square;
 		circle = triangle = square = 0;
 		
-		try{
-			gameLock.lock();
-			horde = attacker.getHorde();
-		}catch(InterruptedException e){
-		}finally{
-			gameLock.unlock();
-		}
+		horde = attacker.getHorde();
 		
 		if(horde != null){
 			for(CreatureFigure figure : horde){
@@ -500,6 +437,7 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 		}else{
 			buildTowerFromScratch();
 		}
+		
 	}
 	
 	private HashMap<AreaPosition, VoidTile> getAvailableVoidTiles(
@@ -535,12 +473,17 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 				for(Map.Entry<AreaPosition, VoidTile> entry : voidMap.entrySet()){
 					if(randomTile == temp){
 						tile = entry.getValue();
-						if(addTower(template.createNewTower(
-								new Position(tile.getPosition().getX(),
-										tile.getPosition().getY(), Tile.size)))){
-							tile.setIsOccupied(true);
-							plan = generateBuildPlan(tile);
-							builtTowersList.add(plan);
+						if(defender.getCredits() >= template.getCost()){
+							if(addTower(template.createNewTower(
+									new Position(tile.getPosition().getX(),
+											tile.getPosition().getY(), Tile.size)),
+									template.getCost())){
+								tile.setIsOccupied(true);
+								plan = generateBuildPlan(tile);
+								builtTowersList.add(plan);
+								return;
+							}
+						}else{
 							return;
 						}
 					}
@@ -557,7 +500,7 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 		int tileX, tileY;
 		double relPositionVal;
 		long time = getCurrentGameTimeElapsed();
-		int hordeSize = getHordeSize();
+		int hordeSize = attacker.getHordeSize();
 		
 		tileX = tile.getPosition().getX() / Tile.size;
 		tileY = tile.getPosition().getY() / Tile.size;
@@ -592,17 +535,22 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 		if(levelMap != null){
 			voidMap = getAvailableVoidTiles(levelMap);
 			if(voidMap.size() > 0){
-				for(int x = -tileX; x < tileX; x++){
-					for(int y = -tileY; y < tileY; y++){
+				for(int x = -tileX / 2; x < tileX / 2; x++){
+					for(int y = -tileY / 2; y < tileY / 2; y++){
 						areaPosition = new AreaPosition((int)(x + middleX) * Tile.size,
 								(int)(y + middleY) * Tile.size, Tile.size, Tile.size);
-						if((tile = voidMap.get(areaPosition)) != null &&
-								addTower(template.createNewTower(
-										new Position(tile.getPosition().getX(),
-												tile.getPosition().getY(),
-												Tile.size)))){
-							tile.setIsOccupied(true);
-							builtTowersList.add(generateBuildPlan(tile));
+						if(defender.getCredits() >= template.getCost()){
+							if((tile = voidMap.get(areaPosition)) != null &&
+									addTower(template.createNewTower(
+											new Position(tile.getPosition().getX(),
+													tile.getPosition().getY(),
+													Tile.size)),
+											template.getCost())){
+								tile.setIsOccupied(true);
+								builtTowersList.add(generateBuildPlan(tile));
+								return;
+							}
+						}else{
 							return;
 						}
 					}
@@ -612,11 +560,16 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 				for(Map.Entry<AreaPosition, VoidTile> entry : voidMap.entrySet()){
 					if(randomTile == temp){
 						tile = entry.getValue();
-						if(addTower(template.createNewTower(
-								new Position(tile.getPosition().getX(),
-										tile.getPosition().getY(), Tile.size)))){
-							tile.setIsOccupied(true);
-							builtTowersList.add(generateBuildPlan(tile));
+						if(defender.getCredits() >= template.getCost()){
+							if(addTower(template.createNewTower(
+									new Position(tile.getPosition().getX(),
+											tile.getPosition().getY(), Tile.size))
+									, template.getCost())){
+								tile.setIsOccupied(true);
+								builtTowersList.add(generateBuildPlan(tile));
+								return;
+							}
+						}else{
 							return;
 						}
 					}
@@ -675,11 +628,11 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 				towerTemplates.add(new TowerFigureTemplate(
 						creatureTemplate.getCreatureType(),
 						creatureTemplate.getHue(), 
-						300, 200, 5, 10));
+						300, 200, 10, 10));
 			}else{
 				towerTemplates.add(new TowerFigureTemplate(
 						Figures.getRandom(), ColorCreator.getRandomHue(), 
-						300, 200, 5, 10));
+						300, 200, 10, 10));
 			}
 		}
 	}
@@ -692,6 +645,7 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 		for(TowerBuildPlan plan : towerBuildPlanList){
 			id = timer.getNewUniqueId();
 			time = plan.getTime();
+			System.out.print("time 1: " + time);
 			if(random.nextInt(100) + 1 <= towerMutationTimeChance){
 				time = (timeTemp = random.nextInt(2 * towerMutationTimeRange) + 
 						1) <= towerMutationTimeRange ? time + timeTemp : 
@@ -700,6 +654,7 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 			plannedTowersLeft.add(id);
 			towerBuildPlanMap.put(id, plan.getDetails());
 			timer.setTimer(id, this, time);
+			System.out.println("; time 2: " + time);
 		}
 	}
 }

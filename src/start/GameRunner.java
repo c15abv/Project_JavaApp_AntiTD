@@ -18,7 +18,7 @@ public class GameRunner implements Runnable{
 		long lastUpdateTime = System.nanoTime();
 		int loops;
 		
-		while(isRunning){
+		while(isRunning && !Thread.interrupted()){
 			loops = 0;
 			while(System.nanoTime() > lastUpdateTime && loops < FPS_SKIP){
 				game.update();
@@ -32,5 +32,4 @@ public class GameRunner implements Runnable{
 	public synchronized void terminate(){
 		isRunning = false;
 	}
-
 }

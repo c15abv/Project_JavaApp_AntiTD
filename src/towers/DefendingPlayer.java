@@ -17,8 +17,8 @@ public class DefendingPlayer extends Player{
 	private ArrayList<TowerFigure> currentDefence;
 	private AITowerFigures ai;
 	
-	public DefendingPlayer(int credits, GameLevel level){
-		super(credits, level);
+	public DefendingPlayer(GameLevel level){
+		super(level.getDefenderCredit(), level);
 		this.ai = null;
 		currentDefence = new ArrayList<TowerFigure>();
 	}

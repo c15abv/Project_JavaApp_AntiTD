@@ -10,15 +10,13 @@ public class AttackingPlayer extends Player{
 
 	private ArrayList<CreatureFigure> currentHorde;
 	private AICreatureFigures ai;
-	private int points;
-	private int creaturesBought;
+	private int points, creaturesBought, lowestCost;
 	
-	public AttackingPlayer(int credits, GameLevel level){
-		super(credits, level);
+	public AttackingPlayer(GameLevel level){
+		super(level.getAttackerCredit(), level);
 		currentHorde = new ArrayList<CreatureFigure>();
-		points = 0;
 		ai = new AICreatureFigures(this);
-		creaturesBought = 0;
+		points = creaturesBought = lowestCost = 0;
 	}
 
 	@Override
@@ -66,6 +64,18 @@ public class AttackingPlayer extends Player{
 	
 	public int getCreaturesBought(){
 		return creaturesBought;
+	}
+	
+	public void setLowestCost(int lowestCost){
+		this.lowestCost = lowestCost;
+	}
+	
+	public int getLowestCost(){
+		return lowestCost;
+	}
+	
+	public boolean noHorde(){
+		return getHordeSize() == 0;
 	}
 
 }

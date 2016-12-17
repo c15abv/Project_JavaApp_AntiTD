@@ -23,8 +23,10 @@ public class SquareCreatureFigure extends CreatureFigure{
 	@Override
 	public void render(Graphics2D g2d){
 		g2d.setColor(getColor());
-		g2d.fillRect((int)(getPosition().getX()),
-				(int)(getPosition().getY()),
+		g2d.fillRect((int)(getPosition().getX() -
+				(getScale() * CreatureFigure.BASE_SIZE) / 2),
+				(int)(getPosition().getY() -
+				(getScale() * CreatureFigure.BASE_SIZE) / 2),
 				(int)(getScale() * CreatureFigure.BASE_SIZE),
 				(int)(getScale() * CreatureFigure.BASE_SIZE));
 	}
