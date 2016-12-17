@@ -215,7 +215,7 @@ public class LevelXMLReader{
                                 else if(tileType.equals("V")){
 
                                     levelMap.put(areaPosition,
-                                            new WallTile(position, tileType));
+                                            new VoidTile(position));
                                 }
                             }
                             else if(tileType.equals("P")||
@@ -462,7 +462,7 @@ public class LevelXMLReader{
                         if(tileType.equals("W")){
 
                             levelMap.put(areaPosition,
-                                    new VoidTile(position));
+                                    new WallTile(position));
                        //     System.out.print(tileType);
                         }
                         else if(tileType.equals("V")){

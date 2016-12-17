@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import tiles.StartTile;
 import tiles.Tile;
 import utilities.IdCounter;
-import utilities.Lock;
 
 public class GameLevel{
 
@@ -23,6 +23,7 @@ public class GameLevel{
 	private HashMap<AreaPosition, Tile> levelMap;
 	private ArrayList<String> rules;
 	private ArrayList<String> landOnFiles;
+	private ArrayList<StartTile> startPositions;
 	private IdCounter idCounter;
 	
 	private String levelName = DEFAULT_MAP_NAME;
@@ -31,17 +32,12 @@ public class GameLevel{
 	private int defenderCredit = DEFAULT_CREDIT;
 	private int timeToFinish = DEFAULT_TIME; 
 	private volatile int levelMapHash, tilesX, tilesY;
-	private volatile Position currentStartPosition;
 	private int nrOfTemplates = DEFAULT_TEMPLATES;
-	private Lock lock;
-	private int nrOfXTiles = 0;
-	private int nrOfYTiles = 0;
 	
 	public GameLevel(){
 		this(DEFAULT_PLAYER_SCORE_GOAL, null, null, null);
 	}
 	
-
     public GameLevel(int attackingPlayerScoreGoal,
             HashMap<AreaPosition, Tile> levelMap, String levelName,
             int attackerCredit, int defenderCredit, int timeToFinish,
@@ -53,17 +49,20 @@ public class GameLevel{
         this.defenderCredit = defenderCredit;
         this.timeToFinish = timeToFinish;
         this.nrOfTemplates = nrOfTemplates;
-        this.nrOfXTiles = nrOfX;
-        this.nrOfYTiles = nrOfY;
-
+        this.tilesX = nrOfX;
+        this.tilesY = nrOfY;
+        
         if((this.levelMap = levelMap) == null){
             this.levelMap = new HashMap<AreaPosition, Tile>();
         }
         
-        idCounter = new IdCounter();
-        lock = new Lock();
+        this.levelMapHash = this.levelMap.hashCode();
+        startPositions = new ArrayList<StartTile>();
+        
+        findStartTiles();
+        
+        idCounter = new IdCounter(1);
     }
-
 	
 	public GameLevel(int attackingPlayerScoreGoal, ArrayList<String> rules,
 			ArrayList<String> landOnFiles,
@@ -86,7 +85,6 @@ public class GameLevel{
 		tilesX = TILES_X;
 		tilesY = TILES_Y;
 		idCounter = new IdCounter(1);
-		currentStartPosition = null;
 	}
 	
 	
@@ -100,15 +98,6 @@ public class GameLevel{
 		for(Map.Entry<AreaPosition, Tile> entry : levelMap.entrySet()){
 		    entry.getValue().render(g2d);
 		}
-	}
-	
-	public int getNrOfXTiles() {
-		return nrOfXTiles;
-	}
-
-
-	public int getNrOfYTiles() {
-		return nrOfYTiles;
 	}
 	
 	public synchronized int getTilesX(){
@@ -248,6 +237,18 @@ public class GameLevel{
 	
 	public String getLevelName() {
 		return levelName;
+	}
+	
+	public ArrayList<StartTile> getStartTiles(){
+		return new ArrayList<StartTile>(startPositions);
+	}
+	
+	private void findStartTiles(){
+		for(Map.Entry<AreaPosition, Tile> entry : levelMap.entrySet()){
+			if(entry.getValue().isStart()){
+				startPositions.add((StartTile)entry.getValue());
+			}
+		}
 	}
 		
 }

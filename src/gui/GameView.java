@@ -88,6 +88,7 @@ public class GameView implements View {
 		centerPanel = buildCenterPanel();
 		rightPanel = new RightPanel(viewModel);
 		JPanel lowerPanel = buildLowerPanel();
+		
 
 		frame.add(upperPanel, BorderLayout.NORTH);
 		frame.add(rightPanel, BorderLayout.EAST);
@@ -319,6 +320,7 @@ public class GameView implements View {
 
 			public void actionPerformed(ActionEvent arg0) {
 
+<<<<<<< HEAD
 				viewModel.initGame(view, 1);
 				
 				SwingUtilities.invokeLater(new Runnable() {
@@ -327,6 +329,13 @@ public class GameView implements View {
 						rightPanel.initUI();
 					}
 				});
+=======
+				viewModel.initGame(view);
+				rightPanel.resetGui();
+				rightPanel.initUI();
+				frame.pack();
+				viewModel.changeSizeOfGameCanvas(rightPanel.getWidth());
+>>>>>>> refs/remotes/origin/master
 
 			}
 
@@ -427,6 +436,7 @@ public class GameView implements View {
 				options[0]); // default button title
 
 		if (n == JOptionPane.YES_OPTION) {
+			viewModel.quitGame();
 			frame.dispose();
 		}
 	}
@@ -644,6 +654,11 @@ public class GameView implements View {
 	@Override
 	public void setCredits(int credit) {
 		rightPanel.setCreditTextField(credit);
+	}
+	
+	@Override
+	public JPanel getSidePanel(){
+		return rightPanel;
 	}
 
 }

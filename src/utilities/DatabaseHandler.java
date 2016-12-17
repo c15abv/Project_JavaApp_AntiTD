@@ -11,7 +11,7 @@ import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 /**
  * Class responsible for communicating with the database.
  * 
- * @author Karolina Jonzén and Alexander Ekström 
+ * @author Karolina Jonzï¿½n and Alexander Ekstrï¿½m 
  * @version 1.0
  */
 public class DatabaseHandler {
