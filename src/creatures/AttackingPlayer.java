@@ -6,12 +6,33 @@ import java.util.ArrayList;
 import start.GameLevel;
 import start.Player;
 
+/**
+ * The AttackingPlayer class holds the information
+ * regarding the attacking player's current horde, and
+ * the credits and points which have been spent and 
+ * earned during an ongoing game session.<br>
+ * <br>
+ * Since the AttackingPlayer class is responsible
+ * for the horde of creatures, it is also responsible
+ * for making the appropriate calls to update and 
+ * render them.
+ * 
+ * @author Alexander Beliaev
+ *
+ */
 public class AttackingPlayer extends Player{
 
 	private ArrayList<CreatureFigure> currentHorde;
 	private AICreatureFigures ai;
 	private int points, creaturesBought, lowestCost;
 	
+	/**
+	 * AttackingPlayer constructor.<br>
+	 * <br>
+	 * Creates an AttackingPlayer instance with the
+	 * specified level.
+	 * @param level the current level.
+	 */
 	public AttackingPlayer(GameLevel level){
 		super(level.getAttackerCredit(), level);
 		currentHorde = new ArrayList<CreatureFigure>();
@@ -19,6 +40,9 @@ public class AttackingPlayer extends Player{
 		points = creaturesBought = lowestCost = 0;
 	}
 
+	/* (non-Javadoc)
+	 * @see start.Player#update()
+	 */
 	@Override
 	public void update(){
 		CreatureFigure figure;
@@ -38,6 +62,9 @@ public class AttackingPlayer extends Player{
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see start.Player#render(java.awt.Graphics2D)
+	 */
 	@Override
 	public void render(Graphics2D g2d){
 		for(CreatureFigure figure : currentHorde){
@@ -45,10 +72,16 @@ public class AttackingPlayer extends Player{
 		}
 	}
 	
+	/**
+	 * Adds a new creature to
+	 * @param figure
+	 */
 	public void addCreatureFigure(CreatureFigure figure){
 		currentHorde.add(figure);
 		creaturesBought++;
 	}
+	
+	//Setters and getters
 	
 	public ArrayList<CreatureFigure> getHorde(){
 		return new ArrayList<CreatureFigure>(currentHorde);
