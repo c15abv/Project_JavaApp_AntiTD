@@ -39,7 +39,6 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 		private DefendingPlayer defender;
 		private AttackingPlayer attacker;
 		private GameLevel level;
-		private Game game;
 		private AIMemory memory;
 		private int numberOfTowers, towerMutationChance,
 			towerMutationRange, towerBuildChance;
@@ -54,7 +53,6 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 			this.defender = player;
 			this.attacker = attacker;
 			this.level = level;
-			this.game = game;
 			this.memory = memory;
 			this.knownTargets = new ArrayList<CreatureFigureTemplate>();
 			this.numberOfTowers = DEFAULT_NUMBER_OF_TOWERS;
@@ -125,7 +123,6 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 	private DefendingPlayer defender;
 	private AttackingPlayer attacker;
 	private GameLevel level;
-	private Game game;
 	private AIMemory memory;
 	private int numberOfTowers, towerMutationTimeChance,
 		towerMutationTimeRange;
@@ -149,7 +146,6 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 		this.defender = builder.defender;
 		this.attacker = builder.attacker;
 		this.level = builder.level;
-		this.game = builder.game;
 		this.memory = builder.memory;
 		this.numberOfTowers = builder.numberOfTowers;
 		this.knownTargets = builder.knownTargets;
@@ -180,57 +176,42 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 	@Override
 	public void run(){
 		Random random = new Random();
-		int hordeSize = 0;
 		ArrayList<Long> tempNotified = null;
 		ArrayList<Long> notifiedBuilt;
 		PlanDetails detailsTemp;
 		isRunning = true;
-		long timedelta = 0;
 		
 		while(isRunning && !Thread.interrupted()){
 			notifiedBuilt = null;
 			
 			if(canBuildTowers){
-				if(towerBuildPlanMap.isEmpty()){
-					if((random.nextInt(MILLION) + 1) <= towerBuildChance){
-						buildTower(null);
-					}
-				}else{
-					//hordeSize = getHordeSize();
+				if((random.nextInt(MILLION) + 1) <= towerBuildChance){
+					buildTower(null);
+				}
+				if(!towerBuildPlanMap.isEmpty()){
 					tempNotified = getTempNotifiedList();
 					for(Long id : tempNotified){
 						if((detailsTemp = towerBuildPlanMap.get(id)) != null){
 							if(notifiedBuilt == null){
 								notifiedBuilt = new ArrayList<Long>();
 							}
-							System.out.println("I'm buildin', bitch!");
+							System.out.println("building");
 							buildTower(detailsTemp);
 							notifiedBuilt.add(id);
 							plannedTowersLeft.remove(id);
 						}
 					}
 					
-					/*if(plannedTowersLeft.size() > 0){
-						detailsTemp = towerBuildPlanMap.get(plannedTowersLeft.get(0));
-						if(detailsTemp != null && 
-								detailsTemp.getNumFigures() <= hordeSize){
-							if(notifiedBuilt == null){
-								notifiedBuilt = new ArrayList<Long>();
-							}
-							timer.removeTimer(plannedTowersLeft.get(0));
-							buildTower(detailsTemp);
-							notifiedBuilt.add(plannedTowersLeft.get(0));
-							plannedTowersLeft.remove(0);
-						}
-					}*/
-					
 					if(notifiedBuilt != null){
 						removeNotifiedBuilt(notifiedBuilt);
 					}
 				}
 			}
-			timedelta = System.currentTimeMillis();
-			while(System.currentTimeMillis() - timedelta < 1);
+			try{
+				Thread.currentThread();
+				Thread.sleep(1);
+			}catch(InterruptedException e){
+			}
 		}
 		
 		successThisSession = finalizeAI();
@@ -260,6 +241,7 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 		try{
 			lock.lock();
 			notifiedList.add(id);
+			System.out.println("build now");
 		}catch(InterruptedException e){
 		}finally{
 			lock.unlock();
@@ -320,7 +302,13 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 	private HashMap<AreaPosition, Tile> getLevelMap(){
 		HashMap<AreaPosition, Tile> levelMap = null;
 		
-		levelMap = level.getLevelMap();
+		try{
+			gameLock.lock();
+			levelMap = level.getLevelMap();
+		}catch(InterruptedException e){
+		}finally{
+			gameLock.unlock();
+		}
 		
 		return levelMap;
 	}
@@ -343,18 +331,38 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 		boolean success = false;
 		
 		tower.setActionTimer(timer);
-		defender.addTowerFigure(tower);
-		defender.setCredits(defender.getCredits() - cost);
-		success = true;
+		try{
+			gameLock.lock();
+			defender.addTowerFigure(tower);
+			defender.setCredits(defender.getCredits() - cost);
+			success = true;
+		}catch(InterruptedException e){
+		}finally{
+			gameLock.unlock();
+		}
 		
 		return success;
+	}
+	
+	private ArrayList<CreatureFigure> getHorde(){
+		ArrayList<CreatureFigure> horde = null;
+		
+		try{
+			gameLock.lock();
+			horde = attacker.getHorde();
+		}catch(InterruptedException e){
+		}finally{
+			gameLock.unlock();
+		}
+		
+		return horde;
 	}
 	
 	private int getAverageHueAmongHorde(){
 		ArrayList<CreatureFigure> horde = null;
 		int hueTotal = 0;
 		
-		horde = attacker.getHorde();
+		horde = getHorde();
 		
 		if(horde != null){
 			for(CreatureFigure figure : horde){
@@ -371,7 +379,7 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 		int circle, triangle, square;
 		circle = triangle = square = 0;
 		
-		horde = attacker.getHorde();
+		horde = getHorde();
 		
 		if(horde != null){
 			for(CreatureFigure figure : horde){

@@ -162,9 +162,6 @@ public class AIMemory{
 		this.loadedSpecificMemory = loader.loadedSpecificMemory;
 		
 		loadedSpecificMemory += ";";
-		
-		if(mapValueUsed == 0)
-			mapValueUsed = mapValueSought;
 	}
 	
 	public ArrayList<TowerBuildPlan> getTowerBuildPlan(){
@@ -193,6 +190,8 @@ public class AIMemory{
 		String newString = "";
 		char[] array;
 		
+		System.out.println(success + " > " + loadedSuccessValue);
+		
 		if(success > loadedSuccessValue){
 			newSubString += "" + mapValueSought + ":" + success;
 			
@@ -204,15 +203,22 @@ public class AIMemory{
 			
 			newSubString += ";";
 			
-			if(loadedMemory != null && loadedSpecificMemory != null){
+			System.out.println("new memory: " + newSubString);
+			System.out.println(mapValueSought + " == " + mapValueUsed);
+			
+			if(loadedMemory != null && loadedSpecificMemory != null &&
+					mapValueSought == mapValueUsed){
+				System.out.println("replace");
 				newString = loadedSpecificMemory
 						.replaceAll("(?=[]\\[+&|!(){}^\"~*?:\\\\-])", "\\\\");
 				loadedMemory = loadedMemory.replaceAll(newString, newSubString);
 			}else if(loadedMemory != null){
+				System.out.println("append");
 				stringBuilder = new StringBuilder(loadedMemory);
 				stringBuilder.append(newSubString);
 				loadedMemory = stringBuilder.toString();
 			}else{
+				System.out.println("new");
 				loadedMemory = newSubString;
 			}
 			
@@ -221,6 +227,7 @@ public class AIMemory{
 			    out.print(loadedMemory);
 			    out.close();
 			}catch(FileNotFoundException e){
+				System.out.println("not found");
 			}
 		}
 	}

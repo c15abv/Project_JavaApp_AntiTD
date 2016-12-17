@@ -89,8 +89,14 @@ public class AITrainer{
 					index = random.nextInt(templates.size());
 					temp = templates.get(index);
 					if(attacker.getCredits() >= temp.getCost()){
-						attacker.addCreatureFigure(prepareCreature(getRandomStart(), temp));
-						attacker.setCredits(attacker.getCredits() - temp.getCost());
+						try{
+							lock.lock();
+							attacker.addCreatureFigure(prepareCreature(getRandomStart(), temp));
+							attacker.setCredits(attacker.getCredits() - temp.getCost());
+						}finally{
+							lock.unlock();
+						}
+						
 					}
 				}
 		}
@@ -186,6 +192,9 @@ public class AITrainer{
 					.enableLearnFromExperience()
 					.setGameTimer(game.getTimer(), game.getGameTimeTimerId())
 					.setGameLock(game.getLock())
+					.setTowerMutationTimeChance(5)
+					.setTowerMutationTimeRange(2000)
+					.setBuildTowerChance(250)
 					.build();
 			
 			aiAtk = new AITrainer().new VerySimpleAttackerAI(type,

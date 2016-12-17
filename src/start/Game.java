@@ -101,8 +101,8 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 	public void update(){
 		if(gameState != GameState.ENDED){
 			try{
-				lock.lock();
 				updateCanvasCamera();
+				lock.lock();
 				level.update();
 				if(gameState == GameState.RUNNING){
 					defender.update();
@@ -167,42 +167,42 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 	
 	public void render(){
 		if(gameState != GameState.ENDED){
+			buffer = this.getBufferStrategy();
+			if(buffer == null){
+				this.createBufferStrategy(2);
+				return;
+			}
+			
+			g2d = bufferedImage.createGraphics();
+			g2d.setColor(Color.BLACK);
+			g2d.fillRect(-Tile.size, -Tile.size,
+					level.getWidth() + Tile.size, level.getHeight() + Tile.size);
+				
 			try{
 				lock.lock();
-				buffer = this.getBufferStrategy();
-				if(buffer == null){
-					this.createBufferStrategy(2);
-					return;
-				}
-				
-				g2d = bufferedImage.createGraphics();
-				g2d.setColor(Color.BLACK);
-				g2d.fillRect(-Tile.size, -Tile.size,
-						level.getWidth() + Tile.size, level.getHeight() + Tile.size);
-				
 				//render stuff
 				level.render(g2d);
 				defender.render(g2d);
 				attacker.render(g2d);
-				
-				g = buffer.getDrawGraphics();
-				g.drawImage(bufferedImage, -cameraOffsetX,
-						-cameraOffsetY, null);
-				
-				if(!buffer.contentsLost()){
-					buffer.show();
-				}
-				
-				if(g != null){
-					g.dispose();
-				}
-				
-				if(g2d != null){
-					g2d.dispose();
-				}
 			}catch(InterruptedException e){
 			}finally{
 				lock.unlock();
+			}
+				
+			g = buffer.getDrawGraphics();
+			g.drawImage(bufferedImage, -cameraOffsetX,
+					-cameraOffsetY, null);
+			
+			if(!buffer.contentsLost()){
+				buffer.show();
+			}
+			
+			if(g != null){
+				g.dispose();
+			}
+			
+			if(g2d != null){
+				g2d.dispose();
 			}
 		}
 	}
