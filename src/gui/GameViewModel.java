@@ -8,7 +8,7 @@ import utilities.HighScoreInfo;
 /**
  * Interface to implement for communication between gui and game logic.
  * 
- * @author Karolina Jonzén and Alexander Ekström
+ * @author Karolina Jonzï¿½n and Alexander Ekstrï¿½m
  * @version 1.0
  */
 public interface GameViewModel {
@@ -109,5 +109,8 @@ public interface GameViewModel {
 	 * @return
 	 */
 	int getCredits();
-
+	
+	void quitGame();
+	
+	void changeSizeOfGameCanvas(int width);
 }

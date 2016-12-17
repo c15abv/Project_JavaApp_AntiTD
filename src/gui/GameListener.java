@@ -4,21 +4,28 @@ import java.sql.Time;
 
 import javax.swing.SwingUtilities;
 
+import org.junit.runner.Runner;
+
 import creatures.AttackingPlayer;
 import start.Game;
 import start.Game.GameResult;
 import start.Game.GameState;
+import start.GameRunner;
+import towers.AIDefendingPlayer;
 import utilities.Lock;
 
 /**
  * Class that listens to changes in the game and passes information to gui.
  * 
- * @author Karolina Jonzén and Alexander Ekström
+ * @author Karolina Jonzï¿½n and Alexander Ekstrï¿½m
  * @version 1.0
  */
 public class GameListener implements Runnable {
 	private AttackingPlayer player;
 	private boolean isRunning = true;
+	private AIDefendingPlayer aiDef;
+	private GameRunner runner;
+	private Thread runnerThread, aiDefThread;
 	private Game game;
 	private View view;
 	private int currentPoints;
@@ -34,17 +41,35 @@ public class GameListener implements Runnable {
 	 * @param view
 	 * @param player
 	 */
-	public GameListener(Game game, View view, AttackingPlayer player) {
+	public GameListener(Game game, View view, AttackingPlayer player,
+			AIDefendingPlayer aiDef, GameRunner runner, Thread runnerThread,
+			Thread aiDefThread) {
 		this.game = game;
 		this.view = view;
 		this.player = player;
-
+		this.runner = runner;
+		this.aiDef = aiDef;
+		this.runnerThread = runnerThread;
+		this.aiDefThread = aiDefThread;
+	}
+	
+	private void joinThreads(){
+		runner.terminate();
+		aiDef.terminate();
+		runnerThread.interrupt();
+		aiDefThread.interrupt();
+		
+		try{
+			aiDefThread.join();
+			runnerThread.join();
+		}catch(InterruptedException e){
+		}
 	}
 
 	@Override
 	public void run() {
 
-		while (isRunning) {
+		while (isRunning && !Thread.interrupted()) {
 
 			try {
 				lock.lock();
@@ -70,22 +95,25 @@ public class GameListener implements Runnable {
 
 			if (game.getGameState() == GameState.ENDED) {
 				System.out.println("GAME ENDED");
-
-				try {
-					lock.lock();
-					GameResult gameResult = game.getGameResult();
-					int score = 1; // ska räknas ut sen
-					Time time = new Time(12345); // räknas också ut sen
-
-					SwingUtilities.invokeLater(
-							() -> view.showResult(gameResult, score, time));
-
-					isRunning = false;
-				} catch (InterruptedException e) {
-				} finally {
-					lock.unlock();
+				joinThreads();
+				
+				System.out.println("Threads joined");
+				if(game.careAboutResult()){
+					try {
+						lock.lock();
+						GameResult gameResult = game.getGameResult();
+						int score = 1; // ska rï¿½knas ut sen
+						Time time = new Time(12345); // rï¿½knas ocksï¿½ ut sen
+	
+						SwingUtilities.invokeLater(
+								() -> view.showResult(gameResult, score, time));
+	
+						isRunning = false;
+					} catch (InterruptedException e) {
+					} finally {
+						lock.unlock();
+					}
 				}
-
 			}
 
 		}

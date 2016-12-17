@@ -5,7 +5,7 @@ import java.sql.Time;
 /**
  * Class that holds high score information.
  * 
- * @author Karolina Jonzén and Alexander Ekström
+ * @author Karolina Jonzï¿½n and Alexander Ekstrï¿½m
  * @version 1.0
  *
  */

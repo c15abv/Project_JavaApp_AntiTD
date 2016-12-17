@@ -1,12 +1,16 @@
 package gui;
 
 import java.awt.Color;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.swing.border.EmptyBorder;
+
 import creatures.AttackingPlayer;
+import creatures.CreatureFigure;
 import creatures.CreatureFigureTemplate;
 import start.AreaPosition;
 import start.Game;
@@ -21,6 +25,8 @@ import tiles.Tile;
 import tiles.VoidTile;
 import tiles.PathTile.Direction;
 import tiles.PathTile.ValidPath;
+import towers.AIDefendingPlayer;
+import towers.AIMemory;
 import towers.AITowerFigures;
 import towers.DefendingPlayer;
 import utilities.ActionTimer;
@@ -32,12 +38,14 @@ import utilities.Lock;
 /**
  * Class responsible for communicating gui events to game logic.
  * 
- * @author Karolina Jonzén and Alexander Ekström
+ * @author Karolina Jonzï¿½n and Alexander Ekstrï¿½m
  * @version 1.0
  */
 public class GameViewAdapter implements GameViewModel {
 	private AttackingPlayer player1;
 	private DefendingPlayer player2;
+	private AIDefendingPlayer aiDef;
+	private AIMemory memory;
 	private AITowerFigures ai;
 	private Game game;
 	private GameRunner runner;
@@ -45,11 +53,11 @@ public class GameViewAdapter implements GameViewModel {
 	private GameLevel level = new GameLevel();
 	private LevelInfo levelInfo;
 	private ArrayList<CreatureFigureTemplate> troops = new ArrayList<>();
-	private Thread thread;
-	private Thread thread2;
+	private Thread thread, thread2, aiDefThread;
 	private DatabaseHandler databaseHandler = new DatabaseHandler();
-	private Lock lock = new Lock();
+	private Lock lock;
 	private View view;
+	private GameListener gameListener;
 
 	@Override
 	public void pauseGame() {
@@ -79,10 +87,33 @@ public class GameViewAdapter implements GameViewModel {
 		readLevelMap();
 		levelInfo = new LevelInfo(3, 10, 20, 500, level);
 
-		player1 = new AttackingPlayer(100, level);
-		player2 = new DefendingPlayer(100, level);
+		game = new Game(level);
+		lock = game.getLock();
+		
+		player1 = game.getAttacker();
+		player2 = game.getDefender(); 
 		ai = new AITowerFigures(player1, player2);
-		game = new Game(level, player1, player2);
+		
+		try{
+			memory = new AIMemory
+					.AIMemoryLoader(level.getInitialLevelMapHash()).load();
+		}catch(IOException e1){
+			e1.printStackTrace();
+		}
+		
+		
+		aiDef = new AIDefendingPlayer.Builder(player2,
+				player1, level, game, memory)
+				.enableLearnFromExperience()
+				.setGameTimer(game.getTimer(), game.getGameTimeTimerId())
+				.setGameLock(game.getLock())
+				.setTowerMutationTimeChance(5)
+				.setTowerMutationTimeRange(2000)
+				.setBuildTowerChance(500)
+				.build();
+		
+		aiDefThread = new Thread(aiDef);
+		
 		runner = new GameRunner(game);
 		timer = game.getTimer();
 
@@ -111,8 +142,6 @@ public class GameViewAdapter implements GameViewModel {
 			StartTile start = (StartTile)level.getLevelMap().get(startPosition.toArea());
 			CreatureFigureTemplate troop = troops.get(index);
 			
-			
-
 			player1.addCreatureFigure(troop
 					.createNewCreature(start.getPosition(), start.getStartingDirection()));
 
@@ -125,22 +154,19 @@ public class GameViewAdapter implements GameViewModel {
 
 	@Override
 	public void buyCreature(int index, long time) {
-
+		CreatureFigure figure;
 		try {
 			lock.lock();
 			Position startPosition = game.getSelectedStart();
 			StartTile start = (StartTile) level.getLevelMap()
 					.get(startPosition.toArea());
 			
-			
-			
 			CreatureFigureTemplate troop = troops.get(index);
-
-			troop.enableTeleporter(time);
-			
-
-			player1.addCreatureFigure(troop
-					.createNewCreature(start.getPosition(), start.getStartingDirection()));
+			troop.enableTeleporter((long)time);
+			troop.setActionTimer(timer);
+			figure = troop
+					.createNewCreature(start.getPosition(), start.getStartingDirection()); 
+			player1.addCreatureFigure(figure);
 
 		} catch (InterruptedException e1) {
 		} finally {
@@ -154,7 +180,7 @@ public class GameViewAdapter implements GameViewModel {
 	 */
 	private void readLevelMap() {
 
-		LevelXMLReader levelXMLReader = new LevelXMLReader("XML/Levels.xml");
+		LevelXMLReader levelXMLReader = new LevelXMLReader("XML/levels.xml");
 
 		ArrayList<String> lvlNames = levelXMLReader.getLvlNames();
 
@@ -291,12 +317,15 @@ public class GameViewAdapter implements GameViewModel {
 	public void startGame() {
 		try {
 			lock.lock();
+			
+			gameListener = new GameListener(game, view, player1,
+					aiDef, runner, thread, aiDefThread);
 			game.startGame();
 
-			GameListener gameListener = new GameListener(game, view, player1);
-
+			aiDefThread.start();
 			thread2 = new Thread(gameListener);
 			thread2.start();
+			
 		} catch (InterruptedException e) {
 		} finally {
 			lock.unlock();
@@ -371,11 +400,48 @@ public class GameViewAdapter implements GameViewModel {
 	 * Initiates the map displayed in the gui.
 	 */
 	private void initiateMap() {
+		
 		view.getLevelMapPanel().removeAll();
-		view.getLevelMapPanel().setBackground(Color.RED);
+		view.getLevelMapPanel().setBackground(Color.BLACK);
 		view.getLevelMapPanel().add(game);
 		view.getLevelMapPanel().revalidate();
 		view.getLevelMapPanel().repaint();
+		game.changeSize(view.getLevelMapPanel().getSize().width, view.getLevelMapPanel().getSize().height);
 	}
-
+	
+	@Override
+	public void changeSizeOfGameCanvas(int width){
+		game.changeSize(game.getWidth() - width,
+				game.getHeight());
+	}
+	
+	@Override
+	public void quitGame(){
+		try {
+			lock.lock();
+			game.quitGame();
+		} catch (InterruptedException e) {
+		} finally {
+			lock.unlock();
+		}
+		
+		joinThreads();
+	}
+	
+	private void joinThreads(){
+		runner.terminate();
+		aiDef.terminate();
+		gameListener.terminate();
+		aiDefThread.interrupt();
+		thread.interrupt();
+		thread2.interrupt();
+		
+		try{
+			aiDefThread.join();
+			thread.join();
+			thread2.join();
+		}catch(InterruptedException e){
+			e.printStackTrace();
+		}
+	}
 }

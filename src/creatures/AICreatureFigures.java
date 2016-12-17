@@ -2,7 +2,6 @@ package creatures;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
 
 import creatures.CreatureFigure.Orientation;
 import start.AreaPosition;
@@ -14,14 +13,49 @@ import tiles.PathTile.Direction;
 import tiles.PathTile.PositionConnection;
 import tiles.Tile;
 
+/**
+ * The AICreatureFigures class uses a depth-first search inspired algorithm to
+ * help an AttackingPlayer's current horde traverse a level given to the
+ * AttackingPlayer class. The algorithm takes the creature's orientation
+ * into account when choosing a certain path, hence the algorithm is
+ * strongly inspired by but not solely based on the depth-first search
+ * pattern. The path taken by each creature within the horde is remembered
+ * separately. If one creature finds it way to a goal any other creature
+ * within the horde will be unaware of it. A creature will also never be
+ * let to endlessly roam on a level without end (no goals).
+ * 
+ * @author Alexander Beliaev
+ * @version 1.0
+ */
 public class AICreatureFigures{
 
 	private AttackingPlayer attacker;
 	
+	/**
+	 * AICreatureFigures constructor.<br>
+	 * <br>
+	 * Creates an AICreatureFigures instance for the specified
+	 * AttackingPlayer.
+	 * @param attacker the holder class of the attacking player.
+	 */
 	public AICreatureFigures(AttackingPlayer attacker){
 		this.attacker = attacker;
 	}
 	
+	
+	/**
+	 * The intent of this method is to be used in conjunction and
+	 * in a simultaneous fashion with the game's other update
+	 * methods.<br>
+	 * <br>
+	 * Each call to the update method updates each creature
+	 * in the attacking player's horde by one logical step. What
+	 * a logical step may infer to depends on the given creature.
+	 * Some may move several positions on the x- and y-axis while
+	 * others none until several logical steps later. If the
+	 * AICreatureFigures class finds a creature to be out of place
+	 * it will inevitably remove it from the game.
+	 */
 	public void update(){
 		ArrayList<CreatureFigure> horde = attacker.getHorde();
 		GameLevel level = attacker.getLevel();
@@ -59,6 +93,11 @@ public class AICreatureFigures{
 		}
 	}
 	
+	/*
+	 * Sets a new position for the creature based on the 
+	 * direction of it as well as the available paths 
+	 * in the level.
+	 * */
 	private boolean setNewPos(Direction direction,
 			HashMap<Direction, Position> posMap,
 			CreatureFigure figure){
@@ -75,13 +114,13 @@ public class AICreatureFigures{
 		return false;
 	}
 	
-	private Orientation randomOrientation(){
-		int randomInt = 0;
-		return (randomInt = new Random().nextInt(3)) == 0 ? 
-				Orientation.FORWARD : randomInt == 1 ?
-						Orientation.LEFT : Orientation.RIGHT;
-	}
-	
+	/* 
+	 * Finds a new position for the creature based on the 
+	 * given quantity of valid positions.
+	 * 
+	 * The path taken up until this point is also stored
+	 * and remembered.
+	 * */
 	private boolean findNewPos(ConnectedPositions connected, CreatureFigure figure){
 		HashMap<Direction, Position> posMap = connected.getMap();
 		Position newPos = null;
@@ -107,7 +146,7 @@ public class AICreatureFigures{
 		}
 		
 		if(orient == Orientation.RANDOM){
-			orient = randomOrientation();
+			orient = Orientation.randomOrientation();
 		}
 		
 		for(int i = 0; i < 3; i++){
@@ -151,6 +190,10 @@ public class AICreatureFigures{
 		return setNewPos(memory.getBackTrackDirection(), posMap, figure);
 	}
 	
+	/* 
+	 * Translates a given facing direction in conjunction with an orientation
+	 * to the direction of the orientation.
+	 * */
 	private Direction getTranslatedDirection(Direction dirFacing, Orientation orientTo){
 		switch(dirFacing){
 		case EAST:

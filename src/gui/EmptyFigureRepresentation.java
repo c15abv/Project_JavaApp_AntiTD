@@ -13,7 +13,7 @@ import javax.swing.border.Border;
 /**
  * FigureRepresentation that represent figures that has not yet been set.
  * 
- * @author Karolina Jonzén
+ * @author Karolina Jonzï¿½n
  * @version 1.0
  */
 @SuppressWarnings("serial")

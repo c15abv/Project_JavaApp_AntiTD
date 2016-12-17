@@ -182,6 +182,8 @@ public class AITrainer{
 						ColorCreator.getRandomHue(),
 						random.nextDouble() + 0.5, 10, Orientation.RANDOM,
 						level);
+				temp.setActionTimer(game.getTimer());
+				temp.enableTeleporter((long)1000);
 				templatesList.add(temp);
 			}
 			
@@ -192,9 +194,9 @@ public class AITrainer{
 					.enableLearnFromExperience()
 					.setGameTimer(game.getTimer(), game.getGameTimeTimerId())
 					.setGameLock(game.getLock())
-					.setTowerMutationTimeChance(5)
+					.setTowerMutationTimeChance(25)
 					.setTowerMutationTimeRange(2000)
-					.setBuildTowerChance(250)
+					.setBuildTowerChance(500)
 					.build();
 			
 			aiAtk = new AITrainer().new VerySimpleAttackerAI(type,
