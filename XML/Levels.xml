@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!-- Author: Jan Nylén -->
 
 <!-- HORIZONTAL("HORIZONTAL"), VERTICAL("VERTICAL"),
 
-		HORIZONTAL_T_SOUTH("HORIZONTAL_T_SOUTH"),
-		
+		HORIZONTAL_T_SOUTH("HORIZONTAL_T_SOUTH"),		
 		HORIZONTAL_T_NORTH("HORIZONTAL_T_NORTH"),
 		
-		VERTICAL_T_EAST("VERTICAL_T_EAST"),
-		
+		VERTICAL_T_EAST("VERTICAL_T_EAST")		
 		VERTICAL_T_WEST("VERTICAL_T_WEST"),
 		
 		CROSSROAD("CROSSROAD"),
@@ -19,8 +18,9 @@
 		NORTH("NORTH"), WEST("WEST"),
 		EAST("EAST"), SOUTH("SOUTH");
 			-->
-<levels>	
-	<level name="testlevel">
+<levels xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="LevelsXMLSchema.xsd">	
+	<level nameID="testlevel">
 		<row Index="1">
 			<!-- <cell landOn = "haste">W</cell> -->
 			<tile>W</tile>
@@ -37,7 +37,7 @@
 			<tile>V</tile>
 			<tile>V</tile>
 			<tile>V</tile>
-			<tile landOn="GoalTile" direction="EAST">G</tile>
+			<tile landOn="GoalTile" direction="SOUTH">G</tile>
 			<tile>V</tile>
 			<tile>V</tile>
 			<tile>W</tile>
@@ -48,7 +48,7 @@
 			<tile direction="L_TURN_HORIZONTAL_SOUTH_TO_EAST">P</tile>
 			<tile direction="HORIZONTAL">P</tile>
 			<tile direction="HORIZONTAL_T_NORTH">P</tile>
-			<tile direction="L_TURN_HORIZONTAL_NORTH_TO_EAST">P</tile>
+			<tile direction="L_TURN_HORIZONTAL_SOUTH_TO_WEST">P</tile>
 			<tile>V</tile>
 			<tile>W</tile>
 		</row>
@@ -75,9 +75,9 @@
 		<row Index="6">
 			<tile>W</tile>
 			<tile>V</tile>
-			<tile direction="L_TURN_HORIZONTAL_SOUTH_TO_EAST">P</tile>
+			<tile direction="L_TURN_HORIZONTAL_NORTH_TO_EAST">P</tile>
 			<tile direction="HORIZONTAL">P</tile>
-			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="HORIZONTAL_T_SOUTH">P</tile>
 			<tile direction="L_TURN_HORIZONTAL_NORTH_TO_WEST">P</tile>
 			<tile>V</tile>
 			<tile>W</tile>
@@ -87,7 +87,7 @@
 			<tile>V</tile>
 			<tile>V</tile>
 			<tile>V</tile>
-			<tile landOn="StartTile" direction="WEST">S</tile>
+			<tile landOn="StartTile" direction="NORTH">S</tile>
 			<tile>V</tile>
 			<tile>V</tile>
 			<tile>W</tile>
@@ -111,7 +111,7 @@
 		</rules>
 	</level>
 	
-	<level name="testlevel2">
+	<level nameID="testlevel2">
 		<row Index="1">
 			<!-- <cell landOn = "haste">W</cell> -->
 			<tile>W</tile>
@@ -128,7 +128,7 @@
 			<tile>V</tile>
 			<tile>V</tile>
 			<tile>V</tile>
-			<tile landOn="GoalTile" direction="NORTH">G</tile>
+			<tile landOn="GoalTile" direction="SOUTH">G</tile>
 			<tile>V</tile>
 			<tile>V</tile>
 			<tile>W</tile>
@@ -153,6 +153,7 @@
 			<tile>V</tile>
 			<tile>W</tile>
 		</row>
+				
 		<row Index="5">
 			<tile>W</tile>
 			<tile>V</tile>
@@ -178,7 +179,7 @@
 			<tile>V</tile>
 			<tile>V</tile>
 			<tile>V</tile>
-			<tile landOn="StartTile" direction="SOUTH">S</tile>
+			<tile landOn="StartTile" direction="NORTH">S</tile>
 			<tile>V</tile>
 			<tile>V</tile>
 			<tile>W</tile>
@@ -194,11 +195,11 @@
 			<tile>W</tile>
 		</row>
 		<rules>
-			<attackerCredit>101</attackerCredit>
-			<defenderCredit>101</defenderCredit>
-			<timeToFinish>11</timeToFinish>
-			<nrOfTemplates>7</nrOfTemplates>
-			<attackingPlayerScoreGoal>8</attackingPlayerScoreGoal>
+			<attackerCredit>102</attackerCredit>
+			<defenderCredit>102</defenderCredit>
+			<timeToFinish>12</timeToFinish>
+			<nrOfTemplates>10</nrOfTemplates>
+			<attackingPlayerScoreGoal>5</attackingPlayerScoreGoal>
 		</rules>
 	</level>
 </levels>

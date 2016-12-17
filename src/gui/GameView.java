@@ -18,6 +18,7 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -27,6 +28,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
@@ -138,10 +140,10 @@ public class GameView implements View {
 		setStyle(timeTextField);
 
 		timeLabel.setLabelFor(timeTextField);
-		
+
 		timeContainer.add(timeLabel);
 		timeContainer.add(timeTextField);
-		
+
 		JPanel pointsContainer = new JPanel(new FlowLayout());
 		pointsContainer.setBackground(lowerPanelColor);
 
@@ -151,10 +153,10 @@ public class GameView implements View {
 		setStyle(pointsTextField);
 
 		pointsLabel.setLabelFor(pointsTextField);
-		
+
 		pointsContainer.add(pointsLabel);
 		pointsContainer.add(pointsTextField);
-		
+
 		GridBagLayout gridBag = new GridBagLayout();
 		GridBagConstraints c = new GridBagConstraints();
 		c.insets = new Insets(10, 10, 0, 0);
@@ -166,13 +168,13 @@ public class GameView implements View {
 		c.weighty = 1;
 		c.anchor = GridBagConstraints.WEST;
 		c.fill = GridBagConstraints.NONE;
-				
+
 		gridBag.setConstraints(timeContainer, c);
-		
+
 		c.gridy = 1;
-		
+
 		gridBag.setConstraints(pointsContainer, c);
-		
+
 		lowerPanel.setLayout(gridBag);
 		lowerPanel.add(timeContainer);
 		lowerPanel.add(pointsContainer);
@@ -259,7 +261,9 @@ public class GameView implements View {
 
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				showInfoBox("About text", "About");
+				showInfoBox(
+						"Game created by Alexander Beliaev, Jan Nylen, Alexander Ekstrom, Karolina Jonzen",
+						"About");
 
 			}
 		});
@@ -268,9 +272,22 @@ public class GameView implements View {
 
 		menuItem = new JMenuItem("Help");
 
+		JTextArea textArea = new JTextArea();
+		textArea.setText(
+				"This is an anti-tower defence game where you have a limited "
+				+ "amount of credit to create troops and try to reach goal. \n ");
+		
+		textArea.setLineWrap(true);  
+		textArea.setWrapStyleWord(true); 
+		textArea.setEditable(false);
+		JScrollPane scrollPane = new JScrollPane(textArea);
+
+		scrollPane.setPreferredSize( new Dimension( 500, 500 ) );
+		
+		
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				showInfoBox("Help text", "Help");
+				JOptionPane.showMessageDialog(null, scrollPane, "Help",JOptionPane.YES_NO_OPTION );
 			}
 		});
 
@@ -425,74 +442,91 @@ public class GameView implements View {
 		rightPanel.disableComponents();
 		String infoMessage = "";
 		String title = "";
+
 		switch (result) {
 		case ATTACKER_WINNER:
-			Object[] options = { "Save score", "Quit game" };
+			Object[] options = { "Next level", "Quit game" };
 			infoMessage = "YOU WON!";
 			title = "Game ended";
 			int n;
 
 			n = JOptionPane.showOptionDialog(frame, infoMessage, title,
 					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
-					null, options, // the titles of buttons
-					options[0]); // default button title
+					null, options, options[0]);
 
 			if (n == JOptionPane.YES_OPTION) {
-				// prompt the user to enter their name
-				String name = JOptionPane.showInputDialog(frame,
-						"Enter your name: ");
-				try {
-					viewModel.insertIntoDataBase(name, score, time,
-							viewModel.getLevelInfo().getLevel().getLevelName());
 
-					Object[] options2 = { "View high score table",
-							"Quit game" };
-					infoMessage = "Your result was saved.";
-					title = "Result saved";
+				// Load next level (save score)
 
-					n = JOptionPane.showOptionDialog(frame, infoMessage, title,
-							JOptionPane.YES_NO_OPTION,
-							JOptionPane.QUESTION_MESSAGE, null, options2, // the
-																			// titles
-																			// of
-																			// buttons
-							options2[0]); // default button title
-
-					if (n == JOptionPane.YES_OPTION) {
-						showHighScoreTable();
-					} else {
-						frame.dispose();
-					}
-
-				} catch (SQLException e) {
-					JOptionPane.showMessageDialog(frame,
-							"Could not insert data into database. Your result will not be saved.");
-				}
 			} else {
-				frame.dispose();
+				showOnQuitDialog(score, time);
 			}
 			break;
 
 		case DEFENDER_WINNER:
-			Object[] options3 = { "Try again", "Quit game" };
+			Object[] options4 = { "Try again", "Quit game" };
 			infoMessage = "YOU LOST!";
 			title = "Game ended";
 
 			n = JOptionPane.showOptionDialog(frame, infoMessage, title,
 					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
-					null, options3, // the titles of buttons
-					options3[0]); // default button title
+					null, options4, options4[0]);
 
 			if (n == JOptionPane.YES_NO_OPTION) {
 				// restart level
 			} else {
-				frame.dispose();
+				showOnQuitDialog(score, time);
 			}
 			break;
 		case NA:
 			// what does this mean?
 			break;
 
+		}
+
+	}
+
+	private void showOnQuitDialog(int score, Time time) {
+		Object[] options = { "Save score", "Don't save score" };
+		String infoMessage = "Do you want to save your score?";
+		String title = "Game ended";
+
+		int n = JOptionPane.showOptionDialog(frame, infoMessage, title,
+				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+				options, options[0]);
+
+		if (n == JOptionPane.YES_OPTION) {
+			// prompt the user to enter their name
+			String name = JOptionPane.showInputDialog(frame,
+					"Enter your name: ");
+			try {
+				viewModel.insertIntoDataBase(name, score, time,
+						viewModel.getLevelInfo().getLevel().getLevelName());
+
+				Object[] options2 = { "View high score table", "Quit game" };
+				infoMessage = "Your score was saved.";
+				title = "Result saved";
+
+				n = JOptionPane.showOptionDialog(frame, infoMessage, title,
+						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+						null, options2, options2[0]);
+
+				if (n == JOptionPane.YES_OPTION) {
+					showHighScoreTable();
+
+				} /*
+					 * else { frame.dispose(); }
+					 */
+
+			} catch (SQLException e) {
+				JOptionPane.showMessageDialog(frame,
+						"Could not insert data into database. Your result will not be saved.");
+				e.printStackTrace();
+			}
+		} else
+
+		{
+			frame.dispose();
 		}
 	}
 
@@ -596,7 +630,8 @@ public class GameView implements View {
 
 	@Override
 	public void setPoints(int points) {
-		pointsTextField.setText(String.valueOf(points) + "/"+viewModel.getScoreGoal());
+		pointsTextField.setText(
+				String.valueOf(points) + "/" + viewModel.getScoreGoal());
 		lowerPanel.revalidate();
 		lowerPanel.repaint();
 	}
