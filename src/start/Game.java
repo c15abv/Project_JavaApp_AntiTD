@@ -60,6 +60,8 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 	private Graphics g;
 	private Graphics2D g2d;
 	
+	private volatile boolean careAboutResult = true;
+	
 	public Game(GameLevel level){
 		this(level, SIZE_X, SIZE_Y);
 	}
@@ -96,6 +98,17 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 		
 		addMouseMotionListener(this);
 	    addMouseListener(this);
+	}
+	
+	public void changeSize(int width, int height){
+		this.setSize(width, height);
+		canvasWidth = width;
+		canvasHeight = height;
+		graphicsE = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		device = graphicsE.getDefaultScreenDevice();
+		configuration = device.getDefaultConfiguration();
+		bufferedImage = configuration.createCompatibleImage(canvasWidth,
+				canvasHeight);
 	}
 	
 	public void update(){
@@ -175,7 +188,7 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 			
 			g2d = bufferedImage.createGraphics();
 			g2d.setColor(Color.BLACK);
-			g2d.fillRect(-Tile.size, -Tile.size,
+			g2d.fillRect(0, 0,
 					level.getWidth() + Tile.size, level.getHeight() + Tile.size);
 				
 			try{
@@ -232,6 +245,7 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 	}
 	
 	public synchronized void quitGame(){
+		careAboutResult = false;
 		timer.terminate();
 		timerThread.interrupt();
 		gameResult = GameResult.DEFENDER_WINNER;
@@ -256,6 +270,10 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 			this.gameTimeTimerId = timer.getNewUniqueId();
 			this.currentSelectedStartPosition = null;
 		}
+	}
+	
+	public synchronized boolean careAboutResult(){
+		return careAboutResult;
 	}
 
 	public synchronized GameState getGameState(){
