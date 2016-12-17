@@ -44,7 +44,7 @@ import start.Figures;
  * Class that builds the right panel of the gui where the user can create and
  * buy troops.
  * 
- * @author Karolina Jonzén
+ * @author Karolina Jonzï¿½n
  * @version 1.0
  */
 @SuppressWarnings("serial")

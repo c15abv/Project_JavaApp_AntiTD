@@ -8,7 +8,7 @@ import java.awt.Dimension;
 /**
  * Radio button to represent square creatures.
  * 
- * @author Karolina Jonzén
+ * @author Karolina Jonzï¿½n
  * @version 1.0
  */
 @SuppressWarnings("serial")
