@@ -633,6 +633,7 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 		for(int i = 0; i < numberOfTowers; i++){
 			if(i < knownTargets.size()){
 				creatureTemplate = knownTargets.get(i);
+				System.out.println(creatureTemplate.getCreatureType());
 				towerTemplates.add(new TowerFigureTemplate(
 						creatureTemplate.getCreatureType(),
 						creatureTemplate.getHue(), 
@@ -659,6 +660,7 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 						1) <= towerMutationTimeRange ? time + timeTemp : 
 							Math.abs(time + (towerMutationTimeRange - timeTemp));
 			}
+			
 			plannedTowersLeft.add(id);
 			towerBuildPlanMap.put(id, plan.getDetails());
 			timer.setTimer(id, this, time);
