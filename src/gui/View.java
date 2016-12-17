@@ -9,7 +9,7 @@ import start.Game.GameResult;
 /**
  * Interface to implement for communication between gui and game logic.
  * 
- * @author Karolina Jonzén
+ * @author Karolina Jonzï¿½n
  * @version 1.0
  */
 public interface View {
@@ -46,4 +46,6 @@ public interface View {
 	 * @return
 	 */
 	JPanel getLevelMapPanel();
+	
+	JPanel getSidePanel();
 }

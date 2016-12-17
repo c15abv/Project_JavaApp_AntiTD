@@ -7,6 +7,7 @@ import start.Figures;
 import start.GameLevel;
 import start.Position;
 import tiles.PathTile.Direction;
+import utilities.ActionTimer;
 
 public class CreatureFigureTemplate{
 	
@@ -18,6 +19,7 @@ public class CreatureFigureTemplate{
 	private GameLevel level;
 	private long time;
 	private double speed;
+	private ActionTimer timer;
 	
 	public CreatureFigureTemplate(Figures creatureType, int hue, double scale,
 			int cost, Orientation orientation, GameLevel level){
@@ -28,10 +30,23 @@ public class CreatureFigureTemplate{
 		this.orientation = orientation;
 		this.level = level;
 		
+		timer = null;
 		creditOnGoal = creditOnKill = cost / 4;
+		
+		chooseRandomShape();
 		
 		time = -1;
 		speed = CreatureFigure.BASE_SPEED;
+	}
+	
+	private void chooseRandomShape(){
+		int randomInt = new Random().nextInt(3);
+		
+		if(creatureType != null &&
+				creatureType == Figures.STAR){
+			creatureType = randomInt == 0 ? Figures.CIRCLE :
+				randomInt == 1 ? Figures.TRIANGLE : Figures.SQUARE;
+		}
 	}
 	
 	public int getCost(){
@@ -69,6 +84,18 @@ public class CreatureFigureTemplate{
 	public void setCreditOnKill(int creditOnKill){
 		this.creditOnKill = creditOnKill;
 	}
+	
+	public void setActionTimer(ActionTimer timer){
+		this.timer = timer;
+	}
+	
+	public int getHitPoints(){
+		return (int)(CreatureFigure.BASE_HITPOINTS * scale);
+	}
+	
+	public double getSpeed(){
+		return (double) speed / scale;
+	}
 
 	public CreatureFigure createNewCreature(Position position,
 			Direction direction){
@@ -79,6 +106,9 @@ public class CreatureFigureTemplate{
 				(creatureType == Figures.TRIANGLE ? 
 						createNewTriangleCreature(position, speed) : 
 							createNewRandomCreature(position, speed)));
+		if(timer != null){
+			creature.setActionTimer(timer);
+		}
 		if(time != -1){
 			creature.enableTeleport(time);
 		}

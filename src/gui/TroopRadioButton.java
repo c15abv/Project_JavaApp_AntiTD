@@ -12,7 +12,7 @@ import java.awt.Graphics2D;
 /**
  * Radio button for troop types being displayed in the troop panel.
  * 
- * @author Karolina Jonzén
+ * @author Karolina Jonzï¿½n
  * @version 1.0
  */
 @SuppressWarnings("serial")

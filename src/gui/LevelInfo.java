@@ -5,7 +5,7 @@ import start.GameLevel;
 /**
  * Class that holds level information.
  * 
- * @author Karolina Jonzén
+ * @author Karolina Jonzï¿½n
  * @version 1.0
  */
 public class LevelInfo {

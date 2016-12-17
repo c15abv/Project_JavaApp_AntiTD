@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 import start.Figures;
 import start.GameLevel;
@@ -23,6 +24,12 @@ public abstract class CreatureFigure implements TimerListener{
 	
 	public enum Orientation{
 		RIGHT, LEFT, RANDOM, FORWARD;
+		
+		public static Orientation randomOrientation(){
+			int random = new Random().nextInt(3);
+			return random == 0 ? Orientation.RIGHT :
+				random == 1 ? Orientation.LEFT : Orientation.FORWARD;
+		}
 	}
 	
 	public static final int DEFAULT_CREDIT = 10;
@@ -335,17 +342,24 @@ public abstract class CreatureFigure implements TimerListener{
 		
 		if(tile.walkable()){
 			path = ((PathTile)tile).getValidPath();
-			teleportTile = new TeleportTile(tilePosition, path);
-			teleportTile.setTeleporterAt(getPosition());
-			if(id != 0){
-				teleportTile.setId(id);
+			if(tile.getClass().equals(PathTile.class)){
+				teleportTile = new TeleportTile(tilePosition, path);
+				teleportTile.setTeleporterAt(getPosition());
+				if(id != 0){
+					teleportTile.setId(id);
+				}
+				if(otherTeleportTile != null){
+					otherTeleportTile.setConnection(teleportTile);
+					teleportTile.setConnection(otherTeleportTile);
+				}
+				level.changeTile(figPos.toArea(), 
+						teleportTile);
+			}else if(otherTeleportTile == null){
+				onSpawnTimedActionMap.put(id, () -> {
+					performTeleportCreationAction(id, null);
+				});
+				actionTimer.setTimer(id, this, 1000);
 			}
-			if(otherTeleportTile != null){
-				otherTeleportTile.setConnection(teleportTile);
-				teleportTile.setConnection(otherTeleportTile);
-			}
-			level.changeTile(figPos.toArea(), 
-					teleportTile);
 			
 		}
 	}

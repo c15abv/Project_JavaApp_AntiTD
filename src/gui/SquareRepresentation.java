@@ -9,7 +9,7 @@ import start.Figures;
 /**
  * FigureRepresentation that represents square figures.
  * 
- * @author Karolina Jonzén
+ * @author Karolina Jonzï¿½n
  * @version 1.0
  */
 @SuppressWarnings("serial")
