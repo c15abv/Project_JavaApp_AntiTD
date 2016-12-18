@@ -10,7 +10,9 @@ import towers.AITowerFigures;
 import utilities.ColorCreator;
 
 /**
- * ProjectileFigure.
+ * ProjectileFigure holds the basic information
+ * regarding how projectiles adhere to the
+ * physics laws in the AntiTD game.
  * 
  * @author Alexander Beliaev
  * @version 1.0
@@ -27,6 +29,13 @@ public abstract class ProjectileFigure{
 	private Color color;
 	protected boolean killedTarget;
 	
+	/**
+	 * Creates a new projectile with the specified hue and
+	 * starting position.
+	 * 
+	 * @param hue the hue.
+	 * @param position the position.
+	 */
 	public ProjectileFigure(int hue, Position position){
 		this.hue = hue;
 		this.position = position;
@@ -36,6 +45,13 @@ public abstract class ProjectileFigure{
 		killedTarget = false;
 	}
 	
+	
+	/**
+	 * Updates the trajectory of the ProjectileFigure with
+	 * the given CreatureFigure as reference.
+	 * 
+	 * @param figure the target CreatureFigure.
+	 */
 	public void update(CreatureFigure figure){
 		int deltaX, deltaY;
 		double scaleX, scaleY, newX, newY;
@@ -62,6 +78,17 @@ public abstract class ProjectileFigure{
 		}
 	}
 	
+	
+	/**
+	 * Calculates the damage which a certain projectile would do
+	 * to a certain creature.
+	 * 
+	 * @param shape the shape of the projectile.
+	 * @param targetShape the shape of the target creature.
+	 * @param hue the hue of the projectile.
+	 * @param targetHue the hue of the target creature.
+	 * @return a double with the calculated damage output.
+	 */
 	public static double calculateDamageMultiplier(Figures shape, Figures targetShape, 
 			int hue, int targetHue){
 		double multiplier;
@@ -81,9 +108,26 @@ public abstract class ProjectileFigure{
 		return multiplier * hueDiffMultiplier;
 	}
 	
+	/**
+	 * Renders the projectile.
+	 * 
+	 * @param g2d the Graphics2D object.
+	 */
 	public abstract void render(Graphics2D g2d);
+	
+	
+	/**
+	 * Returns a Figures value describing the shape of the
+	 * projectile.
+	 * 
+	 * @return a Figures value describing the shape of the
+	 * projectile.
+	 */
 	public abstract Figures getShape();
 	
+	/*
+	 * Setters and getters.
+	 * */
 	public Position getPosition(){
 		return position;
 	}
@@ -108,6 +152,9 @@ public abstract class ProjectileFigure{
 		return killedTarget;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 92821;
@@ -116,6 +163,9 @@ public abstract class ProjectileFigure{
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
