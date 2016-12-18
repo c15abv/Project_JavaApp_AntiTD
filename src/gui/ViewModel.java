@@ -11,7 +11,7 @@ import utilities.HighScoreInfo;
  * @author Karolina Jonz�n and Alexander Ekstr�m
  * @version 1.0
  */
-public interface GameViewModel {
+public interface ViewModel {
 
 	/**
 	 * Initiates the game.
@@ -94,23 +94,11 @@ public interface GameViewModel {
 	void insertIntoDataBase(String name, int score, Time time, String level)
 			throws SQLException;
 
-	/**
-	 * Gets the hit points of a creature with the index given as parameter.
-	 * 
-	 * @param index
-	 * @return
-	 */
 	int getHitpoints(int index);
 
-	
-	/**
-	 * Gets the attacking player's current credit.
-	 * 
-	 * @return
-	 */
 	int getCredits();
 	
-<<<<<<< HEAD
+
 	/**
 	 * Restarts the game with next level.
 	 * 
@@ -118,9 +106,47 @@ public interface GameViewModel {
 	 */
 	void playNextLevel();
 
-=======
+	/**
+	 * Quits game.
+	 */
 	void quitGame();
 	
+	/**
+	 * Adapts game canvas size to screen size.
+	 * 
+	 * @param width
+	 */
 	void changeSizeOfGameCanvas(int width);
->>>>>>> refs/remotes/origin/master
+	
+	/**
+	 * Checks if game is running.
+	 * 
+	 */
+	boolean gameIsRunning();
+	
+	/**
+	 * Checks if game is initiated.
+	 * 
+	 */
+	boolean gameIsInitiated();
+
+	/**
+	 * Quit game that has not started.
+	 */
+	void quitBeforeStart();
+		
+	public int getCurrentLevel();
+	
+	public double getSpeed(int index);
+
+	//void storeResult();
+
+	long getTotalScore();
+
+	long getTotalTime();
+
+	void setTotalScore(long totalScore);
+
+	void setTotalTime(long totalTime);
+
 }

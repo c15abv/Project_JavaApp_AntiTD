@@ -1,23 +1,20 @@
 package gui;
 
 import java.sql.Time;
-
 import javax.swing.SwingUtilities;
-
-import org.junit.runner.Runner;
-
 import creatures.AttackingPlayer;
 import start.Game;
 import start.Game.GameResult;
 import start.Game.GameState;
 import start.GameRunner;
 import towers.AIDefendingPlayer;
+import utilities.ActionTimer;
 import utilities.Lock;
 
 /**
  * Class that listens to changes in the game and passes information to gui.
  * 
- * @author Karolina Jonz�n and Alexander Ekstr�m
+ * @author Karolina Jonzen and Alexander Ekstrom
  * @version 1.0
  */
 public class GameListener implements Runnable {
@@ -33,6 +30,9 @@ public class GameListener implements Runnable {
 	private int currentCredits;
 	private int previousCredits;
 	private Lock lock = new Lock();
+	private long score;
+	private long totalTime;
+	private ViewModel viewModel;
 
 	/**
 	 * Constructor that initiates the object based on the given parameters.
@@ -43,7 +43,7 @@ public class GameListener implements Runnable {
 	 */
 	public GameListener(Game game, View view, AttackingPlayer player,
 			AIDefendingPlayer aiDef, GameRunner runner, Thread runnerThread,
-			Thread aiDefThread) {
+			Thread aiDefThread, ViewModel viewModel) {
 		this.game = game;
 		this.view = view;
 		this.player = player;
@@ -51,18 +51,19 @@ public class GameListener implements Runnable {
 		this.aiDef = aiDef;
 		this.runnerThread = runnerThread;
 		this.aiDefThread = aiDefThread;
+		this.viewModel = viewModel;
 	}
-	
-	private void joinThreads(){
+
+	private void joinThreads() {
 		runner.terminate();
 		aiDef.terminate();
 		runnerThread.interrupt();
 		aiDefThread.interrupt();
-		
-		try{
+
+		try {
 			aiDefThread.join();
 			runnerThread.join();
-		}catch(InterruptedException e){
+		} catch (InterruptedException e) {
 		}
 	}
 
@@ -96,18 +97,24 @@ public class GameListener implements Runnable {
 			if (game.getGameState() == GameState.ENDED) {
 				System.out.println("GAME ENDED");
 				joinThreads();
-				
+
 				System.out.println("Threads joined");
-				if(game.careAboutResult()){
+				if (game.careAboutResult()) {
 					try {
 						lock.lock();
 						GameResult gameResult = game.getGameResult();
-						int score = 1; // ska r�knas ut sen
-						Time time = new Time(12345); // r�knas ocks� ut sen
-	
+						
+						score = calculateScore();
+						
+						long totalScore = viewModel.getTotalScore() + score;
+						viewModel.setTotalScore(totalScore);
+						
+						long totalTime = viewModel.getTotalTime() + game.getTimer().timeElapsed();
+						viewModel.setTotalTime(totalTime/1000);
+												
 						SwingUtilities.invokeLater(
-								() -> view.showResult(gameResult, score, time));
-	
+								() -> view.showResult(gameResult, (int)totalScore, getTime(totalTime/1000)));
+
 						isRunning = false;
 					} catch (InterruptedException e) {
 					} finally {
@@ -125,6 +132,31 @@ public class GameListener implements Runnable {
 	 */
 	public synchronized void terminate() {
 		isRunning = false;
+	}
+	
+	private int calculateScore()	{
+		ActionTimer gameTimer = game.getTimer();
+		long timeElapsed = gameTimer.timeElapsed();
+		long timeLeft = gameTimer.timeLeft(game.getGameTimeTimerId());
+		long totalTime = timeElapsed + timeLeft;
+				
+		double bonus = ((double)timeLeft/totalTime);
+		
+		int score = (int)(bonus * 1000);
+		
+		return score;
+	}
+	
+	private Time getTime(long time)	{
+		return new Time(time);
+	}
+	
+	public long getLevelScore()	{
+		return score;
+	}
+	
+	public long getLevelTime()	{
+		return totalTime;
 	}
 
 }

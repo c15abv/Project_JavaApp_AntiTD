@@ -250,5 +250,9 @@ public class GameLevel{
 			}
 		}
 	}
+	
+	public int getNrOfTemplates() {
+		return nrOfTemplates;
+	}
 		
 }
