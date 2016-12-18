@@ -8,8 +8,11 @@ import java.awt.geom.Point2D;
 
 import start.Position;
 
+/**
+ * @author Alexander Beliaev, Jan Nylén, Alexander Ekstrom
+ *  A void tile used representing areas where towers are allowed to be build.
+ */
 public class VoidTile extends BuildableTile{
-
 	
 	private Font font;
 	private Color color;

@@ -44,6 +44,20 @@ public class LandOnAreaCreator {
         if(pathTile instanceof PathTile ){
         }
     }*/
+    
+    public Class loadClassDynamically(String className){
+        ClassLoader classLoader = LandOnAreaCreator.class.getClassLoader();
+
+        try {
+            Class aClass = classLoader.loadClass(className);
+            System.out.println("aClass.getName() = " + aClass.getName());
+            
+            //return theClass;
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     /**
      * Used to create a tile of type PathTile dynamiccaly

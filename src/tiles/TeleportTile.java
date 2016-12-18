@@ -7,6 +7,9 @@ import creatures.CreatureFigure;
 import start.AreaPosition;
 import start.Position;
 
+/**
+ * @author Alexander Beliaev
+ */
 public class TeleportTile extends PathTile{
 
 	private static final int RENDER_COUNT_LIMIT = 99;

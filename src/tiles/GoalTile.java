@@ -5,6 +5,10 @@ import java.awt.Graphics2D;
 
 import start.Position;
 
+/**
+ * @author Alexander Beliaev, Jan Nylén, Alexander Ekstrom
+ *  A goalTile used for creating goals for units to reach
+ */
 public class GoalTile extends PathTile{
 	
 	private static final int RENDER_COUNT_LIMIT = 50;
