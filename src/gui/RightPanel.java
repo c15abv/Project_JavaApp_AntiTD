@@ -44,17 +44,16 @@ import start.Figures;
  * Class that builds the right panel of the gui where the user can create and
  * buy troops.
  * 
- * @author Karolina Jonzï¿½n
+ * @author Karolina Jonzén
  * @version 1.0
  */
 @SuppressWarnings("serial")
 public class RightPanel extends JPanel {
-	private List<FigureRepresentation> troop = new ArrayList<>();
 	private Color backgroundColor = UIManager.getColor("control");
 	private Font textFont = new Font("Arial", Font.BOLD, 30);
-	private int currentCredit = 0;
 	private JPanel modePanel;
 	private boolean isPlayMode = false;
+	private List<FigureRepresentation> troop = new ArrayList<>();
 	private ButtonGroup shapeBtnGroup = new ButtonGroup();
 	private ButtonGroup troopsBtnGroup = new ButtonGroup();
 	private JPanel creaturePreview;
@@ -78,7 +77,7 @@ public class RightPanel extends JPanel {
 	private JTextField speedTextField;
 	private JTextField teleporterTextField;
 	private JTextField directionTextField;
-	private GameViewModel gameViewModel;
+	private ViewModel viewModel;
 
 	/**
 	 * Constructor that sets the game view model to the given parameter and
@@ -86,9 +85,9 @@ public class RightPanel extends JPanel {
 	 * 
 	 * @param gameViewModel
 	 */
-	public RightPanel(GameViewModel gameViewModel) {
+	public RightPanel(ViewModel gameViewModel) {
 		super();
-		this.gameViewModel = gameViewModel;
+		this.viewModel = gameViewModel;
 	}
 
 	/**
@@ -173,62 +172,37 @@ public class RightPanel extends JPanel {
 	 */
 	private void initTroopPanel() {
 		troopPanel.setLayout(new BoxLayout(troopPanel, BoxLayout.PAGE_AXIS));
-
 		setStyle(troopPanel, "YOUR TROOP");
 
-		for (int i = 0; i < gameViewModel.getLevelInfo().getNrOfTroops(); i++) {
+		JPanel emptyCreature;
+		JPanel container;
+		Border border = BorderFactory.createDashedBorder(Color.DARK_GRAY);
 
-			JPanel emptyCreature = new EmptyFigureRepresentation();
-			Border border = BorderFactory.createDashedBorder(Color.DARK_GRAY);
-			JPanel container = new JPanel();
+		for (int i = 0; i < viewModel.getLevelInfo().getNrOfTroops(); i++) {
+			emptyCreature = new EmptyFigureRepresentation();
+			container = new JPanel();
 			container.setBorder(border);
-
 			container.add(emptyCreature);
-
 			troopPanel.add(container);
-
 		}
 
 		troopPanel.addContainerListener(new ContainerListener() {
 
 			@Override
 			public void componentAdded(ContainerEvent arg0) {
-				if (troop.size() == gameViewModel.getLevelInfo()
-						.getNrOfTroops()) {
+				if (troop.size() == viewModel.getLevelInfo().getNrOfTroops()) {
 					createBtn.setEnabled(false);
 					startGameBtn.setEnabled(true);
 				}
-
 			}
 
 			@Override
 			public void componentRemoved(ContainerEvent arg0) {
-
 			}
-
 		});
 
 		troopPanel.revalidate();
 		troopPanel.repaint();
-	}
-
-	/**
-	 * Fills the troop panel by making containers for the number of troops
-	 * according to the current level.
-	 */
-	protected void fillTroopPanel() {
-		for (int i = 0; i < gameViewModel.getLevelInfo().getNrOfTroops(); i++) {
-
-			JPanel emptyCreature = new EmptyFigureRepresentation();
-			Border border = BorderFactory.createDashedBorder(Color.DARK_GRAY);
-			JPanel container = new JPanel();
-			container.setBorder(border);
-
-			container.add(emptyCreature);
-
-			troopPanel.add(container);
-
-		}
 	}
 
 	/**
@@ -306,7 +280,7 @@ public class RightPanel extends JPanel {
 	 * @return
 	 */
 	private JPanel createOrientationPanel() {
-		JPanel directionPanel = new JPanel();
+		JPanel orientationPanel = new JPanel();
 
 		JRadioButton leftRadioBtn = new JRadioButton("Left");
 		leftRadioBtn.setActionCommand(Orientation.LEFT.name());
@@ -339,11 +313,11 @@ public class RightPanel extends JPanel {
 		leftRightBtnGroup.add(leftRadioBtn);
 		leftRightBtnGroup.add(rightRadioBtn);
 
-		directionPanel.add(leftRadioBtn);
-		directionPanel.add(rightRadioBtn);
-		setStyle(directionPanel, "CHOOSE DIRECTION");
+		orientationPanel.add(leftRadioBtn);
+		orientationPanel.add(rightRadioBtn);
+		setStyle(orientationPanel, "CHOOSE ORIENTATION");
 
-		return directionPanel;
+		return orientationPanel;
 	}
 
 	/**
@@ -364,7 +338,7 @@ public class RightPanel extends JPanel {
 
 		teleporter.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				int telePorterCost = gameViewModel.getLevelInfo()
+				int telePorterCost = viewModel.getLevelInfo()
 						.getTeleporterCost();
 				if (teleporter.isSelected()) {
 					updateCurrentCost(telePorterCost);
@@ -373,7 +347,7 @@ public class RightPanel extends JPanel {
 				} else {
 					updateCurrentCost(-telePorterCost);
 					figure.setIsTeleportCreature(false);
-					currentCreatureCost = gameViewModel.getLevelInfo()
+					currentCreatureCost = viewModel.getLevelInfo()
 							.getCreatureCost();
 				}
 				updateCostTextField();
@@ -404,9 +378,9 @@ public class RightPanel extends JPanel {
 						index = troopSize;
 					}
 
-					
 					JRadioButton troopCreature = new TroopRadioButton(figure,
 							index);
+
 					troopsBtnGroup.add(troopCreature);
 
 					ItemListener itemListener = new ItemListener() {
@@ -423,10 +397,12 @@ public class RightPanel extends JPanel {
 									FigureRepresentation figure = troop
 											.get(index);
 									updateCreaturePreview(figure);
-									hitPointsTextField.setText("HP: "
-											+ String.valueOf(gameViewModel
+									hitPointsTextField.setText(
+											"HP: " + String.valueOf(viewModel
 													.getHitpoints(index)));
-									speedTextField.setText("Speed: " + "?");
+									speedTextField
+											.setText("Speed: " + String.valueOf(
+													viewModel.getSpeed(index)));
 									directionTextField.setText("Orientation: "
 											+ figure.orientation.name());
 
@@ -444,25 +420,24 @@ public class RightPanel extends JPanel {
 									}
 									currentCreatureCost = figure.cost;
 									updateCostTextField();
-
 								}
-
 							}
 						}
 					};
 
 					troopCreature.addItemListener(itemListener);
 
-					JPanel container = new JPanel();
-					container.add(troopCreature);
-					container.setBorder(
-							BorderFactory.createDashedBorder(Color.DARK_GRAY));
-
 					if (figure.getOrientation() != null) {
 						troop.add(figure);
 
 						createNewCreature(figure.getCreatureType().name());
 
+						JPanel container = new JPanel();
+						container.setBorder(BorderFactory
+								.createDashedBorder(Color.DARK_GRAY));
+						container.add(troopCreature);
+
+						System.out.print(index);
 						troopPanel.remove(index);
 						troopPanel.add(container, index);
 						troopPanel.revalidate();
@@ -478,10 +453,19 @@ public class RightPanel extends JPanel {
 					message = "Select troop first.";
 					JOptionPane.showMessageDialog(container, message);
 				}
-
 			}
-
 		});
+	}
+
+	public void updateProperties(int index) {
+		hitPointsTextField.setText(
+				"HP: " + String.valueOf(viewModel
+						.getHitpoints(index)));
+		speedTextField
+				.setText("Speed: " + String.valueOf(
+						viewModel.getSpeed(index)));
+		directionTextField.setText("Orientation: "
+				+ figure.orientation.name());
 	}
 
 	/**
@@ -506,8 +490,6 @@ public class RightPanel extends JPanel {
 					(float) sizeSlider.getValue() / 100,
 					figure.isTeleportCreature, figure.getOrientation(),
 					figure.cost);
-			//System.out.println("Figure size = "+figure.getScale());
-
 			break;
 
 		case CIRCLE:
@@ -544,16 +526,32 @@ public class RightPanel extends JPanel {
 
 				try {
 					ButtonModel btn = troopsBtnGroup.getSelection();
+
 					int index = Integer.parseInt(btn.getActionCommand());
 
-					if (currentCreatureCost <= currentCredit) {
+					if (currentCreatureCost <= Integer
+							.parseInt(creditTextField.getText())) {
 						if (troop.get(index).isTeleportCreature) {
-							gameViewModel.buyCreature(index,
-									(long) teleporterTimeSlider.getValue());
+							try {
+								viewModel.buyCreature(index,
+										(long) teleporterTimeSlider.getValue());
+								updateCreditTextField();
+							} catch (NullPointerException e) {
+								message = "Select start position first.";
+								JOptionPane.showMessageDialog(container,
+										message);
+							}
 						} else {
-							gameViewModel.buyCreature(index);
+							try {
+								viewModel.buyCreature(index);
+								updateCreditTextField();
+							} catch (NullPointerException e) {
+								message = "Select start position first.";
+								JOptionPane.showMessageDialog(container,
+										message);
+							}
 						}
-						updateCreditTextField();
+
 					} else {
 						JOptionPane.showMessageDialog(null,
 								"You don't have enough credit to buy this creature.");
@@ -561,12 +559,9 @@ public class RightPanel extends JPanel {
 
 				} catch (NullPointerException e) {
 					message = "Select troop first.";
-					e.printStackTrace();
 					JOptionPane.showMessageDialog(container, message);
 				}
-
 			}
-
 		});
 	}
 
@@ -576,9 +571,8 @@ public class RightPanel extends JPanel {
 	public void updateCreditTextField() {
 		int oldCredit = Integer.parseInt(creditTextField.getText());
 		int newCredit = oldCredit - currentCreatureCost;
-		currentCredit = newCredit;
 
-		creditTextField.setText(String.valueOf(currentCredit));
+		creditTextField.setText(String.valueOf(newCredit));
 	}
 
 	/**
@@ -594,11 +588,14 @@ public class RightPanel extends JPanel {
 	private void createStartGameButton() {
 		startGameBtn = new JButton("Start game");
 		startGameBtn.setEnabled(false);
-		isPlayMode = true;
 
 		startGameBtn.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent ae) {
+				
+				
+				isPlayMode = true;
+
 				initPlayModePanel();
 				GridBagLayout layout = (GridBagLayout) settingsPanel
 						.getLayout();
@@ -606,12 +603,14 @@ public class RightPanel extends JPanel {
 				settingsPanel.remove(modePanel);
 				modePanel = playModePanel;
 
+				
+
+				for (FigureRepresentation figure : troop) {
+					viewModel.addTroop(figure);
+				}
+				
 				troopsBtnGroup.setSelected(((AbstractButton) troopsBtnGroup
 						.getElements().nextElement()).getModel(), true);
-				
-				for(FigureRepresentation figure:troop)	{
-					gameViewModel.addTroop(figure);
-				}
 
 				c.gridx = 0;
 				c.gridy = 0;
@@ -635,7 +634,7 @@ public class RightPanel extends JPanel {
 				settingsPanel.revalidate();
 				settingsPanel.repaint();
 
-				gameViewModel.startGame();
+				viewModel.startGame();
 			}
 
 		});
@@ -822,7 +821,7 @@ public class RightPanel extends JPanel {
 			}
 		});
 
-		setStyle(sizeSlider, "CHOOSE HP/SPEED");
+		setStyle(sizeSlider, "CHOOSE SIZE");
 	}
 
 	/**
@@ -844,7 +843,7 @@ public class RightPanel extends JPanel {
 	 * Creates the credit text field.
 	 */
 	private void createCreditTextField() {
-		creditTextField = new JTextField(String.valueOf(currentCredit));
+		creditTextField = new JTextField("");
 		creditTextField.setHorizontalAlignment(JTextField.CENTER);
 
 		creditTextField.setFont(textFont);
@@ -880,7 +879,7 @@ public class RightPanel extends JPanel {
 					updateCreaturePreview(figure);
 					if (!creatureSelected) {
 						updateCurrentCost(
-								gameViewModel.getLevelInfo().getCreatureCost());
+								viewModel.getLevelInfo().getCreatureCost());
 						updateCostTextField();
 						creatureSelected = true;
 
@@ -969,15 +968,14 @@ public class RightPanel extends JPanel {
 		comp.setBorder(titledBorder);
 
 	}
-	
+
 	/**
 	 * Sets the credit text field to its start value.
 	 * 
 	 * @param credit
 	 */
 	public void initCreditTextFieldValue() {
-		currentCredit = gameViewModel.getCredits();
-		creditTextField.setText(String.valueOf(currentCredit));
+		creditTextField.setText(String.valueOf(viewModel.getCredits()));
 	}
 
 	/**
@@ -985,7 +983,9 @@ public class RightPanel extends JPanel {
 	 */
 	public void resetGui() {
 		this.removeAll();
-		currentCreatureCost = 0;
+		troop = new ArrayList<>();
+		shapeBtnGroup = new ButtonGroup();
+		troopsBtnGroup = new ButtonGroup();
 	}
 
 	/**

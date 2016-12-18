@@ -56,7 +56,7 @@ public class GameView implements View {
 	private JPanel centerPanel;
 	private JPanel lowerPanel;
 	private JTable highScoreTable = new JTable();
-	private GameViewModel viewModel;
+	private ViewModel viewModel;
 	private RightPanel rightPanel;
 	private JTextField timeTextField;
 	private JTextField pointsTextField;
@@ -68,7 +68,7 @@ public class GameView implements View {
 	 * 
 	 * @param viewModel
 	 */
-	public GameView(GameViewModel viewModel) {
+	public GameView(ViewModel viewModel) {
 		this.viewModel = viewModel;
 
 		initUI();
@@ -88,7 +88,6 @@ public class GameView implements View {
 		centerPanel = buildCenterPanel();
 		rightPanel = new RightPanel(viewModel);
 		JPanel lowerPanel = buildLowerPanel();
-		
 
 		frame.add(upperPanel, BorderLayout.NORTH);
 		frame.add(rightPanel, BorderLayout.EAST);
@@ -263,7 +262,7 @@ public class GameView implements View {
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				showInfoBox(
-						"Game created by Alexander Beliaev, Jan Nylen, Alexander Ekstrom, Karolina Jonzen",
+						"Game created by Alexander Beliaev, Jan Nylen, Alexander Ekstrom and Karolina Jonzen.",
 						"About");
 
 			}
@@ -276,19 +275,20 @@ public class GameView implements View {
 		JTextArea textArea = new JTextArea();
 		textArea.setText(
 				"This is an anti-tower defence game where you have a limited "
-				+ "amount of credit to create troops and try to reach goal. \n ");
-		
-		textArea.setLineWrap(true);  
-		textArea.setWrapStyleWord(true); 
+						+ "amount of time and credit to create troops and try to reach goal "
+						+ "while the computer builds towers. \n ");
+
+		textArea.setLineWrap(true);
+		textArea.setWrapStyleWord(true);
 		textArea.setEditable(false);
 		JScrollPane scrollPane = new JScrollPane(textArea);
 
-		scrollPane.setPreferredSize( new Dimension( 500, 500 ) );
-		
-		
+		scrollPane.setPreferredSize(new Dimension(500, 500));
+
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null, scrollPane, "Help",JOptionPane.YES_NO_OPTION );
+				JOptionPane.showMessageDialog(null, scrollPane, "Help",
+						JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
 
@@ -320,12 +320,34 @@ public class GameView implements View {
 
 			public void actionPerformed(ActionEvent arg0) {
 
-				viewModel.initGame(view);
-				rightPanel.resetGui();
-				rightPanel.initUI();
-				frame.pack();
-				viewModel.changeSizeOfGameCanvas(rightPanel.getWidth());
+				if (viewModel.gameIsRunning()) {
+					String infoMessage = "Are you sure?";
+					String title = "New game";
+					Object[] options = { "New game", "Cancel" };
 
+					int n = JOptionPane.showOptionDialog(frame, infoMessage,
+							title, JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE, null, options,
+							options[0]);
+
+					if (n == JOptionPane.YES_OPTION) {
+
+						viewModel.quitGame();
+						resetGame(1);
+					}
+				} else {
+
+					if (viewModel.gameIsInitiated()) {
+						viewModel.quitBeforeStart();
+						resetGame(1);
+					} else {
+						viewModel.initGame(view, 0);
+						rightPanel.initUI();
+						frame.pack();
+						viewModel.changeSizeOfGameCanvas(rightPanel.getWidth());
+					}
+
+				}
 			}
 
 		});
@@ -378,6 +400,18 @@ public class GameView implements View {
 		return menuBar;
 	}
 
+	private void resetGame(int levelIndex) {
+		rightPanel.resetGui();
+
+		viewModel.initGame(this, levelIndex);
+
+		rightPanel.initUI();
+
+		pointsTextField.setText("0");
+
+		frame.pack();
+	}
+
 	/**
 	 * Shows the high score table.
 	 */
@@ -425,7 +459,11 @@ public class GameView implements View {
 				options[0]); // default button title
 
 		if (n == JOptionPane.YES_OPTION) {
-			viewModel.quitGame();
+			if (viewModel.gameIsRunning()) {
+				viewModel.quitGame();
+			} else {
+				viewModel.quitBeforeStart();
+			}
 			frame.dispose();
 		}
 	}
@@ -438,14 +476,15 @@ public class GameView implements View {
 	 */
 	@Override
 	public void showResult(GameResult result, int score, Time time) {
-		rightPanel.disableComponents();
+		// rightPanel.disableComponents();
 		String infoMessage = "";
 		String title = "";
-
+		GameView view = this;
 		switch (result) {
 		case ATTACKER_WINNER:
 			Object[] options = { "Next level", "Quit game" };
-			infoMessage = "YOU WON!";
+			infoMessage = "YOU WON! \n Your current score is "
+					+ (int) viewModel.getTotalScore();
 			title = "Game ended";
 			int n;
 
@@ -455,7 +494,7 @@ public class GameView implements View {
 
 			if (n == JOptionPane.YES_OPTION) {
 
-				// Load next level (save score)
+				resetGame(2);
 
 			} else {
 				showOnQuitDialog(score, time);
@@ -472,13 +511,12 @@ public class GameView implements View {
 					null, options4, options4[0]);
 
 			if (n == JOptionPane.YES_NO_OPTION) {
-				// restart level
+				resetGame(viewModel.getCurrentLevel());
 			} else {
 				showOnQuitDialog(score, time);
 			}
 			break;
 		case NA:
-			// what does this mean?
 			break;
 
 		}
@@ -495,12 +533,11 @@ public class GameView implements View {
 				options, options[0]);
 
 		if (n == JOptionPane.YES_OPTION) {
-			// prompt the user to enter their name
 			String name = JOptionPane.showInputDialog(frame,
 					"Enter your name: ");
 			try {
 				viewModel.insertIntoDataBase(name, score, time,
-						viewModel.getLevelInfo().getLevel().getLevelName());
+						viewModel.getLevelInfo().getLevelName());
 
 				Object[] options2 = { "View high score table", "Quit game" };
 				infoMessage = "Your score was saved.";
@@ -513,9 +550,7 @@ public class GameView implements View {
 				if (n == JOptionPane.YES_OPTION) {
 					showHighScoreTable();
 
-				} /*
-					 * else { frame.dispose(); }
-					 */
+				}
 
 			} catch (SQLException e) {
 				JOptionPane.showMessageDialog(frame,
@@ -644,9 +679,9 @@ public class GameView implements View {
 	public void setCredits(int credit) {
 		rightPanel.setCreditTextField(credit);
 	}
-	
+
 	@Override
-	public JPanel getSidePanel(){
+	public JPanel getSidePanel() {
 		return rightPanel;
 	}
 
