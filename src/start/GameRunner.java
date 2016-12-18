@@ -1,5 +1,15 @@
 package start;
 
+/**
+ * GameRunner performs the update and render calls
+ * to the game class. This is the game thread.<br>
+ * <br>
+ * The game is updated 60 times per second, with
+ * an undefined upper limit of renders per second.
+ * 
+ * @author Alexander Believ
+ * @version 1.0
+ */
 public class GameRunner implements Runnable{
 	
 	public static final int UPS = 60;
@@ -9,10 +19,18 @@ public class GameRunner implements Runnable{
 	private volatile boolean isRunning = true;
 	private Game game;
 	
+	/**
+	 * Creates a new GameRunner with the specified
+	 * game.
+	 * @param game the game.
+	 */
 	public GameRunner(Game game){
 		this.game = game;
 	}
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public void run(){
 		long lastUpdateTime = System.nanoTime();
@@ -29,6 +47,9 @@ public class GameRunner implements Runnable{
 		}
 	}
 	
+	/**
+	 * Ends the game-loop.
+	 */
 	public synchronized void terminate(){
 		isRunning = false;
 	}

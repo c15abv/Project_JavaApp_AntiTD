@@ -10,7 +10,7 @@ import start.Position;
  */
 public abstract class Tile{
 
-	public static final int size = 50; 
+	public static final int size = 100; 
 	
 	private Position position;
 	private long id;

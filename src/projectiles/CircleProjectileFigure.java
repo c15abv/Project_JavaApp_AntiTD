@@ -7,7 +7,7 @@ import start.Figures;
 import start.Position;
 
 /**
- * CircleProjectileFigure.
+ * A circle projectile.
  * 
  * @author Alexander Beliaev
  * @version 1.0
@@ -17,12 +17,23 @@ public class CircleProjectileFigure extends ProjectileFigure{
 	public static final Figures shape = Figures.CIRCLE;
 	private int damage;
 	
+	/**
+	 * Creates a new circle projectile with the specified hue and
+	 * starting position.
+	 * 
+	 * @param hue the hue.
+	 * @param damage the base damage.
+	 * @param position the starting position.
+	 */
 	public CircleProjectileFigure(int hue, int damage, 
 			Position position){
 		super(hue, position);
 		this.damage = damage;
 	}
 
+	/* (non-Javadoc)
+	 * @see projectiles.ProjectileFigure#update(creatures.CreatureFigure)
+	 */
 	@Override
 	public void update(CreatureFigure figure){
 		boolean tempAlive;
@@ -39,6 +50,9 @@ public class CircleProjectileFigure extends ProjectileFigure{
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see projectiles.ProjectileFigure#render(java.awt.Graphics2D)
+	 */
 	@Override
 	public void render(Graphics2D g2d){
 		g2d.setColor(this.getColor());
@@ -48,6 +62,9 @@ public class CircleProjectileFigure extends ProjectileFigure{
 				ProjectileFigure.TEMP_SIZE);
 	}
 
+	/* (non-Javadoc)
+	 * @see projectiles.ProjectileFigure#getShape()
+	 */
 	@Override
 	public Figures getShape(){
 		return shape;
