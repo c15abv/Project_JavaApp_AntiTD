@@ -146,7 +146,7 @@ public class AITrainer{
 			this.successLimit = successLimit;
 			this.type = AttackerAIType.BUNDLE_BUYER;
 			
-		    xmlReader = new LevelXMLReader("XML/levels.xml");
+		    xmlReader = new LevelXMLReader("XML/Levels.xml");
 		    levelNames = xmlReader.getLvlNames();
 		    
 			setup();
