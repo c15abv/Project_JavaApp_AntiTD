@@ -2,21 +2,24 @@
 
 <!-- Author: Jan Nylén -->
 
-<!-- HORIZONTAL("HORIZONTAL"), VERTICAL("VERTICAL"),
+<!-- <xs:enumeration value="HORIZONTAL" />
+			<xs:enumeration value="HORIZONTAL_T_SOUTH" />
+			<xs:enumeration value="HORIZONTAL_T_NORTH" />
 
-		HORIZONTAL_T_SOUTH("HORIZONTAL_T_SOUTH"),		
-		HORIZONTAL_T_NORTH("HORIZONTAL_T_NORTH"),
-		
-		VERTICAL_T_EAST("VERTICAL_T_EAST")		
-		VERTICAL_T_WEST("VERTICAL_T_WEST"),
-		
-		CROSSROAD("CROSSROAD"),
-		L_TURN_HORIZONTAL_SOUTH_TO_EAST("L_TURN_HORIZONTAL_SOUTH_TO_EAST"),
-		L_TURN_HORIZONTAL_NORTH_TO_WEST("L_TURN_HORIZONTAL_NORTH_TO_WEST"),
-		L_TURN_HORIZONTAL_NORTH_TO_EAST("L_TURN_HORIZONTAL_NORTH_TO_EAST"),
-		L_TURN_HORIZONTAL_SOUTH_TO_WEST("L_TURN_HORIZONTAL_SOUTH_TO_WEST"),
-		NORTH("NORTH"), WEST("WEST"),
-		EAST("EAST"), SOUTH("SOUTH");
+			<xs:enumeration value="VERTICAL" />
+			<xs:enumeration value="VERTICAL_T_EAST" />
+			<xs:enumeration value="VERTICAL_T_WEST" />
+
+			<xs:enumeration value="L_TURN_HORIZONTAL_SOUTH_TO_EAST" />
+			<xs:enumeration value="L_TURN_HORIZONTAL_NORTH_TO_WEST" />
+			<xs:enumeration value="L_TURN_HORIZONTAL_NORTH_TO_EAST" />
+			<xs:enumeration value="L_TURN_HORIZONTAL_SOUTH_TO_WEST" />
+
+			<xs:enumeration value="EAST" />
+			<xs:enumeration value="NORTH" />
+			<xs:enumeration value="WEST" />
+			<xs:enumeration value="SOUTH" />
+			<xs:enumeration value="CROSSROAD" />
 			-->
 <levels xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="LevelsXMLSchema.xsd">	
@@ -103,12 +106,23 @@ xsi:schemaLocation="LevelsXMLSchema.xsd">
 			<tile>W</tile>
 		</row>
 		<rules>
-			<attackerCredit>101</attackerCredit>
+			<attackerCredit>1000</attackerCredit>
 			<defenderCredit>101</defenderCredit>
-			<timeToFinish>11</timeToFinish>
-			<nrOfTemplates>7</nrOfTemplates>
+			<timeToFinish>120</timeToFinish>
+			<nrOfTemplates>3</nrOfTemplates>
 			<attackingPlayerScoreGoal>8</attackingPlayerScoreGoal>
 		</rules>
+		<!-- vet inte hur jag man ska identifiera klasserna.. Om dom ska ha ett 
+			eget element och sen en text med filens namn. Eller om det direkt bara ska 
+			vara namnet i textform... -->
+		<landOnClassFiles>		
+			<landOn>PathTile</landOn>
+			<landOn>GoalTile</landOn>
+			<landOn>StartTile</landOn>
+			<landOn>TeleporTile</landOn>
+			<landOn>VoidTile</landOn>
+			<landOn>WallTile</landOn>
+		</landOnClassFiles>
 	</level>
 	
 	<level nameID="testlevel2">
@@ -195,11 +209,459 @@ xsi:schemaLocation="LevelsXMLSchema.xsd">
 			<tile>W</tile>
 		</row>
 		<rules>
-			<attackerCredit>102</attackerCredit>
+			<attackerCredit>1000</attackerCredit>
 			<defenderCredit>102</defenderCredit>
-			<timeToFinish>12</timeToFinish>
-			<nrOfTemplates>10</nrOfTemplates>
+			<timeToFinish>120</timeToFinish>
+			<nrOfTemplates>3</nrOfTemplates>
 			<attackingPlayerScoreGoal>5</attackingPlayerScoreGoal>
 		</rules>
+		<!-- vet inte hur jag man ska identifiera klasserna.. Om dom ska ha ett 
+			eget element och sen en text med filens namn. Eller om det direkt bara ska 
+			vara namnet i textform... -->
+		<landOnClassFiles>
+			<landOn>GoalTile</landOn>
+			<landOn>StartTile</landOn>
+			<landOn>TeleporTile</landOn>
+			<landOn>GoalTile</landOn>
+			<landOn>GoalTile</landOn>
+		</landOnClassFiles>
 	</level>
+	<level nameID="testlevel3">
+		<row Index="1">
+			<!-- <cell landOn = "haste">W</cell> -->
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="2">
+			<tile>W</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="L_TURN_HORIZONTAL_SOUTH_TO_EAST">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="L_TURN_HORIZONTAL_SOUTH_TO_WEST">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile landOn="StartTile" direction="SOUTH">S</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile landOn="StartTile" direction="SOUTH">S</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="L_TURN_HORIZONTAL_SOUTH_TO_EAST">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="L_TURN_HORIZONTAL_SOUTH_TO_WEST">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="3">
+			<tile>W</tile>
+			<tile landOn="GoalTile" direction="SOUTH">G</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile landOn="GoalTile" direction="SOUTH">G</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="4">
+			<tile>W</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL_T_EAST">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="VERTICAL_T_WEST">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="5">
+			<tile>W</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="6">
+			<tile>W</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile direction="L_TURN_HORIZONTAL_SOUTH_TO_EAST">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="L_TURN_HORIZONTAL_NORTH_TO_WEST">P</tile>
+			<tile>V</tile>
+			<tile direction="L_TURN_HORIZONTAL_NORTH_TO_EAST">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="VERTICAL_T_WEST">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL_T_EAST">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="L_TURN_HORIZONTAL_NORTH_TO_WEST">P</tile>
+			<tile>V</tile>
+			<tile direction="L_TURN_HORIZONTAL_NORTH_TO_EAST">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="L_TURN_HORIZONTAL_SOUTH_TO_WEST">P</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="7">
+			<tile>W</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="L_TURN_HORIZONTAL_NORTH_TO_EAST">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="L_TURN_HORIZONTAL_NORTH_TO_WEST">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="8">
+			<tile>W</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="9">
+			<!-- <cell landOn = "haste">W</cell> -->
+			<tile>W</tile>
+			<tile direction="L_TURN_HORIZONTAL_NORTH_TO_EAST">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="CROSSROAD">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile landOn="GoalTile" direction="WEST">G</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile landOn="GoalTile" direction="EAST">G</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="CROSSROAD">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="L_TURN_HORIZONTAL_NORTH_TO_WEST">P</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="10">
+			<tile>W</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile landOn="StartTile" direction="SOUTH">S</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile landOn="StartTile" direction="SOUTH">S</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="11">
+			<tile>W</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="12">
+			<tile>W</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile direction="L_TURN_HORIZONTAL_SOUTH_TO_EAST">P</tile>
+			<tile direction="HORIZONTAL" >P</tile>
+			<tile direction="L_TURN_HORIZONTAL_SOUTH_TO_WEST">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="L_TURN_HORIZONTAL_SOUTH_TO_EAST">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="L_TURN_HORIZONTAL_SOUTH_TO_WEST">P</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="13">
+			<tile>W</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="L_TURN_HORIZONTAL_NORTH_TO_EAST">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="L_TURN_HORIZONTAL_NORTH_TO_WEST">P</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL_T_EAST">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="VERTICAL_T_WEST">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>V</tile>
+			<tile direction="L_TURN_HORIZONTAL_NORTH_TO_EAST">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="L_TURN_HORIZONTAL_NORTH_TO_WEST">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="14">
+			<tile>W</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="L_TURN_HORIZONTAL_NORTH_TO_EAST">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="L_TURN_HORIZONTAL_NORTH_TO_WEST">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile direction="L_TURN_HORIZONTAL_NORTH_TO_EAST">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="L_TURN_HORIZONTAL_NORTH_TO_WEST">P</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="15">
+			<tile>W</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>V</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="16">
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+		</row>
+		<rules>
+			<attackerCredit>1000</attackerCredit>
+			<defenderCredit>101</defenderCredit>
+			<timeToFinish>120</timeToFinish>
+			<nrOfTemplates>3</nrOfTemplates>
+			<attackingPlayerScoreGoal>8</attackingPlayerScoreGoal>
+		</rules>
+		<!-- vet inte hur jag man ska identifiera klasserna.. Om dom ska ha ett 
+			eget element och sen en text med filens namn. Eller om det direkt bara ska 
+			vara namnet i textform... -->
+		<landOnClassFiles>
+			<landOn>GoalTile</landOn>
+			<landOn>StartTile</landOn>
+			<landOn>TeleporTile</landOn>
+			<landOn>GoalTile</landOn>
+			<landOn>GoalTile</landOn>
+		</landOnClassFiles>
+	</level>
+	
 </levels>

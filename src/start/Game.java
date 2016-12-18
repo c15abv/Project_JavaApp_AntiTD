@@ -153,7 +153,7 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 	}
 	
 	private int heightDelta(){
-		if(level.getWidth() > canvasWidth){
+		if(level.getHeight() > canvasHeight){
 			return level.getHeight() - canvasHeight;
 		}
 		
@@ -161,7 +161,7 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 	}
 	
 	private void updateCanvasCamera(){
-		if(mouseCoordinateX > SIZE_X - 40){
+		if(mouseCoordinateX > canvasWidth - 40){
 			if(cameraOffsetX < widthDelta())
 				cameraOffsetX += 4;
 		}else if(mouseCoordinateX < 40){
@@ -169,7 +169,7 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 				cameraOffsetX -= 4;
 		}
 		
-		if(mouseCoordinateY > SIZE_Y - 40){
+		if(mouseCoordinateY > canvasHeight - 40){
 			if(cameraOffsetY < heightDelta())
 				cameraOffsetY += 4;
 		}else if(mouseCoordinateY < 40){
@@ -312,8 +312,8 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 
 	@Override
 	public void mouseClicked(MouseEvent arg0){
-		Position position = level.getAdjacentStartPosition(arg0.getX() +
-				Tile.size / 2, arg0.getY() + Tile.size / 2);
+		Position position = level.getAdjacentStartPosition(arg0.getX() + this.cameraOffsetX +
+				Tile.size / 2, arg0.getY() +this.cameraOffsetY + Tile.size / 2);
 		if(position != null){
 			level.selectTile(position.getX() + Tile.size / 2,
 					position.getY() + Tile.size / 2);
