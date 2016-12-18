@@ -3,11 +3,17 @@ package tiles;
 import creatures.CreatureFigure;
 
 /**
+
+ * Implement this interface when a figure entering the tile
+ * should trigger an effect/action.
+ * 
  * @author Alexander Beliaev
- * An interface used for defining a landOn method that
- * defines what is supposed to happen when a unit reaches a
- * given tile.
+ * @version 1.0
  */
 public interface EnterTileEffect{
+	
+	/**
+	 * @param creature
+	 */
 	void landOn(CreatureFigure creature);
 }

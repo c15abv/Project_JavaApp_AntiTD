@@ -2,14 +2,29 @@ package tiles;
 
 import start.Position;
 
+/**
+ * The abstract class BuildableTile may be
+ * inherited to define a certain Tile to be buildable.
+ * 
+ * @author Alexander Beliaev
+ * @version 1.0
+ */
 public abstract class BuildableTile extends Tile{
 
 	private volatile boolean isOccupied;
 	
+	/**
+	 * Creates a new BuildableTile, initialized
+	 * as free to build on.
+	 * 
+	 * @param position
+	 */
 	public BuildableTile(Position position){
 		super(position);
 		isOccupied = false;
 	}
+	
+	//setters and getters
 
 	@Override
 	public boolean buildable(){

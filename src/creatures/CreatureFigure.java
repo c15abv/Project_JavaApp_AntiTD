@@ -20,6 +20,16 @@ import utilities.ColorCreator;
 import utilities.Lock;
 import utilities.TimerListener;
 
+/**
+ * 
+ * The abstract class CreatureFigure holds the very basics
+ * of what a creature is. It is only when the CreatureFigure
+ * class is extended when certain characteristics are set.
+ * 
+ * @author Alexander Beliaev
+ * @version 1.0
+ *
+ */
 public abstract class CreatureFigure implements TimerListener{
 	
 	public enum Orientation{
@@ -60,6 +70,17 @@ public abstract class CreatureFigure implements TimerListener{
 	private boolean hasSpawned;
 	private boolean hasReachedGoal;
 	
+	/**
+	 * Creates a new creature with the specified
+	 * characteristics.
+	 * 
+	 * @param hue the hue of the creature.
+	 * @param scale the scale of the creature.
+	 * @param position the initial position of the creature.
+	 * @param orientation the orientation of the creature.
+	 * @param level the level.
+	 * @param speed the speed of the creature.
+	 */
 	public CreatureFigure(int hue, double scale, Position position,
 			Orientation orientation, GameLevel level, double speed){
 		this.hue = hue;
@@ -73,12 +94,45 @@ public abstract class CreatureFigure implements TimerListener{
 		init();
 	}
 	
+	/**
+	 * Renders the figure.
+	 * 
+	 * @param g2d the Graphics2D object.
+	 */
 	public abstract void render(Graphics2D g2d);
+	
+	
+	/**
+	 * Performs a check if a certain position is within the
+	 * body of the creature.
+	 * 
+	 * @param position the position to be checked.
+	 * @return <code>true</code> if and only if the given
+	 * position is on or within the body of the creature.
+	 */
 	public abstract boolean isCollision(Position position);
+	
+	
+	/**
+	 * Returns a Figures value describing the shape of the
+	 * creature.
+	 * 
+	 * @return a Figures value describing the shape of the
+	 * creature.
+	 */
 	public abstract Figures getShape();
 	
+	/**
+	 * Updates the creature by iterating over any
+	 * data structures holding any previously defined
+	 * actions; as well as incrementing the amount of
+	 * steps it should be taking. The amount of steps
+	 * taken is directly dependent upon the scaling
+	 * factor of the creature. The creature may therefore
+	 * not precisely one position each update, but rather
+	 * parts of or several whole. 
+	 */
 	public void update(){
-		//System.out.println(getNavigationFrom()+ ": "+ getPosition().toString());
 		if(isAlive && !hasReachedGoal){
 			if(!hasSpawned){
 				for(Action action : this.onSpawnActionList){
@@ -111,10 +165,12 @@ public abstract class CreatureFigure implements TimerListener{
 		}
 	}
 	
-	public Color getColor(){
-		return creatureColor;
-	}
-	
+	/**
+	 * Reduces the current life of the creature by the 
+	 * specified amount.
+	 * 
+	 * @param damage the damage to inflict upon the creature.
+	 */
 	public void setDamageTaken(int damage){
 		if(!hasReachedGoal){
 			hitPoints -= damage;
@@ -122,46 +178,11 @@ public abstract class CreatureFigure implements TimerListener{
 		if(hitPoints <= 0){
 			isAlive = false;
 		}
-		
 	}
 	
-	public int getHitPoints(){
-		return hitPoints;
-	}
-	
-	public boolean isAlive(){
-		return isAlive;
-	}
-	
-	protected void remove(){
-		isAlive = false;
-		finished = true;
-	}
-	
-	public boolean isFinished(){
-		return finished;
-	}
-	
-	public int percentLife(){
-		return Math.round((int)((double)hitPoints * 100 / (double)startHitPoints));
-	}
-	
-	protected void setCreditOnGoal(int creditOnGoal){
-		this.creditOnGoal = creditOnGoal;
-	}
-	
-	public int getCreditOnGoal(){
-		return creditOnGoal;
-	}
-	
-	protected void setCreditOnKill(int creditOnKill){
-		this.creditOnKill = creditOnKill;
-	}
-	
-	public int getCreditOnKill(){
-		return creditOnKill;
-	}
-	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 92821;
@@ -171,6 +192,9 @@ public abstract class CreatureFigure implements TimerListener{
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if(this == obj){
@@ -189,7 +213,17 @@ public abstract class CreatureFigure implements TimerListener{
 		
 		return true;
 	}
-
+	
+	/**
+	 * A default method to enable a creature to be able
+	 * to create TeleportTiles.<br>
+	 * <br>
+	 * The time given to the method is the amount of time
+	 * before the first teleport is supposed to be set.
+	 * 
+	 * @param time the time to be elapsed before setting
+	 * the first teleport.
+	 */
 	public void enableTeleport(Long time){
 		final long id = level.getNewUniqueId();
 		
@@ -200,16 +234,29 @@ public abstract class CreatureFigure implements TimerListener{
 		addOnDeathAction(() -> {
 			TeleportTile tile = (TeleportTile)level.getTileById(id);
 			if(tile != null){
-				performTeleportCreationAction(0, tile);
+				performTeleportCreationAction(id, tile);
 			}
 		});
-		
 	}
 	
+	/**
+	 * Adds an action which will be performed upon the
+	 * spawning of the creature.
+	 * 
+	 * @param action the action to be added.
+	 */
 	public void addOnSpawnAction(Action action){
 		onSpawnActionList.add(action);
 	}
 	
+	/**
+	 * Adds an action which will be performed after a 
+	 * certain time following the spawning of the creature.
+	 * 
+	 * @param time the time in milliseconds to wait before
+	 * performing the specified action.
+	 * @param action the action to be added.
+	 */
 	public void addOnSpawnTimedAction(Long time, Action action){
 		long id;
 		if(hasActionTimer()){
@@ -219,26 +266,29 @@ public abstract class CreatureFigure implements TimerListener{
 		}
 	}
 	
+	/**
+	 * Adds an action which will be performed upon the
+	 * death of the creature.
+	 * 
+	 * @param action the action to be added.
+	 */
 	public void addOnDeathAction(Action action){
 		onDeathActionList.add(action);
 	}
 	
+	/**
+	 * Adds an action which will be performed each call
+	 * to the update method.
+	 * 
+	 * @param action the action to be added.
+	 */
 	public void addActiveAction(Action action){
 		onActiveActionList.add(action);
 	}
 	
-	public ActionTimer getActionTimer(){
-		return actionTimer;
-	}
-
-	public void setActionTimer(ActionTimer actionTimer){
-		this.actionTimer = actionTimer;
-	}
-	
-	public boolean hasActionTimer(){
-		return actionTimer != null;
-	}
-	
+	/* (non-Javadoc)
+	 * @see utilities.TimerListener#receiveNotification(java.lang.Long)
+	 */
 	@Override
 	public void receiveNotification(Long id){
 		try{
@@ -251,6 +301,9 @@ public abstract class CreatureFigure implements TimerListener{
 		//id is the key in onSpawnTimerActionMap.
 	}
 	
+	/*
+	 * Initializes the creature.
+	 * */
 	private void init(){
 		isAlive = true;
 		hasReachedGoal = false;
@@ -270,6 +323,69 @@ public abstract class CreatureFigure implements TimerListener{
 		
 		speed = speed / scale;
 		tilesMoved = 1;
+	}
+	
+	/*
+	 * Setters and getters.
+	 */
+	public ActionTimer getActionTimer(){
+		return actionTimer;
+	}
+
+	public void setActionTimer(ActionTimer actionTimer){
+		this.actionTimer = actionTimer;
+	}
+	
+	public boolean hasActionTimer(){
+		return actionTimer != null;
+	}
+	
+	protected void remove(){
+		isAlive = false;
+		finished = true;
+	}
+	
+	public Color getColor(){
+		return creatureColor;
+	}
+	
+	public int getHitPoints(){
+		return hitPoints;
+	}
+	
+	public boolean isAlive(){
+		return isAlive;
+	}
+	
+	public boolean isFinished(){
+		return finished;
+	}
+	
+	/**
+	 * Returns the amount of life of the creature
+	 * in parts whole parts of one hundred.
+	 * 
+	 * @return the percentage of life left.
+	 */
+	public int percentLife(){
+		return Math.round((int)((double)hitPoints * 100 /
+				(double)startHitPoints));
+	}
+	
+	protected void setCreditOnGoal(int creditOnGoal){
+		this.creditOnGoal = creditOnGoal;
+	}
+	
+	public int getCreditOnGoal(){
+		return creditOnGoal;
+	}
+	
+	protected void setCreditOnKill(int creditOnKill){
+		this.creditOnKill = creditOnKill;
+	}
+	
+	public int getCreditOnKill(){
+		return creditOnKill;
 	}
 	
 	public int getHue(){
@@ -329,6 +445,24 @@ public abstract class CreatureFigure implements TimerListener{
 		navigationFrom = Direction.getOpposite(navigation);
 	}
 	
+	public int getTilesMoved(){
+		return (int)tilesMoved;
+	}
+	
+	public void resetTilesMoved(){
+		tilesMoved = Math.round(tilesMoved) - tilesMoved;
+	}
+	
+	/*
+	 * The default action performed by a teleporter-creature.
+	 * 
+	 * A teleport can not be placed on an existing TeleportTile.
+	 * If the creature would happen to be located on a TeleportTile
+	 * the creature will not put a teleporter.
+	 * 
+	 * A teleport will only be 'active' if the creature dies
+	 * after the first teleport has been set.
+	 * */
 	private void performTeleportCreationAction(final long id,
 			final TeleportTile otherTeleportTile){
 		Position figPos = new Position(getPosition().getX()
@@ -354,21 +488,7 @@ public abstract class CreatureFigure implements TimerListener{
 				}
 				level.changeTile(figPos.toArea(), 
 						teleportTile);
-			}else if(otherTeleportTile == null){
-				onSpawnTimedActionMap.put(id, () -> {
-					performTeleportCreationAction(id, null);
-				});
-				actionTimer.setTimer(id, this, 1000);
 			}
-			
 		}
-	}
-	
-	public int getTilesMoved(){
-		return (int)tilesMoved;
-	}
-	
-	public void resetTilesMoved(){
-		tilesMoved = Math.round(tilesMoved) - tilesMoved;
 	}
 }

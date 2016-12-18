@@ -6,20 +6,35 @@ import start.Figures;
 import start.GameLevel;
 import start.Position;
 
+/**
+ * A square CreatureFigure.
+ * 
+ * @author Alexander Believ
+ * @version 1.0
+ */
 public class SquareCreatureFigure extends CreatureFigure{
 
 	public static final Figures shape = Figures.SQUARE;
 
+	/**
+	 * See CreatureFigure constructor.
+	 */
 	public SquareCreatureFigure(int hue, double scale, Position position,
 			Orientation orientation, GameLevel level){
 		this(hue, scale, position, orientation, level, BASE_SPEED);
 	}
 	
+	/**
+	 * See CreatureFigure constructor.
+	 */
 	public SquareCreatureFigure(int hue, double scale, Position position,
 			Orientation orientation, GameLevel level, double speed){
 		super(hue, scale, position, orientation, level, speed);
 	}
 	
+	/* (non-Javadoc)
+	 * @see creatures.CreatureFigure#render(java.awt.Graphics2D)
+	 */
 	@Override
 	public void render(Graphics2D g2d){
 		g2d.setColor(getColor());
@@ -31,11 +46,17 @@ public class SquareCreatureFigure extends CreatureFigure{
 				(int)(getScale() * CreatureFigure.BASE_SIZE));
 	}
 
+	/* (non-Javadoc)
+	 * @see creatures.CreatureFigure#getShape()
+	 */
 	@Override
 	public Figures getShape(){
 		return shape;
 	}
 
+	/* (non-Javadoc)
+	 * @see creatures.CreatureFigure#isCollision(start.Position)
+	 */
 	@Override
 	public boolean isCollision(Position position) {
 		int dx = Math.abs(position.getX() - this.getPosition().getX());
