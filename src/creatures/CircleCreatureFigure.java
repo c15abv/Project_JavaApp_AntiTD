@@ -1,5 +1,6 @@
 package creatures;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 
 import start.Figures;
@@ -45,6 +46,9 @@ public class CircleCreatureFigure extends CreatureFigure{
 						(getScale() * CreatureFigure.BASE_SIZE) / 2),
 				(int)(getScale() * CreatureFigure.BASE_SIZE),
 				(int)(getScale() * CreatureFigure.BASE_SIZE));
+		g2d.setColor(Color.WHITE);
+		g2d.drawString(""+percentLife(), (int)(getPosition().getX() -
+				(getScale() * CreatureFigure.BASE_SIZE) / 2), getPosition().getY());
 	}
 
 	/* (non-Javadoc)
