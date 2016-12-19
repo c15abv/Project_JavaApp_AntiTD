@@ -44,8 +44,8 @@ public abstract class CreatureFigure implements TimerListener{
 	
 	public static final int DEFAULT_CREDIT = 10;
 	public static final int BASE_HITPOINTS = 100;
-	public static final int BASE_SIZE = 26;
-	public static final double BASE_SPEED = 1;
+	public static final int BASE_SIZE = 36;
+	public static final double BASE_SPEED = 2;
 
 	private Color creatureColor;
 	private Orientation orientation;
@@ -436,7 +436,7 @@ public abstract class CreatureFigure implements TimerListener{
 		return navigationFrom;
 	}
 	
-	public PathMemory getMemory(){
+	protected PathMemory getMemory(){
 		return memory;
 	}
 	

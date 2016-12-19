@@ -234,4 +234,10 @@ public class PathMemory{
 		return mostRecentCrossing;
 	}
 	
+	protected void eraseMemory(){
+		remMap = new HashMap<Position, RememberedPositionConnection>();
+		remDir = new Stack<DirectionHolder>();
+		mostRecentCrossing = null;
+	}
+	
 }
