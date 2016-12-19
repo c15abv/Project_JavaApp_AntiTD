@@ -132,7 +132,8 @@ public class GameViewAdapter implements ViewModel {
 						.setGameLock(game.getLock())
 						.setTowerMutationTimeChance(5)
 						.setTowerMutationTimeRange(2000)
-						.setBuildTowerChance(500).build();
+						.setBuildTowerChance(500)
+						.build();
 
 		aiDefThread = new Thread(aiDef);
 
@@ -204,15 +205,15 @@ public class GameViewAdapter implements ViewModel {
 
 		ArrayList<String> lvlNames = levelXMLReader.getLvlNames();
 
-		GameLevel l = levelXMLReader.getLevelByName(lvlNames.get(levelIndex));
+		level = levelXMLReader.getLevelByName(lvlNames.get(levelIndex));
 
-		level.setLevelMap(l.getLevelMap());
+		/*level.setLevelMap(l.getLevelMap());
 		level.setAttackerCredit(l.getAttackerCredit());
 		level.setAttackingPlayerScoreGoal(l.getAttackingPlayerScoreGoal());
 		level.setDefenderCredit(l.getDefenderCredit());
 		level.setLandOnFiles(l.getLandOnFiles());
 		level.setRules(l.getRules());
-		level.setTimeToFinish(l.getTimeToFinish());
+		level.setTimeToFinish(l.getTimeToFinish());*/
 
 		levelInfo = new LevelInfo(level.getNrOfTemplates(),
 				CreatureFigure.DEFAULT_CREDIT,

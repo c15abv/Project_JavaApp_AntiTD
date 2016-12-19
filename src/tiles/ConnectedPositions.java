@@ -6,6 +6,13 @@ import java.util.Map;
 import start.Position;
 import tiles.PathTile.Direction;
 
+
+/**
+ * 
+ * 
+ * @author Alexander Beliaev
+ * @version 1.0
+ */
 public class ConnectedPositions{
 	protected HashMap<Direction, Position> map;
 	protected Position position;

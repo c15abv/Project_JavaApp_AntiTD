@@ -9,6 +9,17 @@ import start.Position;
 import tiles.PathTile.Direction;
 import utilities.ActionTimer;
 
+/**
+ * The CreatureFigureTemplate class is used to store templates
+ * containing characteristic of a creature in order to quickly 
+ * spawn new creatures of the stored template.<br>
+ * <br>
+ * Various setters can be used in order to further customize
+ * the template.
+ * 
+ * @author Alexander Beliaev
+ * @version 1.0
+ */
 public class CreatureFigureTemplate{
 	
 	private Figures creatureType;
@@ -21,6 +32,16 @@ public class CreatureFigureTemplate{
 	private double speed;
 	private ActionTimer timer;
 	
+	/**
+	 * Creates a new template.
+	 * 
+	 * @param creatureType the shape of the creature.
+	 * @param hue the hue of the creature.
+	 * @param scale the scale of the creature.
+	 * @param cost the cost of the creature.
+	 * @param orientation the orientation of the creature.
+	 * @param level the level.
+	 */
 	public CreatureFigureTemplate(Figures creatureType, int hue, double scale,
 			int cost, Orientation orientation, GameLevel level){
 		this.creatureType = creatureType;
@@ -40,15 +61,46 @@ public class CreatureFigureTemplate{
 	}
 	
 	private void chooseRandomShape(){
-		int randomInt = new Random().nextInt(3);
-		
-		if(creatureType != null &&
-				creatureType == Figures.STAR){
-			creatureType = randomInt == 0 ? Figures.CIRCLE :
-				randomInt == 1 ? Figures.TRIANGLE : Figures.SQUARE;
-		}
+		if(creatureType == Figures.STAR)
+			creatureType = Figures.getRandom(Figures.STAR);
 	}
 	
+	/**
+	 * Creates a new creature with the current template.
+	 * 
+	 * @param position the initial position of the creature.
+	 * @param direction the initial direction of the creature.
+	 * @return the newly created creature.
+	 */
+	public CreatureFigure createNewCreature(Position position,
+			Direction direction){
+		CreatureFigure creature = creatureType == Figures.CIRCLE ? 
+				createNewCircleCreature(position, speed) : 
+			(creatureType == Figures.SQUARE ? 
+					createNewSquareCreature(position, speed) :
+				(creatureType == Figures.TRIANGLE ? 
+						createNewTriangleCreature(position, speed) : 
+							createNewRandomCreature(position, speed)));
+		if(timer != null){
+			creature.setActionTimer(timer);
+		}
+		if(time != -1){
+			creature.enableTeleport(time);
+		}
+		if(direction != null){
+			creature.setNavigation(direction);
+			creature.getMemory().rememberBackTrackDirection(position,
+					Direction.getOpposite(direction));
+		}
+		
+		creature.setCreditOnGoal(creditOnGoal);
+		creature.setCreditOnKill(creditOnKill);
+		return creature;
+	}
+	
+	/*
+	 * Setters and getters.
+	 */
 	public int getCost(){
 		return cost;
 	}
@@ -95,32 +147,6 @@ public class CreatureFigureTemplate{
 	
 	public double getSpeed(){
 		return (double) speed / scale;
-	}
-
-	public CreatureFigure createNewCreature(Position position,
-			Direction direction){
-		CreatureFigure creature = creatureType == Figures.CIRCLE ? 
-				createNewCircleCreature(position, speed) : 
-			(creatureType == Figures.SQUARE ? 
-					createNewSquareCreature(position, speed) :
-				(creatureType == Figures.TRIANGLE ? 
-						createNewTriangleCreature(position, speed) : 
-							createNewRandomCreature(position, speed)));
-		if(timer != null){
-			creature.setActionTimer(timer);
-		}
-		if(time != -1){
-			creature.enableTeleport(time);
-		}
-		if(direction != null){
-			creature.setNavigation(direction);
-			creature.getMemory().rememberBackTrackDirection(position,
-					Direction.getOpposite(direction));
-		}
-		
-		creature.setCreditOnGoal(creditOnGoal);
-		creature.setCreditOnKill(creditOnKill);
-		return creature;
 	}
 	
 	private CircleCreatureFigure createNewCircleCreature(

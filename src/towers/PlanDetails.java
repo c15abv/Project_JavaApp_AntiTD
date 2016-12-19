@@ -16,6 +16,10 @@ public class PlanDetails{
 			return time;
 		}
 		
+		protected void setNewTime(long time){
+			this.time = time;
+		}
+		
 		public PlanDetails getDetails(){
 			return details;
 		}

@@ -29,21 +29,26 @@ public class LandOnAreaCreator {
     public LandOnAreaCreator(){
 
     }
+    
+    /**
+     * A non-finished method that is supposed to load classes
+     * dynamically from a specified directory.
+     * @param className
+     * @return
+     */
+    public Class loadClassDynamically(String className){
+        ClassLoader classLoader = LandOnAreaCreator.class.getClassLoader();
 
-   /* // main is used for testing
-    public static void main(String[] args){
-
-        LandOnAreaCreator landOnCreator = new LandOnAreaCreator();
-        Position position = new Position(0, 0);
-        
-        Class<?> classFromInput;
-        PathTile pathTile = (PathTile) landOnCreator.
-                CreatePathTileDynamically("PathTile", position,
-                        ValidPath.getEnumByString("HORIZONTAL"));
-
-        if(pathTile instanceof PathTile ){
+        try {
+            Class aClass = classLoader.loadClass(className);
+            System.out.println("aClass.getName() = " + aClass.getName());
+            
+            //return theClass;
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
-    }*/
+        return null;
+    }
 
     /**
      * Used to create a tile of type PathTile dynamiccaly
@@ -75,28 +80,21 @@ public class LandOnAreaCreator {
                 object = constructor.newInstance(position, validPath);
                 
                 return  object;
-            }                
+            }      
         } catch (SecurityException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (NoSuchMethodException e) {
-            // TODO Auto-generated catch block
             //If constructor cant be found
             e.printStackTrace();
         } catch (InstantiationException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IllegalArgumentException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         // if null cancel read
@@ -135,26 +133,19 @@ public class LandOnAreaCreator {
                 return  object;
             }                
         } catch (SecurityException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (NoSuchMethodException e) {
-            // TODO Auto-generated catch block
             //If constructor cant be found
             e.printStackTrace();
         } catch (InstantiationException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IllegalArgumentException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         // if null cancel read
@@ -171,6 +162,21 @@ public class LandOnAreaCreator {
     public boolean checkIfclassImplEnterTileEffectandTile(Object myClassObject){
 
         if(myClassObject instanceof EnterTileEffect && myClassObject instanceof Tile){
+            return true;
+        }   
+
+        return false;
+    }
+    
+    /**
+     * Used to test if a class implements the EnterTileEffect LandOn and that it
+     * extends the PathTile class
+     * @param myClassObject
+     * @return
+     */
+    public boolean checkIfclassImplEntrTileEffandExtndPathTile(Object myClassObject){
+
+        if(myClassObject instanceof EnterTileEffect && myClassObject instanceof PathTile){
             return true;
         }   
 

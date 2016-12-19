@@ -10,6 +10,10 @@ import creatures.CreatureFigure;
 import creatures.CreatureFigure.Orientation;
 import start.Position;
 
+/**
+ * @author Alexander Beliaev, Jan Nylén, Alexander Ekstrom
+ *  A PathTile used to represent all tiles that are walkable for units in the game
+ */
 public class PathTile extends Tile implements EnterTileEffect{
 		
 	public enum ValidPath{

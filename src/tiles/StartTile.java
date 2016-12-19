@@ -5,6 +5,10 @@ import java.awt.Graphics2D;
 
 import start.Position;
 
+/**
+ * @author Alexander Beliaev, Jan Nylén, Alexander Ekstrom
+ *  A start tile used for creating starting areas for units
+ */
 public class StartTile extends PathTile{
 	
 	private static final int RENDER_COUNT_LIMIT = 50;

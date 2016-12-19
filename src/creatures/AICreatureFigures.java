@@ -21,8 +21,7 @@ import tiles.Tile;
  * strongly inspired by but not solely based on the depth-first search
  * pattern. The path taken by each creature within the horde is remembered
  * separately. If one creature finds it way to a goal any other creature
- * within the horde will be unaware of it. A creature will also never be
- * let to endlessly roam on a level without end (no goals).
+ * within the horde will be unaware of it.
  * 
  * @author Alexander Beliaev
  * @version 1.0
@@ -54,7 +53,13 @@ public class AICreatureFigures{
 	 * Some may move several positions on the x- and y-axis while
 	 * others none until several logical steps later. If the
 	 * AICreatureFigures class finds a creature to be out of place
-	 * it will inevitably remove it from the game.
+	 * it will inevitably remove it from the game. If a creature
+	 * can not find a new unexplored position, its memory is wiped;
+	 * this is in the case it would happen to enter a series of
+	 * teleport tiles which would lead to it traversing the 
+	 * same path several times. Hence, instead of going to the
+	 * extreme and entirely removing the creature from the game 
+	 * its is wiped.
 	 */
 	public void update(){
 		ArrayList<CreatureFigure> horde = attacker.getHorde();
@@ -77,7 +82,7 @@ public class AICreatureFigures{
 					pair = ((PathTile)tile).getPosPair(figure.getPosition());
 					connected = pair.getConnectedPositions();
 					if(!findNewPos(connected, figure)){
-						figure.remove();
+						figure.getMemory().eraseMemory();
 					}else if(((PathTile)tile).isGoalPosition(figure.getPosition())){
 						figure.setHasReachedGoal(true);
 						figure.setFinished(true);
@@ -128,7 +133,8 @@ public class AICreatureFigures{
 		Direction translatedDir = null;
 		PathMemory memory = figure.getMemory();
 		
-		if(figure.getPosition().equals(memory.getMostRecentCrossing())){
+		if(figure.getPosition().equals(memory.getMostRecentCrossing()) &&
+				memory.positionExplored(figure.getPosition())){
 			return setNewPos(memory.getBackTrackDirection(figure.getPosition()),
 					posMap, figure);
 		}

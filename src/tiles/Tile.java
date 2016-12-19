@@ -4,9 +4,13 @@ import java.awt.Graphics2D;
 
 import start.Position;
 
+/**
+ * @author Alexander Beliaev, Jan Nylén, Alexander Ekstrom
+ *  The abstract parent class for tiles that all tiles have to extend
+ */
 public abstract class Tile{
 
-	public static final int size = 50; 
+	public static final int size = 100; 
 	
 	private Position position;
 	private long id;

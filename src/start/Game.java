@@ -7,6 +7,8 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -21,6 +23,12 @@ import utilities.ActionTimer;
 import utilities.Lock;
 import utilities.TimerListener;
 
+/**
+ * The Game class 
+ * 
+ * @author Alexander Beliaev
+ *
+ */
 public class Game extends Canvas implements TimerListener, MouseListener,
 		MouseMotionListener{
 	
@@ -62,10 +70,23 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 	
 	private volatile boolean careAboutResult = true;
 	
+	/**
+	 * Creates a new game with the specified level.
+	 * Default width and height are used. 
+	 * @param level
+	 */
 	public Game(GameLevel level){
 		this(level, SIZE_X, SIZE_Y);
 	}
 	
+	/**
+	 * Creates a new game with the specified level,
+	 * with the specified width and height. 
+	 * 
+	 * @param level
+	 * @param canvasWidth
+	 * @param canvasHeight
+	 */
 	public Game(GameLevel level, int canvasWidth, int canvasHeight){
 		this.level = level;
 		this.canvasWidth = canvasWidth;
@@ -86,8 +107,8 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 		graphicsE = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		device = graphicsE.getDefaultScreenDevice();
 		configuration = device.getDefaultConfiguration();
-		bufferedImage = configuration.createCompatibleImage(canvasWidth,
-				canvasHeight);
+		bufferedImage = configuration.createCompatibleImage(level.getWidth(),
+				level.getHeight());
 		
 		g = null;
 		g2d = null;
@@ -98,19 +119,25 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 		
 		addMouseMotionListener(this);
 	    addMouseListener(this);
+	    
 	}
 	
+	/**
+	 * Changes the size of the game canvas.
+	 * 
+	 * @param width new width.
+	 * @param height new height.
+	 */
 	public void changeSize(int width, int height){
-		this.setSize(width, height);
+		setSize(width, height);
 		canvasWidth = width;
 		canvasHeight = height;
-		graphicsE = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		device = graphicsE.getDefaultScreenDevice();
-		configuration = device.getDefaultConfiguration();
-		bufferedImage = configuration.createCompatibleImage(canvasWidth,
-				canvasHeight);
 	}
 	
+	/**
+	 * Updates the logic of any object in the game,
+	 * as well as updating the game camera/view.
+	 */
 	public void update(){
 		if(gameState != GameState.ENDED){
 			try{
@@ -136,48 +163,10 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 		}
 	}
 	
-	public synchronized AttackingPlayer getAttacker(){
-		return attacker;
-	}
-	
-	public synchronized DefendingPlayer getDefender(){
-		return defender;
-	}
-	
-	private int widthDelta(){
-		if(level.getWidth() > canvasWidth){
-			return level.getWidth() - canvasWidth;
-		}
-		
-		return 0;
-	}
-	
-	private int heightDelta(){
-		if(level.getHeight() > canvasHeight){
-			return level.getHeight() - canvasHeight;
-		}
-		
-		return 0;
-	}
-	
-	private void updateCanvasCamera(){
-		if(mouseCoordinateX > canvasWidth - 40){
-			if(cameraOffsetX < widthDelta())
-				cameraOffsetX += 4;
-		}else if(mouseCoordinateX < 40){
-			if(cameraOffsetX > 0)
-				cameraOffsetX -= 4;
-		}
-		
-		if(mouseCoordinateY > canvasHeight - 40){
-			if(cameraOffsetY < heightDelta())
-				cameraOffsetY += 4;
-		}else if(mouseCoordinateY < 40){
-			if(cameraOffsetY > 0)
-				cameraOffsetY -= 4;
-		}
-	}
-	
+	/**
+	 * Renders any objects in the game with
+	 * a double buffering strategy.
+	 */
 	public void render(){
 		if(gameState != GameState.ENDED){
 			buffer = this.getBufferStrategy();
@@ -189,7 +178,8 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 			g2d = bufferedImage.createGraphics();
 			g2d.setColor(Color.BLACK);
 			g2d.fillRect(0, 0,
-					level.getWidth() + Tile.size, level.getHeight() + Tile.size);
+					level.getWidth() + Tile.size + cameraOffsetX,
+					level.getHeight() + Tile.size + cameraOffsetY);
 				
 			try{
 				lock.lock();
@@ -203,8 +193,9 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 			}
 				
 			g = buffer.getDrawGraphics();
-			g.drawImage(bufferedImage, -cameraOffsetX,
-					-cameraOffsetY, null);
+			g.drawImage(bufferedImage, -cameraOffsetX, -cameraOffsetY,
+					level.getWidth(), level.getHeight(), null);
+			
 			
 			if(!buffer.contentsLost()){
 				buffer.show();
@@ -220,12 +211,81 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see utilities.TimerListener#receiveNotification(java.lang.Long)
+	 */
 	@Override
 	public void receiveNotification(Long id){
 		timer.terminate();
 		gameResult = GameResult.DEFENDER_WINNER;
 		gameState = GameState.ENDED;
 	}
+	
+	/* 
+	 * The width of the level which is hidden
+	 * due to the canvas being shorter in width
+	 * than the level width.
+	 * */
+	private int widthDelta(){
+		if(level.getWidth() > canvasWidth){
+			return level.getWidth() - canvasWidth;
+		}
+		
+		return 0;
+	}
+	
+	/* 
+	 * The height of the level which is hidden
+	 * due to the canvas being shorter in height
+	 * than the level height.
+	 * */
+	private int heightDelta(){
+		if(level.getHeight() > canvasHeight){
+			return level.getHeight() - canvasHeight;
+		}
+		
+		return 0;
+	}
+	
+	/*
+	 * Updates the game camera/view.
+	 * */
+	private void updateCanvasCamera(){
+		if(mouseCoordinateY < canvasHeight / 2 + canvasHeight / 6 &&
+				mouseCoordinateY > canvasHeight / 2 - canvasHeight / 6){
+			if(mouseCoordinateX > canvasWidth - 40 &&
+					cameraOffsetX < widthDelta()){
+				cameraOffsetX += 4;
+			}else if(mouseCoordinateX < 40 &&
+					cameraOffsetX > 0){
+				cameraOffsetX -= 4;
+			}
+			
+		}else if(mouseCoordinateX < canvasWidth / 2 + canvasWidth / 10 &&
+				mouseCoordinateX > canvasWidth / 2 - canvasWidth / 10){
+			if(mouseCoordinateY > canvasHeight - 40 &&
+					cameraOffsetY < heightDelta()){
+				cameraOffsetY += 4;
+			}else if(mouseCoordinateY < 40 &&
+					cameraOffsetY > 0){
+				cameraOffsetY -= 4;
+			}
+		}
+		
+		if(cameraOffsetY < 0){
+			cameraOffsetY = 0;
+		}else if(cameraOffsetY > heightDelta()){
+			cameraOffsetY = heightDelta();
+		}
+		
+		if(cameraOffsetX < 0){
+			cameraOffsetX = 0;
+		}else if(cameraOffsetX > widthDelta()){
+			cameraOffsetX = widthDelta();
+		}
+	}
+	
+	//Setters and getters.
 	
 	public void startGame(){
 		timerThread.start();
@@ -258,20 +318,6 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 		gameState = GameState.ENDED;
 	}
 	
-	public synchronized void newLevel(GameLevel level){
-		if(gameState == GameState.ENDED){
-			this.level = level;
-			this.attacker = new AttackingPlayer(this.level);
-			this.defender = new DefendingPlayer(this.level);
-			this.aiTower = new AITowerFigures(attacker, defender);
-			this.defender.setTowersAI(aiTower);
-			this.timer = new ActionTimer();
-			this.timerThread = new Thread(timer);
-			this.gameTimeTimerId = timer.getNewUniqueId();
-			this.currentSelectedStartPosition = null;
-		}
-	}
-	
 	public synchronized boolean careAboutResult(){
 		return careAboutResult;
 	}
@@ -300,23 +346,48 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 		return currentSelectedStartPosition;
 	}
 
+	public synchronized AttackingPlayer getAttacker(){
+		return attacker;
+	}
+	
+	public synchronized DefendingPlayer getDefender(){
+		return defender;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
+	 */
 	@Override
 	public void mouseDragged(MouseEvent arg0){
 	}
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
+	 */
 	@Override
 	public void mouseMoved(MouseEvent arg0){
 		mouseCoordinateX = arg0.getX();
 		mouseCoordinateY = arg0.getY();
 	}
 
+	/* 
+	 * Checks if the position clicked is on a start position.
+	 * 
+	 * (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
+	 */
 	@Override
 	public void mouseClicked(MouseEvent arg0){
-		Position position = level.getAdjacentStartPosition(arg0.getX() + this.cameraOffsetX +
-				Tile.size / 2, arg0.getY() +this.cameraOffsetY + Tile.size / 2);
+		Position position = level.getAdjacentStartPosition(arg0.getX() +
+				cameraOffsetX + Tile.size / 2,
+				arg0.getY() + cameraOffsetY + Tile.size / 2);
 		if(position != null){
 			level.selectTile(position.getX() + Tile.size / 2,
 					position.getY() + Tile.size / 2);
+			if(currentSelectedStartPosition != null){
+				level.deselectTile(currentSelectedStartPosition.toArea());
+				currentSelectedStartPosition = null;
+			}
 			currentSelectedStartPosition = position;
 		}else{
 			if(currentSelectedStartPosition != null){
@@ -326,21 +397,30 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
+	 */
 	@Override
-	public void mouseEntered(MouseEvent arg0){
-	}
+	public void mouseEntered(MouseEvent arg0){}
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
+	 */
 	@Override
 	public void mouseExited(MouseEvent arg0){
-		/*mouseCoordinateX = 100;
-		mouseCoordinateY = 100;*/
+		mouseCoordinateX = canvasWidth / 2;
+		mouseCoordinateY = canvasHeight / 2;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
+	 */
 	@Override
-	public void mousePressed(MouseEvent arg0){
-	}
+	public void mousePressed(MouseEvent arg0){}
 
+	/* (non-Javadoc)
+	 * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
+	 */
 	@Override
-	public void mouseReleased(MouseEvent arg0){
-	}
+	public void mouseReleased(MouseEvent arg0){}
 }

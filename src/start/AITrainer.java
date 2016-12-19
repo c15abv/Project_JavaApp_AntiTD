@@ -1,6 +1,7 @@
 package start;
 
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
@@ -78,8 +79,6 @@ public class AITrainer{
 			CreatureFigureTemplate temp;
 			long timedelta = 0;
 			
-			System.out.println(numberToBuy);
-			
 				for(int i = 0; i < numberToBuy; i++){
 					timedelta = System.currentTimeMillis();
 					while(System.currentTimeMillis() - timedelta < 250 &&
@@ -146,7 +145,7 @@ public class AITrainer{
 			this.successLimit = successLimit;
 			this.type = AttackerAIType.BUNDLE_BUYER;
 			
-		    xmlReader = new LevelXMLReader("XML/levels.xml");
+		    xmlReader = new LevelXMLReader("XML/Levels.xml");
 		    levelNames = xmlReader.getLvlNames();
 		    
 			setup();
@@ -160,7 +159,9 @@ public class AITrainer{
 		}
 		
 		private void setup(){
-			level = xmlReader.getLevelByName(levelNames.get(0));
+			int cost, rand;
+			
+			level = xmlReader.getLevelByName(levelNames.get(2));
 			start = level.getStartTiles();
 			
 			try{
@@ -178,12 +179,18 @@ public class AITrainer{
 			
 			templatesList = new ArrayList<CreatureFigureTemplate>();
 			for(int i = 0; i < 3; i++){
+				cost = 10;
+				if((rand = random.nextInt(10)) == 0){
+					cost = 20;
+				}
 				temp = new CreatureFigureTemplate(Figures.STAR,
 						ColorCreator.getRandomHue(),
-						random.nextDouble() + 0.5, 10, Orientation.RANDOM,
+						random.nextDouble() + 0.5, cost, Orientation.RANDOM,
 						level);
-				temp.setActionTimer(game.getTimer());
-				temp.enableTeleporter((long)1000);
+				if(rand == 0){
+					temp.setActionTimer(game.getTimer());
+					temp.enableTeleporter((long)random.nextInt(4001)+1000);
+				}
 				templatesList.add(temp);
 			}
 			
@@ -265,20 +272,28 @@ public class AITrainer{
 		GameHandler handler = null;
 		boolean done = false;
 		JFrame frame;
+		Game game;
+		
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		double width = screenSize.getWidth();
+		double height = screenSize.getHeight();
+		Dimension dimen = new Dimension((int)width, (int)height);
 		
 		handler = new AITrainer()
 				.new GameHandler(AttackerAIType.BUNDLE_BUYER, 200);
 		
 		frame = new JFrame();
-		frame.setSize(new Dimension(Game.SIZE_X, Game.SIZE_Y));
-		frame.setMinimumSize(new Dimension(Game.SIZE_X, Game.SIZE_Y));
-		frame.setMaximumSize(new Dimension(Game.SIZE_X, Game.SIZE_Y));
-		frame.setResizable(false);
+		frame.setSize(dimen);
+		frame.setMinimumSize(dimen);
+		frame.setMaximumSize(dimen);
+		frame.setResizable(true);
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 		frame.setVisible(true);
-		frame.add(handler.getGame());
+		game = handler.getGame();
+		game.changeSize((int)width, (int)height);
+		frame.add(game);
 		frame.pack();
 		
 		while(!done){
@@ -289,7 +304,9 @@ public class AITrainer{
 				handler.join();
 				handler = new AITrainer()
 						.new GameHandler(AttackerAIType.BUNDLE_BUYER, 200);
-				frame.add(handler.getGame());
+				game = handler.getGame();
+				game.changeSize((int)width, (int)height);
+				frame.add(game);
 				frame.pack();
 			}
 		}

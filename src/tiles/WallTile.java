@@ -7,6 +7,10 @@ import java.awt.geom.Point2D;
 
 import start.Position;
 
+/**
+ * @author Alexander Beliaev, Jan Nylén, Alexander Ekstrom
+ *  WallTiles are used to represent the end points of all levels. 
+ */
 public class WallTile extends Tile{
 	
 	private String tileType;
