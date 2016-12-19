@@ -7,6 +7,8 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -117,28 +119,19 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 		
 		addMouseMotionListener(this);
 	    addMouseListener(this);
+	    
 	}
 	
 	/**
 	 * Changes the size of the game canvas.
-	 * This method should only be called when the
-	 * game is not rendered.
 	 * 
 	 * @param width new width.
 	 * @param height new height.
 	 */
 	public void changeSize(int width, int height){
-		this.setSize(width, height);
+		setSize(width, height);
 		canvasWidth = width;
 		canvasHeight = height;
-		graphicsE = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		device = graphicsE.getDefaultScreenDevice();
-		configuration = device.getDefaultConfiguration();
-		bufferedImage = configuration.createCompatibleImage(level.getWidth(),
-				level.getHeight());
-		
-		g = null;
-		g2d = null;
 	}
 	
 	/**
@@ -258,21 +251,25 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 	 * Updates the game camera/view.
 	 * */
 	private void updateCanvasCamera(){
-		if(mouseCoordinateX > canvasWidth - 40){
-			if(cameraOffsetX < widthDelta())
+		if(mouseCoordinateY < canvasHeight / 2 + canvasHeight / 6 &&
+				mouseCoordinateY > canvasHeight / 2 - canvasHeight / 6){
+			if(mouseCoordinateX > canvasWidth - 40 &&
+					cameraOffsetX < widthDelta()){
 				cameraOffsetX += 4;
-		}else if(mouseCoordinateX < 40){
-			if(cameraOffsetX > 0)
+			}else if(mouseCoordinateX < 40 &&
+					cameraOffsetX > 0){
 				cameraOffsetX -= 4;
-		}
-		
-		if(mouseCoordinateY > canvasHeight - 40){
-			if(cameraOffsetY < heightDelta()){
-				cameraOffsetY += 4;
 			}
-		}else if(mouseCoordinateY < 40){
-			if(cameraOffsetY > 0)
+			
+		}else if(mouseCoordinateX < canvasWidth / 2 + canvasWidth / 10 &&
+				mouseCoordinateX > canvasWidth / 2 - canvasWidth / 10){
+			if(mouseCoordinateY > canvasHeight - 40 &&
+					cameraOffsetY < heightDelta()){
+				cameraOffsetY += 4;
+			}else if(mouseCoordinateY < 40 &&
+					cameraOffsetY > 0){
 				cameraOffsetY -= 4;
+			}
 		}
 		
 		if(cameraOffsetY < 0){
@@ -404,29 +401,26 @@ public class Game extends Canvas implements TimerListener, MouseListener,
 	 * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
 	 */
 	@Override
-	public void mouseEntered(MouseEvent arg0){
-	}
+	public void mouseEntered(MouseEvent arg0){}
 
 	/* (non-Javadoc)
 	 * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
 	 */
 	@Override
 	public void mouseExited(MouseEvent arg0){
-		/*mouseCoordinateX = 100;
-		mouseCoordinateY = 100;*/
+		mouseCoordinateX = canvasWidth / 2;
+		mouseCoordinateY = canvasHeight / 2;
 	}
 
 	/* (non-Javadoc)
 	 * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
 	 */
 	@Override
-	public void mousePressed(MouseEvent arg0){
-	}
+	public void mousePressed(MouseEvent arg0){}
 
 	/* (non-Javadoc)
 	 * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
 	 */
 	@Override
-	public void mouseReleased(MouseEvent arg0){
-	}
+	public void mouseReleased(MouseEvent arg0){}
 }
