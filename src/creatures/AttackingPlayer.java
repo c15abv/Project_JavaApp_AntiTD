@@ -73,8 +73,8 @@ public class AttackingPlayer extends Player{
 	}
 	
 	/**
-	 * Adds a new creature to
-	 * @param figure
+	 * Adds a new creature to the horde.
+	 * @param figure the creature to be added to the horde.
 	 */
 	public void addCreatureFigure(CreatureFigure figure){
 		currentHorde.add(figure);
