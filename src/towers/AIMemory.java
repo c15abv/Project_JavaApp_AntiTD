@@ -33,7 +33,7 @@ public class AIMemory{
 			NO_ERROR, INVALID_MEMORY_FORMAT;
 		}
 		
-		public static final String PATH = "res/memory";
+		public static final String PATH = "memory";
 		
 		private int mapValueSought, loadedSuccessValue, mapValueUsed;
 		private String path, loadedMemory, loadedSpecificMemory;
@@ -69,9 +69,10 @@ public class AIMemory{
 		}
 		
 		private void loadMemory() throws IOException{
-			InputStream inp = ClassLoader.getSystemClassLoader().getResourceAsStream(path);
+			InputStream is = getClass().getResourceAsStream(path);
+			InputStreamReader fis = new InputStreamReader(is);
 			BufferedReader bufferedReader = 
-					new BufferedReader(new InputStreamReader(inp));
+					new BufferedReader(fis);
 			StringBuilder stringBuilder;
 			String line;
 			
