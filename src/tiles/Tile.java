@@ -4,24 +4,68 @@ import java.awt.Graphics2D;
 
 import start.Position;
 
+/**
+ * Skeleton by Alexander Beliaev.<br>
+ * Edited by Jan Nylén, Alexander Ekstrom.<br>
+ * Rewritten and edited by Alexander Beliaev.<br>
+ * <br>
+ * 
+ * The abstract class Tile is used to build upon to
+ * create tiles used in the AntiTD game.
+ * 
+ * @author Alexander Beliaev, Jan Nylén, Alexander Ekstrom
+ *  
+ */
 public abstract class Tile{
 
-	public static final int size = 50; 
+	public static final int size = 100; 
 	
 	private Position position;
 	private long id;
 	private boolean selected;
 	
+	/**
+	 * Creates a new Tile at the given position.
+	 * 
+	 * @param position a position.
+	 */
 	public Tile(Position position){
 		this.position = position;
 		id = 0;
 	}
 	
+	/**
+	 * Updates any logic related to a specific tile.
+	 */
 	public abstract void update();
+	
+	
+	/**
+	 * Renders the tile with the given Graphics2D object.
+	 * 
+	 * @param g2d the Graphics2D object.
+	 */
 	public abstract void render(Graphics2D g2d);
+	
+	
+	/**
+	 * Returns whether or not the Tile is traversable.
+	 * 
+	 * @return whether or not the Tile is traversable.
+	 */
 	public abstract boolean walkable();
+	
+	
+	/**
+	 * Returns whether or not the Tile can be built upon.
+	 * 
+	 * @return whether or not the Tile can be built upon.
+	 */
 	public abstract boolean buildable();
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode(){
 		final int prime = 31;
@@ -31,6 +75,9 @@ public abstract class Tile{
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj){
 		if (this == obj)
@@ -48,6 +95,7 @@ public abstract class Tile{
 		return true;
 	}
 
+	//Setters and getters
 	public Position getPosition(){
 		return position;
 	}

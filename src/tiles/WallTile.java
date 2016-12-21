@@ -7,20 +7,24 @@ import java.awt.geom.Point2D;
 
 import start.Position;
 
+/**
+ * Authored by Jan Nylén, Alexander Ekstrom.<br>
+ * Rewritten and edited by Alexander Beliaev.<br>
+ * <br>
+ * 
+ * WallTiles are used to represent the end points of all levels. 
+ * 
+ * @author Alexander Beliaev, Jan Nylén, Alexander Ekstrom
+ * 
+ */
 public class WallTile extends Tile{
 	
-	private String tileType;
 	private Color[] colors1 = {getColor1(), getColor2()};
 	private float[] distance = {0.0f, 1.0f};
 	private RadialGradientPaint paint1;
 
-	public WallTile(Position position) {
-		this(position, null);
-	}
-	
-	public WallTile(Position position, String tileType){
+	public WallTile(Position position){
 		super(position);
-		this.tileType = tileType;
 		paint1 = new RadialGradientPaint(
 				new Point2D.Float(getPosition().getX(),
 						getPosition().getY()), Tile.size / 2,

@@ -5,6 +5,14 @@ import java.awt.Graphics2D;
 
 import start.Position;
 
+/**
+ * Authored by Jan Nylén, Alexander Ekstrom.<br>
+ * Rewritten and edited by Alexander Beliaev.<br>
+ * <br>
+ * 
+ * @author Alexander Beliaev, Jan Nylén, Alexander Ekstrom
+ *  
+ */
 public class StartTile extends PathTile{
 	
 	private static final int RENDER_COUNT_LIMIT = 50;
@@ -13,19 +21,23 @@ public class StartTile extends PathTile{
 	private int renderAnimationCount;
 	private int sleepCount;
 	private boolean sleepRender;
-	private String tileType;
 
-	public StartTile(Position position, ValidPath path) {
-		this(position, null, path);
-	}
 	
-	public StartTile(Position position, String tileType, ValidPath path){
+	/**
+	 * Creates a new StartTile with the given position
+	 * and path type.
+	 * @param position
+	 * @param path
+	 */
+	public StartTile(Position position, ValidPath path){
 		super(position, path);
-		this.tileType = tileType;
 		renderAnimationCount = sleepCount = 0;
 		sleepRender = false;
 	}	
 
+	/* (non-Javadoc)
+	 * @see tiles.PathTile#update()
+	 */
 	@Override
 	public void update(){
 		if(sleepRender && sleepCount < SLEEP_RENDER_COUNT){
@@ -42,6 +54,9 @@ public class StartTile extends PathTile{
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see tiles.PathTile#render(java.awt.Graphics2D)
+	 */
 	@Override
 	public void render(Graphics2D g2d){
 		Color color;
@@ -60,11 +75,22 @@ public class StartTile extends PathTile{
 		g2d.drawOval(getPosition().getX() - size / 2, getPosition().getY() - size / 2, size, size);
 	}
 	
+	/* (non-Javadoc)
+	 * @see tiles.Tile#isStartPosition(start.Position)
+	 */
 	@Override
 	public boolean isStartPosition(Position position){
 		return getPosition().equals(position);
 	}
 	
+	/**
+	 * Returns a valid starting direction from the
+	 * start position. The order in which the methods
+	 * check the directions are: east -> west -> south -> north.
+	 * If no directions are valid Direction.NA is returned.
+	 * 
+	 * @return a valid direction.
+	 */
 	public Direction getStartingDirection(){
 		if(getValidPath() == ValidPath.EAST){
 			return Direction.EAST;

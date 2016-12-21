@@ -10,6 +10,15 @@ import creatures.CreatureFigure;
 import creatures.CreatureFigure.Orientation;
 import start.Position;
 
+/**
+ * Skeleton by Jan Nylén, Alexander Ekstrom<br>
+ * Written by Alexander Beliaev<br>
+ * Edited by Jan Nylén<br>
+ * <br>
+ * 
+ * @author Alexander Beliaev, Jan Nylén, Alexander Ekstrom
+ *  
+ */
 public class PathTile extends Tile implements EnterTileEffect{
 		
 	public enum ValidPath{
@@ -136,23 +145,10 @@ public class PathTile extends Tile implements EnterTileEffect{
 	private Position start1, start2, end1, end2;
 	
 	private HashMap<Position, PositionConnection> positionPairMap;
-	private String tileType;
-	private String landOnEffect;
 	private ValidPath path;
 
 	public PathTile(Position position, ValidPath path){
-		this(position, null, null, path);
-	}
-	
-	public PathTile(Position position, String tileType, ValidPath path){
-		this(position, tileType, null, path);
-	}	
-	
-	public PathTile(Position position, String tileType, String landOnEffect,
-			ValidPath path){
 		super(position);
-		this.tileType = tileType;
-		this.landOnEffect = landOnEffect;
 		this.path = path;
 		positionPairMap = new HashMap<Position, PositionConnection>();
 		generateValidPath();

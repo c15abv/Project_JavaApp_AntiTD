@@ -7,6 +7,16 @@ import creatures.CreatureFigure;
 import start.AreaPosition;
 import start.Position;
 
+/**
+ * The TeleportTile is just like an ordinary PathTile,
+ * except for the fact that it holds a teleport - connected (blue) or
+ * disconnected (gray) - with a landOn effect. If a creature
+ * enters the TeleportTile and enters the teleport position and
+ * there being a connection between another teleport, the creature
+ * will change position to the position of the other teleport.
+ * 
+ * @author Alexander Beliaev
+ */
 public class TeleportTile extends PathTile{
 
 	private static final int RENDER_COUNT_LIMIT = 99;
@@ -19,6 +29,13 @@ public class TeleportTile extends PathTile{
 	private boolean sleepRender, sleepRender2;
 	private Position teleportPosition;
 	
+	/**
+	 * Creates a new TeleportTile with the given position
+	 * and path type.
+	 * 
+	 * @param position
+	 * @param path
+	 */
 	public TeleportTile(Position position, ValidPath path){
 		super(position, path);
 		renderAnimationCount = renderAnimationCount2 =
@@ -27,6 +44,9 @@ public class TeleportTile extends PathTile{
 		teleportPosition = position;
 	}
 
+	/* (non-Javadoc)
+	 * @see tiles.PathTile#landOn(creatures.CreatureFigure)
+	 */
 	@Override
 	public void landOn(CreatureFigure creature){
 		if(connection != null && creature.getPosition()
@@ -35,11 +55,17 @@ public class TeleportTile extends PathTile{
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see tiles.Tile#hasEffect()
+	 */
 	@Override
 	public boolean hasEffect(){
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see tiles.PathTile#update()
+	 */
 	@Override
 	public void update(){
 		if(sleepRender && sleepCount < SLEEP_RENDER_COUNT){
@@ -69,6 +95,9 @@ public class TeleportTile extends PathTile{
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see tiles.PathTile#render(java.awt.Graphics2D)
+	 */
 	@Override
 	public void render(Graphics2D g2d){
 		Color color;
@@ -101,10 +130,22 @@ public class TeleportTile extends PathTile{
 				teleportPosition.getY() - size2 / 2, size2, size2);
 	}
 	
+	
+	/**
+	 * Connects the teleport of this TeleportTile with the teleport
+	 * of another TeleportTile.
+	 * 
+	 * @param connection the other TeleportTile.
+	 */
 	public void setConnection(TeleportTile connection){
 		this.connection = connection;
 	}
 	
+	/**
+	 * Sets a teleport at the specified position.
+	 * 
+	 * @param position a position.
+	 */
 	public void setTeleporterAt(Position position){
 		if(position != null && AreaPosition.withinArea(getPosition(),
 				position, Tile.size, Tile.size)){
@@ -112,6 +153,12 @@ public class TeleportTile extends PathTile{
 		}
 	}
 	
+	/**
+	 * Returns the position of the teleport of this
+	 * TeleportTile.
+	 * 
+	 * @return the position of the teleport.
+	 */
 	public Position getTeleportPosition(){
 		return teleportPosition;
 	}
