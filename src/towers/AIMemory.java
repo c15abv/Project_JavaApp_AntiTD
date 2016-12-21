@@ -4,14 +4,29 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import towers.AIMemory.AIMemoryLoader.Errors;
 import towers.PlanDetails.TowerBuildPlan;
 
+/**
+ * AIMemory handles everything to do with the memory
+ * processing of the AIDefendingPlayer.
+ * 
+ * @author Alexander Beliaev
+ *
+ */
 public class AIMemory{
 
+	/**
+	 * AIMemoryLoader load the most adequate memory.
+	 * 
+	 * @author Alexander Beliaev
+	 *
+	 */
 	public static class AIMemoryLoader{
 		
 		public enum Errors{
@@ -25,6 +40,14 @@ public class AIMemory{
 		private ArrayList<TowerBuildPlan> towerPlan;
 		private Errors error;
 		
+		/**
+		 * Creates a loading class for the AIMemory class,
+		 * loads memories and instantiates an AIMemory object
+		 * with the most adequate memory. When searching for 
+		 * a memory the most similar (level) is chosen.
+		 * 
+		 * @param mapValue the value of the level.
+		 */
 		public AIMemoryLoader(int mapValue){
 			this.mapValueSought = mapValue;
 			this.path = PATH;
@@ -46,8 +69,9 @@ public class AIMemory{
 		}
 		
 		private void loadMemory() throws IOException{
+			InputStream inp = ClassLoader.getSystemClassLoader().getResourceAsStream(path);
 			BufferedReader bufferedReader = 
-					new BufferedReader(new FileReader(path));
+					new BufferedReader(new InputStreamReader(inp));
 			StringBuilder stringBuilder;
 			String line;
 			
@@ -151,6 +175,11 @@ public class AIMemory{
 	private ArrayList<TowerBuildPlan> towerPlan;
 	private Errors error;
 	
+	/**
+	 * Loads the memory used by the AIDefendingPlayer.
+	 * 
+	 * @param loader
+	 */
 	private AIMemory(AIMemoryLoader loader){
 		this.mapValueSought = loader.mapValueSought;
 		this.path = loader.path;
@@ -184,13 +213,18 @@ public class AIMemory{
 		return error;
 	}
 	
+	/**
+	 * Attempts to save the memory. The memory is only saved if the
+	 * most recent session resulting in a higher success rate than the
+	 * success rate which was loaded from the memory.
+	 * 
+	 * @param success the success of the most recent session (tower build plan)
+	 * @param plans the tower build plan
+	 */
 	public void saveMemory(int success, ArrayList<TowerBuildPlan> plans){
 		String newSubString = "";
 		StringBuilder stringBuilder;
 		String newString = "";
-		char[] array;
-		
-		System.out.println(success + " > " + loadedSuccessValue);
 		
 		if(success > loadedSuccessValue){
 			newSubString += "" + mapValueSought + ":" + success;
@@ -203,31 +237,23 @@ public class AIMemory{
 			
 			newSubString += ";";
 			
-			System.out.println("new memory: " + newSubString);
-			System.out.println(mapValueSought + " == " + mapValueUsed);
-			
 			if(loadedMemory != null && loadedSpecificMemory != null &&
 					mapValueSought == mapValueUsed){
-				System.out.println("replace");
 				newString = loadedSpecificMemory
 						.replaceAll("(?=[]\\[+&|!(){}^\"~*?:\\\\-])", "\\\\");
 				loadedMemory = loadedMemory.replaceAll(newString, newSubString);
 			}else if(loadedMemory != null){
-				System.out.println("append");
 				stringBuilder = new StringBuilder(loadedMemory);
 				stringBuilder.append(newSubString);
 				loadedMemory = stringBuilder.toString();
 			}else{
-				System.out.println("new");
 				loadedMemory = newSubString;
 			}
 			
 			try(PrintWriter out = new PrintWriter(path)){
-				System.out.println(loadedMemory);
 			    out.print(loadedMemory);
 			    out.close();
 			}catch(FileNotFoundException e){
-				System.out.println("not found");
 			}
 		}
 	}

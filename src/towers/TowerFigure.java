@@ -24,7 +24,7 @@ import utilities.TimerListener;
  */
 public abstract class TowerFigure implements TimerListener{
 	
-	public static final int SIZE = 40;
+	public static final int SIZE = 80;
 	public static final int COOLDOWN = 1000;
 	
 	private int baseDamage, hue, range, cooldown, killed;
