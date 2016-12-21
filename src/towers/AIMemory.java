@@ -39,6 +39,7 @@ public class AIMemory{
 		private String path, loadedMemory, loadedSpecificMemory;
 		private ArrayList<TowerBuildPlan> towerPlan;
 		private Errors error;
+		private boolean customPath = false;
 		
 		/**
 		 * Creates a loading class for the AIMemory class,
@@ -60,6 +61,7 @@ public class AIMemory{
 		
 		public AIMemoryLoader setPath(String path){
 			this.path = path;
+			this.customPath = true;
 			return this;
 		}
 		
@@ -69,10 +71,19 @@ public class AIMemory{
 		}
 		
 		private void loadMemory() throws IOException{
-			InputStream is = getClass().getResourceAsStream(path);
-			InputStreamReader fis = new InputStreamReader(is);
-			BufferedReader bufferedReader = 
-					new BufferedReader(fis);
+			InputStream is;
+			InputStreamReader fis;
+			BufferedReader bufferedReader;
+			
+			if(!customPath){
+				is = getClass().getResourceAsStream(path);
+				fis = new InputStreamReader(is);
+				bufferedReader = 
+						new BufferedReader(fis);
+			}else{
+				bufferedReader = 
+						new BufferedReader(new FileReader(path));
+			}
 			StringBuilder stringBuilder;
 			String line;
 			
