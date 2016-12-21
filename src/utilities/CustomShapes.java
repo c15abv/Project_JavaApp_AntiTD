@@ -6,16 +6,28 @@ import java.awt.geom.Path2D;
 import start.Position;
 
 /**
- * CustomShapes.
+ * CustomShapes is a class containing methods to generate
+ * Shapes not natively found in the java.awt library.
  * 
  * @author Alexander Beliaev
  * @version 1.0
  */
-public class CustomShapes {
+public class CustomShapes{
 
 	private static final int STAR_RAYS = 5;
 	
 	//fits inside a circle made with the same size.
+	/**
+	 * Creates a star with 5 rays with the specified position
+	 * being the centre of the star. Size is double the size
+	 * of the length from the centre of the star to the end
+	 * to one of its rays. The star will fit inside a circle with
+	 * the diameter size.
+	 * 
+	 * @param position the position.
+	 * @param size the size.
+	 * @return a Shape object containing the star.
+	 */
 	public static Shape createStar(Position position, double size){
         Path2D path = new Path2D.Double();
         double deltaRayAngleRadius = Math.PI / STAR_RAYS;
@@ -48,6 +60,17 @@ public class CustomShapes {
     }
 	
 	//fits inside a circle made with the same size.
+	/**
+	 * Creates an equilateral triangle with the specified
+	 * position being the centre of the triangle. The size is double the size
+	 * of the length from the centre of the triangle to the end
+	 * to one of its corners. The triangle will fit inside a circle with
+	 * the diameter size.
+	 * 
+	 * @param position the position.
+	 * @param size the size.
+	 * @return a Shape object containing the triangle.
+	 */
 	public static Shape createTriangle(Position position, double size){
 		Path2D path = new Path2D.Double();
 		double angleRadius = Math.toRadians(60);

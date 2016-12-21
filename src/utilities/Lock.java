@@ -1,7 +1,7 @@
 package utilities;
 
 /**
- * Lock.
+ * A lock class.
  * 
  * @author Alexander Beliaev
  * @version 1.0

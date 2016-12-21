@@ -1,5 +1,12 @@
 package utilities;
 
+
+/**
+ * An exclusively incremental counter.
+ * 
+ * @author Alexander Beliaev
+ *
+ */
 public class IdCounter{
 	
 	public static final int DEFAULT = 0;
