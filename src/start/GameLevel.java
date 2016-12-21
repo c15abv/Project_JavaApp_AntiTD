@@ -9,6 +9,17 @@ import tiles.StartTile;
 import tiles.Tile;
 import utilities.IdCounter;
 
+/**
+ * Skeleton by Alexander Beliaev.<br>
+ * Edited by Jan Nylén, Alexander Ekstrom<br>
+ * Edited by Alexander Beliaev<br>
+ * <br>
+ * 
+ * The GameLevel contain all the contents of a loaded level.
+ * 
+ * @author Alexander Beliaev, Jan Nylén, Alexander Ekstrom
+ *
+ */
 public class GameLevel{
 
 	public static final int DEFAULT_PLAYER_SCORE_GOAL = 100;
@@ -88,12 +99,19 @@ public class GameLevel{
 	}
 	
 	
+	/**
+	 * Updates any logic related to the contents of the level.
+	 */
 	public void update(){
 		for(Map.Entry<AreaPosition, Tile> entry : levelMap.entrySet()){
 			entry.getValue().update();
 		}
 	}
 	
+	/**
+	 * Renders the level with the given Graphics2D object.
+	 * @param g2d a Graphics2D object.
+	 */
 	public void render(Graphics2D g2d){
 		for(Map.Entry<AreaPosition, Tile> entry : levelMap.entrySet()){
 		    entry.getValue().render(g2d);
@@ -173,10 +191,23 @@ public class GameLevel{
 		return attackingPlayerScoreGoal;
 	}
 	
+	/**
+	 * Returns the hashcode of the level when it was
+	 * first loaded.
+	 * 
+	 * @return the hashcode of the newly created level.
+	 */
 	public int getInitialLevelMapHash(){
 		return levelMapHash;
 	}
 	
+	/**
+	 * Changes the tile with the given AreaPosition to
+	 * a new tile.
+	 * 
+	 * @param areaPosition an AreaPosition.
+	 * @param newTile the new tile.
+	 */
 	public void changeTile(AreaPosition areaPosition, Tile newTile){
 		if(levelMap.containsKey(areaPosition) && newTile != null){
 			levelMap.put(areaPosition, newTile);
@@ -189,6 +220,12 @@ public class GameLevel{
 		return id;
 	}
 	
+	/**
+	 * Returns a tile by its id.
+	 * 
+	 * @param id and id.
+	 * @return a Tile.
+	 */
 	public Tile getTileById(long id){
 		for(Map.Entry<AreaPosition, Tile> entry : levelMap.entrySet()){
 			if(entry.getValue().getId() == id){
@@ -199,6 +236,14 @@ public class GameLevel{
 		return null;
 	}
 
+	/**
+	 * Returns the position of a starting position if
+	 * the given coordinates are within a StartTile.
+	 * 
+	 * @param x the x-coordinate.
+	 * @param y the y-coordinate.
+	 * @return an adjacent starting position.
+	 */
 	public Position getAdjacentStartPosition(int x, int y){
 		AreaPosition clickedAreaPosition = new Position(x, y,
 				Tile.size).toArea();
@@ -212,6 +257,13 @@ public class GameLevel{
 		return null;
 	}
 	
+	/**
+	 * Selects a tile with the given coordinates.
+	 * 
+	 * @param x the x-coordinate.
+	 * @param y the y-coordinate.
+	 * @return the AreaPosition of the selected tile.
+	 */
 	public AreaPosition selectTile(int x, int y){
 		AreaPosition clickedAreaPosition = new Position(x, y,
 				Tile.size).toArea();
@@ -227,6 +279,11 @@ public class GameLevel{
 		return null;
 	}
 	
+	/**
+	 * Deselects a tile with the given AreaPosition.
+	 * 
+	 * @param clickedAreaPosition an AreaPosition.
+	 */
 	public void deselectTile(AreaPosition clickedAreaPosition){
 		Tile tile = levelMap.get(clickedAreaPosition);
 		
@@ -249,6 +306,10 @@ public class GameLevel{
 				startPositions.add((StartTile)entry.getValue());
 			}
 		}
+	}
+	
+	public int getNrOfTemplates() {
+		return nrOfTemplates;
 	}
 		
 }
