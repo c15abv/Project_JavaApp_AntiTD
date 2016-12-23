@@ -188,10 +188,7 @@ public class AIMemory{
 		String newSubString = "";
 		StringBuilder stringBuilder;
 		String newString = "";
-		char[] array;
-		
-		System.out.println(success + " > " + loadedSuccessValue);
-		
+				
 		if(success > loadedSuccessValue){
 			newSubString += "" + mapValueSought + ":" + success;
 			
@@ -202,32 +199,24 @@ public class AIMemory{
 			}
 			
 			newSubString += ";";
-			
-			System.out.println("new memory: " + newSubString);
-			System.out.println(mapValueSought + " == " + mapValueUsed);
-			
+						
 			if(loadedMemory != null && loadedSpecificMemory != null &&
 					mapValueSought == mapValueUsed){
-				System.out.println("replace");
 				newString = loadedSpecificMemory
 						.replaceAll("(?=[]\\[+&|!(){}^\"~*?:\\\\-])", "\\\\");
 				loadedMemory = loadedMemory.replaceAll(newString, newSubString);
 			}else if(loadedMemory != null){
-				System.out.println("append");
 				stringBuilder = new StringBuilder(loadedMemory);
 				stringBuilder.append(newSubString);
 				loadedMemory = stringBuilder.toString();
 			}else{
-				System.out.println("new");
 				loadedMemory = newSubString;
 			}
 			
 			try(PrintWriter out = new PrintWriter(path)){
-				System.out.println(loadedMemory);
 			    out.print(loadedMemory);
 			    out.close();
 			}catch(FileNotFoundException e){
-				System.out.println("not found");
 			}
 		}
 	}

@@ -11,8 +11,10 @@ import creatures.CreatureFigure.Orientation;
 import start.Position;
 
 /**
+ * A PathTile used to represent all tiles that are walkable for units in the game
+ * 
  * @author Alexander Beliaev, Jan Nylén, Alexander Ekstrom
- *  A PathTile used to represent all tiles that are walkable for units in the game
+ * @version 1.0 
  */
 public class PathTile extends Tile implements EnterTileEffect{
 		
@@ -140,7 +142,9 @@ public class PathTile extends Tile implements EnterTileEffect{
 	private Position start1, start2, end1, end2;
 	
 	private HashMap<Position, PositionConnection> positionPairMap;
+	@SuppressWarnings("unused")
 	private String tileType;
+	@SuppressWarnings("unused")
 	private String landOnEffect;
 	private ValidPath path;
 

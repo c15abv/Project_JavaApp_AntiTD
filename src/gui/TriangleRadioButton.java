@@ -8,19 +8,19 @@ import java.awt.Dimension;
 /**
  * Radio button to represent triangle creatures.
  * 
- * @author Karolina Jonz�n
+ * @author Karolina Jonzen
  * @version 1.0
  */
 @SuppressWarnings("serial")
 class TriangleRadioButton extends FigureRadioButton {
-	
+
 	/**
 	 * Constructor that initiates the button.
 	 */
 	public TriangleRadioButton() {
 		initButton();
 	}
-	
+
 	@Override
 	public Dimension getPreferredSize() {
 		return new Dimension(TEMP_SIZE, TEMP_SIZE);

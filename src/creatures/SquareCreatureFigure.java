@@ -13,7 +13,7 @@ import start.Position;
  * @author Alexander Believ
  * @version 1.0
  */
-public class SquareCreatureFigure extends CreatureFigure{
+public class SquareCreatureFigure extends CreatureFigure {
 
 	public static final Figures shape = Figures.SQUARE;
 
@@ -21,75 +21,84 @@ public class SquareCreatureFigure extends CreatureFigure{
 	 * See CreatureFigure constructor.
 	 */
 	public SquareCreatureFigure(int hue, double scale, Position position,
-			Orientation orientation, GameLevel level){
+			Orientation orientation, GameLevel level) {
 		this(hue, scale, position, orientation, level, BASE_SPEED);
 	}
-	
+
 	/**
 	 * See CreatureFigure constructor.
 	 */
 	public SquareCreatureFigure(int hue, double scale, Position position,
-			Orientation orientation, GameLevel level, double speed){
+			Orientation orientation, GameLevel level, double speed) {
 		super(hue, scale, position, orientation, level, speed);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see creatures.CreatureFigure#render(java.awt.Graphics2D)
 	 */
 	@Override
-	public void render(Graphics2D g2d){
+	public void render(Graphics2D g2d) {
 		g2d.setColor(getColor());
-		g2d.fillRect((int)(getPosition().getX() -
-				(getScale() * CreatureFigure.BASE_SIZE) / 2),
-				(int)(getPosition().getY() -
-				(getScale() * CreatureFigure.BASE_SIZE) / 2),
-				(int)(getScale() * CreatureFigure.BASE_SIZE),
-				(int)(getScale() * CreatureFigure.BASE_SIZE));
+		g2d.fillRect(
+				(int) (getPosition().getX()
+						- (getScale() * CreatureFigure.BASE_SIZE) / 2),
+				(int) (getPosition().getY()
+						- (getScale() * CreatureFigure.BASE_SIZE) / 2),
+				(int) (getScale() * CreatureFigure.BASE_SIZE),
+				(int) (getScale() * CreatureFigure.BASE_SIZE));
 		g2d.setColor(Color.WHITE);
-		g2d.drawString(""+percentLife(), (int)(getPosition().getX() -
-				(getScale() * CreatureFigure.BASE_SIZE) / 2), getPosition().getY());
+		g2d.drawString("" + percentLife(),
+				(int) (getPosition().getX()
+						- (getScale() * CreatureFigure.BASE_SIZE) / 2),
+				getPosition().getY());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see creatures.CreatureFigure#getShape()
 	 */
 	@Override
-	public Figures getShape(){
+	public Figures getShape() {
 		return shape;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see creatures.CreatureFigure#isCollision(start.Position)
 	 */
 	@Override
 	public boolean isCollision(Position position) {
 		int dx = Math.abs(position.getX() - this.getPosition().getX());
 		int dy = Math.abs(position.getY() - this.getPosition().getY());
-		double outerRadius = this.getScale() * CreatureFigure.BASE_SIZE / 2 * 1.415;
+		double outerRadius = this.getScale() * CreatureFigure.BASE_SIZE / 2
+				* 1.415;
 		double collPointAngle;
 		double innerRadius;
-		
-		if(dx > outerRadius || dy > outerRadius){
+
+		if (dx > outerRadius || dy > outerRadius) {
 			return false;
 		}
-		
-		if(dx == 0){
+
+		if (dx == 0) {
 			collPointAngle = 0;
-		}else if(dy / dx <= 1){
+		} else if (dy / dx <= 1) {
 			collPointAngle = Math.atan(dy / dx);
-		}else{
+		} else {
 			collPointAngle = Math.PI / 2 - Math.atan(dy / dx);
 		}
-		
-		innerRadius = this.getScale()  * CreatureFigure.BASE_SIZE / 
-				(2 * Math.cos(collPointAngle));
-		
-		if(innerRadius >= Math.sqrt(Math.pow(dx, 2) +
-				Math.pow(dy, 2))){
+
+		innerRadius = this.getScale() * CreatureFigure.BASE_SIZE
+				/ (2 * Math.cos(collPointAngle));
+
+		if (innerRadius >= Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))) {
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 }

@@ -9,7 +9,7 @@ import start.Figures;
 /**
  * FigureRepresentation that represents triangle figures.
  * 
- * @author Karolina Jonz�n
+ * @author Karolina Jonzen
  * @version 1.0
  */
 @SuppressWarnings("serial")
@@ -32,7 +32,8 @@ class TriangleRepresentation extends FigureRepresentation {
 	 * @param orientation
 	 * @param cost
 	 */
-	public TriangleRepresentation(int hue, float scale, boolean isTeleporterCreature, Orientation orientation, int cost) {
+	public TriangleRepresentation(int hue, float scale,
+			boolean isTeleporterCreature, Orientation orientation, int cost) {
 		super(hue, scale, isTeleporterCreature, orientation, cost);
 		this.creatureType = Figures.TRIANGLE;
 	}

@@ -15,7 +15,7 @@ import java.awt.Dimension;
  * Abstract radio button class to represent different creatures the user can
  * choose from.
  * 
- * @author Karolina Jonz�n
+ * @author Karolina Jonzen
  * @version 1.0
  */
 @SuppressWarnings("serial")

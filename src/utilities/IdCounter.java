@@ -1,24 +1,24 @@
 package utilities;
 
-public class IdCounter{
-	
+public class IdCounter {
+
 	public static final int DEFAULT = 0;
-	
+
 	private long id;
-	
-	public IdCounter(){
+
+	public IdCounter() {
 		this(DEFAULT);
 	}
-	
-	public IdCounter(long id){
+
+	public IdCounter(long id) {
 		this.id = id;
 	}
-	
-	public void increment(){
+
+	public void increment() {
 		id++;
 	}
-	
-	public long getId(){
+
+	public long getId() {
 		return id;
 	}
 }

@@ -648,7 +648,7 @@ xsi:schemaLocation="LevelsXMLSchema.xsd">
 		<rules>
 			<attackerCredit>1000</attackerCredit>
 			<defenderCredit>101</defenderCredit>
-			<timeToFinish>120</timeToFinish>
+			<timeToFinish>60</timeToFinish>
 			<nrOfTemplates>3</nrOfTemplates>
 			<attackingPlayerScoreGoal>8</attackingPlayerScoreGoal>
 		</rules>

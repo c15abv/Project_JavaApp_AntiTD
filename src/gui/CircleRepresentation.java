@@ -9,7 +9,7 @@ import start.Figures;
 /**
  * FigureRepresentation that represents circle figures.
  * 
- * @author Karolina Jonz�n
+ * @author Karolina Jonzen
  * @version 1.0
  */
 @SuppressWarnings("serial")

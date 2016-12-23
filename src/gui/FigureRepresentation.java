@@ -17,7 +17,7 @@ import utilities.ColorCreator;
 /**
  * Abstract class that represents different creature figures.
  * 
- * @author Karolina Jonz�n
+ * @author Karolina Jonzen
  * @version 1.0
  */
 @SuppressWarnings("serial")
@@ -53,7 +53,7 @@ public abstract class FigureRepresentation extends JPanel {
 		this.cost = cost;
 
 	}
-	
+
 	/**
 	 * Creates the shape of the figure.
 	 * 
@@ -99,7 +99,6 @@ public abstract class FigureRepresentation extends JPanel {
 		this.orientation = orientation;
 	}
 
-	
 	public Figures getCreatureType() {
 		return creatureType;
 	}
@@ -128,7 +127,7 @@ public abstract class FigureRepresentation extends JPanel {
 	public Color getColor() {
 		return color;
 	}
-	
+
 	public long getTime() {
 		return time;
 	}
@@ -136,7 +135,7 @@ public abstract class FigureRepresentation extends JPanel {
 	public void setTime(long time) {
 		this.time = time;
 	}
-	
+
 	@Override
 	public void paintComponent(Graphics g) {
 		g.setColor(color);

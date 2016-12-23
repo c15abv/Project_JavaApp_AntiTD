@@ -44,7 +44,7 @@ import start.Figures;
  * Class that builds the right panel of the gui where the user can create and
  * buy troops.
  * 
- * @author Karolina Jonzén
+ * @author Karolina Jonzen
  * @version 1.0
  */
 @SuppressWarnings("serial")
@@ -64,7 +64,7 @@ public class RightPanel extends JPanel {
 	private JSlider colorSlider;
 	private JSlider sizeSlider;
 	private JSlider teleporterTimeSlider;
-	private int currentCreatureCost = 0;
+	private int currentCreatureCost;
 	private JPanel troopPanel;
 	private JPanel creatorModePanel;
 	private JPanel playModePanel;
@@ -95,7 +95,6 @@ public class RightPanel extends JPanel {
 	 * layout.
 	 */
 	public void initUI() {
-
 		GridBagLayout gb = new GridBagLayout();
 
 		GridBagConstraints c = new GridBagConstraints();
@@ -162,6 +161,10 @@ public class RightPanel extends JPanel {
 
 		initCreditTextFieldValue();
 
+		creatureSelected = false;
+		currentCreatureCost = 0;
+		updateCostTextField();
+		
 		this.revalidate();
 		this.repaint();
 
@@ -437,7 +440,6 @@ public class RightPanel extends JPanel {
 								.createDashedBorder(Color.DARK_GRAY));
 						container.add(troopCreature);
 
-						System.out.print(index);
 						troopPanel.remove(index);
 						troopPanel.add(container, index);
 						troopPanel.revalidate();
@@ -459,13 +461,10 @@ public class RightPanel extends JPanel {
 
 	public void updateProperties(int index) {
 		hitPointsTextField.setText(
-				"HP: " + String.valueOf(viewModel
-						.getHitpoints(index)));
+				"HP: " + String.valueOf(viewModel.getHitpoints(index)));
 		speedTextField
-				.setText("Speed: " + String.valueOf(
-						viewModel.getSpeed(index)));
-		directionTextField.setText("Orientation: "
-				+ figure.orientation.name());
+				.setText("Speed: " + String.valueOf(viewModel.getSpeed(index)));
+		directionTextField.setText("Orientation: " + figure.orientation.name());
 	}
 
 	/**
@@ -535,7 +534,6 @@ public class RightPanel extends JPanel {
 							try {
 								viewModel.buyCreature(index,
 										(long) teleporterTimeSlider.getValue());
-								updateCreditTextField();
 							} catch (NullPointerException e) {
 								message = "Select start position first.";
 								JOptionPane.showMessageDialog(container,
@@ -544,7 +542,6 @@ public class RightPanel extends JPanel {
 						} else {
 							try {
 								viewModel.buyCreature(index);
-								updateCreditTextField();
 							} catch (NullPointerException e) {
 								message = "Select start position first.";
 								JOptionPane.showMessageDialog(container,
@@ -592,8 +589,7 @@ public class RightPanel extends JPanel {
 		startGameBtn.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent ae) {
-				
-				
+
 				isPlayMode = true;
 
 				initPlayModePanel();
@@ -603,12 +599,10 @@ public class RightPanel extends JPanel {
 				settingsPanel.remove(modePanel);
 				modePanel = playModePanel;
 
-				
-
 				for (FigureRepresentation figure : troop) {
 					viewModel.addTroop(figure);
 				}
-				
+
 				troopsBtnGroup.setSelected(((AbstractButton) troopsBtnGroup
 						.getElements().nextElement()).getModel(), true);
 
@@ -972,7 +966,6 @@ public class RightPanel extends JPanel {
 	/**
 	 * Sets the credit text field to its start value.
 	 * 
-	 * @param credit
 	 */
 	public void initCreditTextFieldValue() {
 		creditTextField.setText(String.valueOf(viewModel.getCredits()));

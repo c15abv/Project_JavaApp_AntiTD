@@ -3,41 +3,42 @@ package start;
 import java.util.Random;
 
 /**
- * Figures holds the various shapes which are available
- * in the AntiTD application.
+ * Figures holds the various shapes which are available in the AntiTD
+ * application.
  * 
  * @author Alexander Believ
  * @version 1.0
  *
  */
-public enum Figures{
-	
+public enum Figures {
+
 	CIRCLE, TRIANGLE, SQUARE, STAR;
-	
+
 	/**
 	 * Gets a random Figures value.
+	 * 
 	 * @return a random Figures value.
 	 */
-	public static Figures getRandom(){
+	public static Figures getRandom() {
 		int val;
-		
-		return (val = new Random().nextInt(4)) == 0 ? Figures.CIRCLE :
-			val == 1 ? Figures.TRIANGLE : val == 2 ? Figures.SQUARE :
-				Figures.STAR;
+
+		return (val = new Random().nextInt(4)) == 0 ? Figures.CIRCLE
+				: val == 1 ? Figures.TRIANGLE
+						: val == 2 ? Figures.SQUARE : Figures.STAR;
 	}
-	
+
 	/**
-	 * Gets a random Figures value excluding the
-	 * given Figures value.
-	 * @param figure a Figures value.
-	 * @return a random Figures value excluding the
-	 * given Figures value.
+	 * Gets a random Figures value excluding the given Figures value.
+	 * 
+	 * @param figure
+	 *            a Figures value.
+	 * @return a random Figures value excluding the given Figures value.
 	 */
-	public static Figures getRandom(Figures figure){
+	public static Figures getRandom(Figures figure) {
 		Figures figure1, figure2, figure3;
 		int val;
-		
-		switch(figure){
+
+		switch (figure) {
 		case CIRCLE:
 			figure1 = Figures.SQUARE;
 			figure2 = Figures.STAR;
@@ -62,8 +63,8 @@ public enum Figures{
 			figure1 = figure2 = figure3 = null;
 			break;
 		}
-		
-		return (val = new Random().nextInt(3)) == 0 ? figure1:
-			val == 1 ? figure2 : figure3;
+
+		return (val = new Random().nextInt(3)) == 0 ? figure1
+				: val == 1 ? figure2 : figure3;
 	}
 }

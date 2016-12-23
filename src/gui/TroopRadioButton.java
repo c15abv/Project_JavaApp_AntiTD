@@ -12,7 +12,7 @@ import java.awt.Graphics2D;
 /**
  * Radio button for troop types being displayed in the troop panel.
  * 
- * @author Karolina Jonz�n
+ * @author Karolina Jonzen
  * @version 1.0
  */
 @SuppressWarnings("serial")
@@ -38,7 +38,7 @@ class TroopRadioButton extends FigureRadioButton {
 	public int getIndex() {
 		return index;
 	}
-	
+
 	@Override
 	public Shape createShape() {
 

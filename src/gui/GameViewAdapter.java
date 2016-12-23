@@ -5,27 +5,15 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.util.ArrayList;
-import java.util.HashMap;
-
-import javax.swing.border.EmptyBorder;
-
 import creatures.AttackingPlayer;
 import creatures.CreatureFigure;
 import creatures.CreatureFigureTemplate;
-import start.AreaPosition;
 import start.Game;
 import start.Game.GameState;
 import start.GameLevel;
 import start.GameRunner;
 import start.Position;
-import tiles.GoalTile;
-import tiles.PathTile;
 import tiles.StartTile;
-import tiles.TeleportTile;
-import tiles.Tile;
-import tiles.VoidTile;
-import tiles.PathTile.Direction;
-import tiles.PathTile.ValidPath;
 import towers.AIDefendingPlayer;
 import towers.AIMemory;
 import towers.AITowerFigures;
@@ -39,7 +27,7 @@ import utilities.Lock;
 /**
  * Class responsible for communicating gui events to game logic.
  * 
- * @author Karolina Jonz�n and Alexander Ekstr�m
+ * @author Karolina Jonzen and Alexander Ekstrom
  * @version 1.0
  */
 public class GameViewAdapter implements ViewModel {
@@ -47,6 +35,7 @@ public class GameViewAdapter implements ViewModel {
 	private DefendingPlayer player2;
 	private AIDefendingPlayer aiDef;
 	private AIMemory memory;
+	@SuppressWarnings("unused")
 	private AITowerFigures ai;
 	private Game game;
 	private GameRunner runner;
@@ -121,7 +110,6 @@ public class GameViewAdapter implements ViewModel {
 			memory = new AIMemory.AIMemoryLoader(level.getInitialLevelMapHash())
 					.load();
 		} catch (IOException e1) {
-			e1.printStackTrace();
 		}
 
 		aiDef = new AIDefendingPlayer.Builder(player2, player1, level,
@@ -132,8 +120,7 @@ public class GameViewAdapter implements ViewModel {
 						.setGameLock(game.getLock())
 						.setTowerMutationTimeChance(5)
 						.setTowerMutationTimeRange(2000)
-						.setBuildTowerChance(500)
-						.build();
+						.setBuildTowerChance(500).build();
 
 		aiDefThread = new Thread(aiDef);
 
@@ -147,7 +134,7 @@ public class GameViewAdapter implements ViewModel {
 		thread = new Thread(runner);
 		thread.start();
 	}
-	
+
 	@Override
 	public void addTroop(FigureRepresentation figure) {
 		CreatureFigureTemplate creature = new CreatureFigureTemplate(
@@ -173,6 +160,11 @@ public class GameViewAdapter implements ViewModel {
 
 	}
 
+	/**
+	 * Adds the creature given as parameter to the attacking player's troop.
+	 * 
+	 * @param creature
+	 */
 	private void addCreatureToPlayerTroop(CreatureFigureTemplate creature) {
 		try {
 			lock.lock();
@@ -201,25 +193,19 @@ public class GameViewAdapter implements ViewModel {
 
 	private void readLevelMap(int levelIndex) {
 
-		levelXMLReader = new LevelXMLReader("XML/levels.xml");
+		ArrayList<String> lvlNames;
+		try {
+			lvlNames = levelXMLReader.getLvlNames();
+			level = levelXMLReader.getLevelByName(lvlNames.get(levelIndex));
 
-		ArrayList<String> lvlNames = levelXMLReader.getLvlNames();
-
-		level = levelXMLReader.getLevelByName(lvlNames.get(levelIndex));
-
-		/*level.setLevelMap(l.getLevelMap());
-		level.setAttackerCredit(l.getAttackerCredit());
-		level.setAttackingPlayerScoreGoal(l.getAttackingPlayerScoreGoal());
-		level.setDefenderCredit(l.getDefenderCredit());
-		level.setLandOnFiles(l.getLandOnFiles());
-		level.setRules(l.getRules());
-		level.setTimeToFinish(l.getTimeToFinish());*/
+		} catch (Exception e) {
+			view.showDialogOnLevelError();
+		}
 
 		levelInfo = new LevelInfo(level.getNrOfTemplates(),
 				CreatureFigure.DEFAULT_CREDIT,
 				CreatureFigure.DEFAULT_CREDIT * 2, level.getAttackerCredit(),
 				level.getLevelName());
-
 	}
 
 	@Override
@@ -325,7 +311,6 @@ public class GameViewAdapter implements ViewModel {
 	public void quitGame() {
 		try {
 			lock.lock();
-			//storeResult();
 			game.quitGame();
 		} catch (InterruptedException e) {
 		} finally {
@@ -335,28 +320,23 @@ public class GameViewAdapter implements ViewModel {
 		joinThreads();
 	}
 
-/*	public void storeResult() {
-		totalScore += gameListener.getLevelScore();
-		totalTime += gameListener.getLevelTime();
-	}*/
-	
 	@Override
 	public void setTotalScore(long totalScore) {
 		this.totalScore = totalScore;
 	}
-	
+
 	@Override
 	public void setTotalTime(long time) {
 		this.totalTime = time;
 	}
-	
+
 	@Override
-	public long getTotalScore()	{
+	public long getTotalScore() {
 		return totalScore;
 	}
-	
+
 	@Override
-	public long getTotalTime()	{
+	public long getTotalTime() {
 		return totalTime;
 	}
 
@@ -367,11 +347,13 @@ public class GameViewAdapter implements ViewModel {
 		try {
 			thread.join();
 		} catch (InterruptedException e) {
-			e.printStackTrace();
 		}
 
 	}
 
+	/**
+	 * Terminates, joins and interrupts all threads.
+	 */
 	private void joinThreads() {
 		runner.terminate();
 		aiDef.terminate();
@@ -390,12 +372,6 @@ public class GameViewAdapter implements ViewModel {
 	}
 
 	@Override
-	public void playNextLevel() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public boolean gameIsRunning() {
 		if (game != null) {
 			return (game.getGameState() != GameState.NA);
@@ -407,7 +383,6 @@ public class GameViewAdapter implements ViewModel {
 	@Override
 	public boolean gameIsInitiated() {
 		if (game != null) {
-			System.out.println(game.getGameState());
 			return (game.getGameState() == GameState.NA);
 		} else {
 			return false;
@@ -433,4 +408,5 @@ public class GameViewAdapter implements ViewModel {
 		}
 		return speed;
 	}
+
 }

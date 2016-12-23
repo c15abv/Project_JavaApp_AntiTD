@@ -1,11 +1,9 @@
 package gui;
 
-import start.GameLevel;
-
 /**
  * Class that holds level information.
  * 
- * @author Karolina Jonz�n
+ * @author Karolina Jonzen
  * @version 1.0
  */
 public class LevelInfo {
@@ -14,7 +12,6 @@ public class LevelInfo {
 	private int teleporterCost;
 	private int startCredit;
 	private String levelName;
-
 
 	/**
 	 * Constructor that initiates the object with the given parameters.
@@ -66,10 +63,9 @@ public class LevelInfo {
 	public void setStartCredit(int startCredit) {
 		this.startCredit = startCredit;
 	}
-	
+
 	public String getLevelName() {
 		return levelName;
 	}
-
 
 }

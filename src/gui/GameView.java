@@ -18,7 +18,6 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -31,7 +30,6 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -47,7 +45,8 @@ import java.awt.GridBagLayout;
 /**
  * Class that builds the gui.
  * 
- * @author karro
+ * @author Karolina Jonzén and Alexander Ekstrom
+ * @version 1.0
  */
 public class GameView implements View {
 	private JFrame frame;
@@ -60,7 +59,7 @@ public class GameView implements View {
 	private RightPanel rightPanel;
 	private JTextField timeTextField;
 	private JTextField pointsTextField;
-	private JTextField levelTextField;
+	private JMenuItem newRestartGameItem;
 
 	/**
 	 * Constructor that sets the view model to the given parameter and initiates
@@ -276,7 +275,38 @@ public class GameView implements View {
 		textArea.setText(
 				"This is an anti-tower defence game where you have a limited "
 						+ "amount of time and credit to create troops and try to reach goal "
-						+ "while the computer builds towers. \n ");
+						+ "while the computer builds towers. You get credits each time a creature reaches"
+						+ " a goal position, depending on its health. The game is won when a certain number of"
+						+ " troops has reached goal, which varies over the levels. The game is lost when the time"
+						+ " is up. Your resulting score is based on the time it took to finish the level and can be"
+						+ "saved."
+						+ "\n\nGame options\nFrom the Game Menu, you can start/restart, pause/resume and quit a game"
+						+ " and reach the high score table.\n\n"
+						+ "Create troops\nCreate your troops in the side panel before you start each level. "
+						+ "Following are explanations of the parameters that can be chosen:\n"
+						+ "Shape: The creatures geometrical shape. A creature takes more damage from "
+						+ "towers with the same shape.\n"
+						+ "Teleporter: Teleporter troops are more expensive than normal troops "
+						+ "and can be used to drop start and goal teleports for any creature to use. "
+						+ "The drop time for the start teleport can be chosen in play mode.\n"
+						+ "Color: The creature's color as a hue between 0-359. The more similar a "
+						+ "creature's color is to an attacking tower's, the more damage it takes.\n"
+						+ "Size: The creature's size, which controls its hitpoints and speed. A larger "
+						+ "creature can take more damage, in exchange for less speed and vice versa.\n"
+						+ "Orientation: Controls what direction the creature prioritizes in crossroads.\n\n"
+						+ "Buy troops\nWhen the game has started, choose your troops in the Your troop-panel, "
+						+ "and see information in the Properties box. Before sending out the troop, choose "
+						+ "a start position on the map buy clicking near it. You can buy troops as long as you "
+						+ "have enough credits."
+						+ "\n\nThe level map\nFollowing are explanations of components in the map:\n"
+						+ "Start positions: red pulsating circles.\n"
+						+ "Chosen start position: red pulsating circles surrounded by a yellow frame.\n"
+						+ "Goal positions: yellow pulsating circles.\n"
+						+ "Teleporter positions: gray pulsating circles for unconnected start teleporters,"
+						+ " otherwise blue pulsating circles.\n"
+						+ "Paths: white dotted lines.\n"
+						+ "Walls: diffuse light brown circles.\n"
+						+ "Tower areas: light brown crosses.\n");
 
 		textArea.setLineWrap(true);
 		textArea.setWrapStyleWord(true);
@@ -313,12 +343,14 @@ public class GameView implements View {
 
 		menuBar.add(menu);
 
-		menuItem = new JMenuItem("New Game");
+		newRestartGameItem = new JMenuItem("New Game");
 
 		GameView view = this;
-		menuItem.addActionListener(new ActionListener() {
+		newRestartGameItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent arg0) {
+
+				newRestartGameItem.setText("Restart game");
 
 				if (viewModel.gameIsRunning()) {
 					String infoMessage = "Are you sure?";
@@ -341,10 +373,17 @@ public class GameView implements View {
 						viewModel.quitBeforeStart();
 						resetGame(1);
 					} else {
-						viewModel.initGame(view, 0);
-						rightPanel.initUI();
-						frame.pack();
-						viewModel.changeSizeOfGameCanvas(rightPanel.getWidth());
+						try {
+							viewModel.initGame(view, 0);
+							rightPanel.initUI();
+							frame.pack();
+							viewModel.changeSizeOfGameCanvas(
+									rightPanel.getWidth());
+							frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+						} catch (NullPointerException e) {
+							showDialogOnLevelError();
+						}
+
 					}
 
 				}
@@ -352,7 +391,7 @@ public class GameView implements View {
 
 		});
 
-		menu.add(menuItem);
+		menu.add(newRestartGameItem);
 
 		JToggleButton pauseAndResumeBtn = createPauseAndResumeButton();
 
@@ -400,6 +439,12 @@ public class GameView implements View {
 		return menuBar;
 	}
 
+	/**
+	 * Resets the UI and initiates a new game with the level index given as
+	 * parameter.
+	 * 
+	 * @param levelIndex
+	 */
 	private void resetGame(int levelIndex) {
 		rightPanel.resetGui();
 
@@ -410,6 +455,8 @@ public class GameView implements View {
 		pointsTextField.setText("0");
 
 		frame.pack();
+
+		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 	}
 
 	/**
@@ -468,23 +515,16 @@ public class GameView implements View {
 		}
 	}
 
-	/**
-	 * Builds and shows a confirm dialog based on the given parameters.
-	 * 
-	 * @param infoMessage
-	 * @param title
-	 */
 	@Override
 	public void showResult(GameResult result, int score, Time time) {
-		// rightPanel.disableComponents();
 		String infoMessage = "";
 		String title = "";
-		GameView view = this;
+
 		switch (result) {
 		case ATTACKER_WINNER:
 			Object[] options = { "Next level", "Quit game" };
-			infoMessage = "YOU WON! \n Your current score is "
-					+ (int) viewModel.getTotalScore();
+			infoMessage = "YOU WON!\n Your current score is "
+					+ (int) viewModel.getTotalScore() + ".";
 			title = "Game ended";
 			int n;
 
@@ -503,7 +543,8 @@ public class GameView implements View {
 
 		case DEFENDER_WINNER:
 			Object[] options4 = { "Try again", "Quit game" };
-			infoMessage = "YOU LOST!";
+			infoMessage = "YOU LOST!\nYour resulting score is "
+					+ (int) viewModel.getTotalScore() + ".";
 			title = "Game ended";
 
 			n = JOptionPane.showOptionDialog(frame, infoMessage, title,
@@ -683,6 +724,11 @@ public class GameView implements View {
 	@Override
 	public JPanel getSidePanel() {
 		return rightPanel;
+	}
+
+	@Override
+	public void showDialogOnLevelError() {
+		JOptionPane.showMessageDialog(null, "Error when reading XML-file.");
 	}
 
 }

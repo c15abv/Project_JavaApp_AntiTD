@@ -9,7 +9,7 @@ import start.Game.GameResult;
 /**
  * Interface to implement for communication between gui and game logic.
  * 
- * @author Karolina Jonz�n
+ * @author Karolina Jonzen
  * @version 1.0
  */
 public interface View {
@@ -30,7 +30,6 @@ public interface View {
 	 */
 	void setCredits(int credit);
 
-	
 	/**
 	 * Sets current points in gui.
 	 * 
@@ -39,13 +38,15 @@ public interface View {
 	void setPoints(int points);
 
 	// void setSpeed(int speed);
-	
+
 	/**
 	 * Gets the level map panel.
 	 * 
 	 * @return
 	 */
 	JPanel getLevelMapPanel();
-	
+
 	JPanel getSidePanel();
+
+	void showDialogOnLevelError();
 }

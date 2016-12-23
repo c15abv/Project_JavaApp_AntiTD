@@ -6,6 +6,6 @@ package utilities;
  * @author Alexander Beliaev
  * @version 1.0
  */
-public interface TimerListener{
+public interface TimerListener {
 	void receiveNotification(Long id);
 }
