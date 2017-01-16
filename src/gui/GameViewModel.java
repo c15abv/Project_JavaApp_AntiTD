@@ -8,31 +8,22 @@ import utilities.HighScoreInfo;
 /**
  * Interface to implement for communication between gui and game logic.
  * 
- * @author Karolina Jonz�n and Alexander Ekstr�m
+ * @author Karolina Jonzen and Alexander Ekstrom
  * @version 1.0
  */
 public interface GameViewModel {
 
 	/**
-	 * Initiates the game.
+	 * Initiates the game with the level index given as parameter.
 	 * 
 	 * @param view
 	 */
 	void initGame(View view, int levelIndex);
 
-	/**
-	 * Starts the game.
-	 */
 	void startGame();
 
-	/**
-	 * Pauses the game.
-	 */
 	void pauseGame();
 
-	/**
-	 * Resumes the game.
-	 */
 	void resumeGame();
 
 	/**
@@ -57,7 +48,7 @@ public interface GameViewModel {
 	 * @param index
 	 * @param time
 	 */
-	void buyCreature(int index, long time)throws NullPointerException;
+	void buyCreature(int index, long time) throws NullPointerException;
 
 	/**
 	 * Gets the level score goal.
@@ -83,7 +74,7 @@ public interface GameViewModel {
 	ArrayList<HighScoreInfo> getFromDataBase() throws SQLException;
 
 	/**
-	 * Inserts the given paramters into the database.
+	 * Inserts the given parameters into the database.
 	 * 
 	 * @param name
 	 * @param score
@@ -102,25 +93,22 @@ public interface GameViewModel {
 	 */
 	int getHitpoints(int index);
 
-	
 	/**
 	 * Gets the attacking player's current credit.
 	 * 
 	 * @return
 	 */
 	int getCredits();
-	
-<<<<<<< HEAD
-	/**
-	 * Restarts the game with next level.
-	 * 
-	 * @return
-	 */
-	void playNextLevel();
 
-=======
+	/**
+	 * Quits the game.
+	 */
 	void quitGame();
-	
+
+	/**
+	 * Adapts the size of the game canvas to the center panel of gui.
+	 * 
+	 * @param width
+	 */
 	void changeSizeOfGameCanvas(int width);
->>>>>>> refs/remotes/origin/master
 }

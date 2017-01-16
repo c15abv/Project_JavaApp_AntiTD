@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence-diagram version="1.1.11" icons="true">  
+  <object id="1" language="java" name="gui.GameView" project="Apjavan_projekt_v12" 
+    file="/Apjavan_projekt_v12/src/gui/GameView.java" binary="false" label="gameView" type="class" autoSize="true">    
+    <position height="-1" width="-1" x="375" y="0"/>  
+  </object>  
+  <object id="2" language="java" name="gui.RightPanel" project="Apjavan_projekt_v12" 
+    file="/Apjavan_projekt_v12/src/gui/RightPanel.java" binary="false" label="rightPanel" type="class" autoSize="true">    
+    <position height="-1" width="-1" x="122" y="0"/>    
+    <execution id="3">      
+      <position height="170" width="118" x="128" y="101"/>    
+    </execution>  
+  </object>  
+  <object id="6" language="java" name="gui.View" project="Apjavan_projekt_v12" 
+    file="/Apjavan_projekt_v12/src/gui/View.java" binary="false" label="view" type="interface" autoSize="true">    
+    <position height="-1" width="-1" x="333" y="0"/>    
+    <execution id="7">      
+      <position height="27" width="67" x="250" y="434"/>    
+    </execution>    
+    <execution id="8">      
+      <position height="27" width="67" x="250" y="315"/>    
+    </execution>  
+  </object>  
+  <object id="9" language="java" name="gui.ViewModel" project="Apjavan_projekt_v12" 
+    file="/Apjavan_projekt_v12/src/gui/ViewModel.java" binary="false" label="viewModel" type="interface" autoSize="true">    
+    <position height="-1" width="-1" x="308" y="0"/>    
+    <execution id="5">      
+      <position height="116" width="120" x="321" y="128"/>    
+    </execution>  
+  </object>  
+  <object id="14" language="java" name="gui.GameViewAdapter" project="Apjavan_projekt_v12" 
+    file="/Apjavan_projekt_v12/src/gui/GameViewAdapter.java" binary="false" label="gameViewAdapter" type="class" 
+    autoSize="true">    
+    <position height="-1" width="-1" x="438" y="0"/>  
+  </object>  
+  <object id="15" language="java" name="gui.GameListener" project="Apjavan_projekt_v12" 
+    file="/Apjavan_projekt_v12/src/gui/GameListener.java" binary="false" label="gameListener" type="class" 
+    autoSize="true">    
+    <position height="-1" width="-1" x="573" y="0"/>    
+    <execution id="16">      
+      <position height="81" width="147" x="637" y="407"/>    
+    </execution>    
+    <execution id="18">      
+      <position height="81" width="147" x="637" y="492"/>    
+    </execution>    
+    <execution id="21">      
+      <position height="105" width="147" x="637" y="288"/>    
+    </execution>  
+  </object>  
+  <object id="25" language="java" name="creatures.AttackingPlayer" project="Apjavan_projekt_v12" 
+    file="/Apjavan_projekt_v12/src/creatures/AttackingPlayer.java" binary="false" label="attackingPlayer" type="class" 
+    autoSize="true">    
+    <position height="-1" width="-1" x="538" y="0"/>    
+    <execution id="24">      
+      <position height="27" width="161" x="788" y="339"/>    
+    </execution>    
+    <execution id="11">      
+      <position height="27" width="161" x="788" y="155"/>    
+    </execution>    
+    <execution id="13">      
+      <position height="27" width="161" x="788" y="190"/>    
+    </execution>  
+  </object>  
+  <object id="26" language="java" name="towers.DefendingPlayer" project="Apjavan_projekt_v12" 
+    file="/Apjavan_projekt_v12/src/towers/DefendingPlayer.java" binary="false" label="defendingPlayer" type="class" 
+    autoSize="true">    
+    <position height="-1" width="-1" x="639" y="0"/>  
+  </object>  
+  <object id="27" language="java" name="start.Game" project="Apjavan_projekt_v12" 
+    file="/Apjavan_projekt_v12/src/start/Game.java" binary="false" label="game" type="class" autoSize="true">    
+    <position height="-1" width="-1" x="822" y="0"/>    
+    <execution id="20">      
+      <position height="27" width="75" x="1126" y="519"/>    
+    </execution>  
+  </object>  
+  <message id="4" operation="buyCreature(int):void" asynchronous="false">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="5"/>  
+  </message>  
+  <message id="10" operation="addCreatureFigure(creatures.CreatureFigure):void" asynchronous="false">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="11"/>  
+  </message>  
+  <message id="12" operation="setCredits(int):void" asynchronous="false">    
+    <end type="SOURCE" refId="5"/>    
+    <end type="TARGET" refId="13"/>  
+  </message>  
+  <message id="17" operation="showResult(start.Game.GameResult,int,java.sql.Time):void" asynchronous="false">    
+    <end type="SOURCE" refId="16"/>    
+    <end type="TARGET" refId="7"/>  
+  </message>  
+  <message id="19" operation="getGameResult():start.Game.GameResult" asynchronous="false">    
+    <end type="SOURCE" refId="18"/>    
+    <end type="TARGET" refId="20"/>  
+  </message>  
+  <message id="22" operation="setPoints(int):void" asynchronous="false">    
+    <end type="SOURCE" refId="21"/>    
+    <end type="TARGET" refId="8"/>  
+  </message>  
+  <message id="23" operation="getPoints():int" asynchronous="false">    
+    <end type="SOURCE" refId="21"/>    
+    <end type="TARGET" refId="24"/>  
+  </message>
+</sequence-diagram>

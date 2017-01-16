@@ -668,7 +668,7 @@ public class AIDefendingPlayer implements TimerListener, Runnable{
 		}
 	}
 	
-	private void loadMemory(){
+	private void loadMemory() {
 		long id, time, timeTemp;
 		Random random = new Random();
 		towerBuildPlanList = memory.getTowerBuildPlan();

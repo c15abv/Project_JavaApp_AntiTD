@@ -54,6 +54,9 @@ public class GameListener implements Runnable {
 		this.viewModel = viewModel;
 	}
 
+	/**
+	 * Terminates, interrupts and joins all threads.
+	 */
 	private void joinThreads() {
 		runner.terminate();
 		aiDef.terminate();
@@ -95,25 +98,26 @@ public class GameListener implements Runnable {
 			previousCredits = currentCredits;
 
 			if (game.getGameState() == GameState.ENDED) {
-				System.out.println("GAME ENDED");
 				joinThreads();
 
-				System.out.println("Threads joined");
 				if (game.careAboutResult()) {
 					try {
 						lock.lock();
 						GameResult gameResult = game.getGameResult();
-						
+
 						score = calculateScore();
-						
+
 						long totalScore = viewModel.getTotalScore() + score;
 						viewModel.setTotalScore(totalScore);
-						
-						long totalTime = viewModel.getTotalTime() + game.getTimer().timeElapsed();
-						viewModel.setTotalTime(totalTime/1000);
-												
-						SwingUtilities.invokeLater(
-								() -> view.showResult(gameResult, (int)totalScore, getTime(totalTime/1000)));
+
+						long totalTime = viewModel.getTotalTime()
+								+ game.getTimer().timeElapsed();
+						viewModel.setTotalTime(totalTime / 1000);
+
+						SwingUtilities
+								.invokeLater(() -> view.showResult(gameResult,
+										(int) totalScore, getTime(
+												totalTime / 1000)));
 
 						isRunning = false;
 					} catch (InterruptedException e) {
@@ -133,29 +137,35 @@ public class GameListener implements Runnable {
 	public synchronized void terminate() {
 		isRunning = false;
 	}
-	
-	private int calculateScore()	{
+
+	/**
+	 * Calculates and returns the attacking player score of the current level
+	 * based on time left.
+	 * 
+	 * @return
+	 */
+	private int calculateScore() {
 		ActionTimer gameTimer = game.getTimer();
 		long timeElapsed = gameTimer.timeElapsed();
 		long timeLeft = gameTimer.timeLeft(game.getGameTimeTimerId());
 		long totalTime = timeElapsed + timeLeft;
-				
-		double bonus = ((double)timeLeft/totalTime);
-		
-		int score = (int)(bonus * 1000);
-		
+
+		double bonus = ((double) timeLeft / totalTime);
+
+		int score = (int) (bonus * 1000);
+
 		return score;
 	}
-	
-	private Time getTime(long time)	{
+
+	private Time getTime(long time) {
 		return new Time(time);
 	}
-	
-	public long getLevelScore()	{
+
+	public long getLevelScore() {
 		return score;
 	}
-	
-	public long getLevelTime()	{
+
+	public long getLevelTime() {
 		return totalTime;
 	}
 
