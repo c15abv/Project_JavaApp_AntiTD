@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Author: Jan Nylén -->
+<levels>
+	<level name="testLevel1">
+		<row Index="1">
+			<!-- <cell landOn = "haste">W</cell> -->
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile direction="SOUTH">G</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="2">
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="3">
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile landOn="TeleportTile" direction="VERTICAL">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="HORIZONTAL_T_NORTH">P</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="4">
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="5">
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile direction="VERTICAL">P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="6">
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile direction="HORIZONTAL">P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="7">
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile direction="HORIZONTAL_T_SOUTH">P</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+		</row>
+		<row Index="8">
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile direction="NORTH">S</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+			<tile>W</tile>
+		</row>
+		<rules>
+			<attackerCredit>101</attackerCredit>
+			<defenderCredit>101</defenderCredit>
+			<timeToFinish>11</timeToFinish>
+			<nrOfTemplates>7</nrOfTemplates>
+			<attackingPlayerScoreGoal>7</attackingPlayerScoreGoal>			
+		</rules>
+		<!-- vet inte hur jag man ska identifiera klasserna.. Om dom ska ha ett 
+			eget element och sen en text med filens namn. Eller om det direkt bara ska 
+			vara namnet i textform... -->
+		<landOnClassFiles>
+			<landOn>teleport</landOn>
+		</landOnClassFiles>
+
+	</level>
+
+	
+		
+</levels>
